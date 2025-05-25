@@ -14,4 +14,6 @@ class KITSUNE_API AKitsuneCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 	
+public:
+	AKitsuneCharacter();
 };
