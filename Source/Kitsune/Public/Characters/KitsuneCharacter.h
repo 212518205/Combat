@@ -16,4 +16,12 @@ class KITSUNE_API AKitsuneCharacter : public ACharacterBase
 	
 public:
 	AKitsuneCharacter();
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+protected:
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UStaticMeshComponent> Sword;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UStaticMeshComponent> Sheath;
 };
