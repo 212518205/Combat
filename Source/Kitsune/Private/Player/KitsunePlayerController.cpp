@@ -13,8 +13,9 @@ void AKitsunePlayerController::BeginPlay()
 	check(KitsuneContext);
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(KitsuneContext, 0);
+	if (Subsystem) {
+		Subsystem->AddMappingContext(KitsuneContext, 0);
+	}
 }
 
 void AKitsunePlayerController::SetupInputComponent()

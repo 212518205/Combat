@@ -6,6 +6,26 @@
 #include "Characters/CharacterBase.h"
 #include "KitsuneCharacter.generated.h"
 
+USTRUCT(BlueprintType)
+struct FModelSet
+{
+	GENERATED_BODY()
+	FModelSet(){}
+	FModelSet(APlayerController* PC,APlayerState* PS,UAbilitySystemComponent* ASC,UAttributeSet* AS)
+	:PlayerController(PC),PlayerState(PS),AbilitySystemComponent(ASC),AttributeSet(AS)	{}
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TObjectPtr<APlayerController> PlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<APlayerState> PlayerState = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UAttributeSet> AttributeSet;
+};
+
 /**
  * 
  */
@@ -24,4 +44,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UStaticMeshComponent> Sheath;
+private:
+	void InitAbilityInfo();
 };
