@@ -5,6 +5,8 @@
 #include"GameFramework/CharacterMovementComponent.h"
 #include"AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
+#include "Player/KitsunePlayerController.h"
+#include "UI/HUD/KitsuneHUD.h"
 
 AKitsuneCharacter::AKitsuneCharacter()
 {
@@ -27,15 +29,17 @@ void AKitsuneCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	AKitsunePlayerState* KitsunePlayerState = GetPlayerState<AKitsunePlayerState>();
-	check(KitsunePlayerState);
-	AbilitySystemComponent = KitsunePlayerState->GetAbilitySystemComponent();
-	AbilitySystemComponent->InitAbilityActorInfo(KitsunePlayerState, this);
-
-	AttributeSet = KitsunePlayerState->GetAttributeSet();
+	InitAbilityInfo();
 }
 
 void AKitsuneCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	InitAbilityInfo();
+}
+
+void AKitsuneCharacter::InitAbilityInfo()
 {
 	AKitsunePlayerState* KitsunePlayerState = GetPlayerState<AKitsunePlayerState>();
 	check(KitsunePlayerState);
@@ -43,4 +47,11 @@ void AKitsuneCharacter::OnRep_PlayerState()
 	AbilitySystemComponent->InitAbilityActorInfo(KitsunePlayerState, this);
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
+	if (AKitsunePlayerController* KitsunePlayerController=Cast<AKitsunePlayerController>(GetController()))
+	{
+		if (AKitsuneHUD* KitsuneHUD=Cast<AKitsuneHUD>(KitsunePlayerController->GetHUD()))
+		{
+			KitsuneHUD->InitCharacterState(KitsunePlayerController, KitsunePlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 }

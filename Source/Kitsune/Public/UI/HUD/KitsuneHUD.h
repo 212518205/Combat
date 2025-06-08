@@ -6,7 +6,10 @@
 #include "GameFramework/HUD.h"
 #include "KitsuneHUD.generated.h"
 
-class UKitsuneUserWidget;
+class UUserWidgetOverlay;
+class UAttributeSet;
+class UAbilitySystemComponent;
+class UUserWidgetBase;
 /**
  * 
  */
@@ -16,13 +19,14 @@ class KITSUNE_API AKitsuneHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	TObjectPtr<UKitsuneUserWidget> OverlayWidget;
-
+	void InitCharacterState(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> OverlayWidgetClass;
+	TObjectPtr<UUserWidgetOverlay> CharStateWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidgetOverlay> OverlayWidgetClass;
 };

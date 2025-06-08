@@ -6,6 +6,7 @@
 
 UKitsuneAttributeSet::UKitsuneAttributeSet()
 {
+	
 }
 
 void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
