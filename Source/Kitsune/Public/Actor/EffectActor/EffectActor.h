@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemInterface.h"
 #include "GameFramework/Actor.h"
 #include "EffectActor.generated.h"
 
+class UGameplayEffect;
 class USphereComponent;
 
 UCLASS()
@@ -14,23 +14,19 @@ class KITSUNE_API AEffectActor : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	/*Public Function Begin*/
 	AEffectActor();
+	/*Public Function End*/
 
 protected:
-	virtual void BeginPlay() override;
-public:	
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UStaticMeshComponent> Mesh;
+	/*Protected Function Begin*/
+	UFUNCTION(BlueprintCallable,Category="Effect|Apply")
+	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GEClass);
+	/*Protected Function End*/
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<USphereComponent> Sphere;
-
-	UFUNCTION()
-	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor
-		, UPrimitiveComponent* OtherCmp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	virtual void EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor
-		, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	/*Protected Variable Begin*/
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Effect|Class")
+	TSubclassOf<UGameplayEffect> GameplayEffectClass;
+	/*Protected Variable End*/
 };

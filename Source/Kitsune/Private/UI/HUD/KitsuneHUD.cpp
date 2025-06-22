@@ -5,6 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Characters/KitsuneCharacter.h"
+#include "UI/ViewModel/CharacterStateViewModel.h"
 #include "UI/Widget/UserWidgetHealth.h"
 #include "UI/Widget/UserWidgetOverlay.h"
 
@@ -12,15 +13,23 @@ void AKitsuneHUD::InitCharacterState(APlayerController* PC, APlayerState* PS, UA
                                      UAttributeSet* AS)
 {
 	const FModelSet ModelSet(PC, PS, ASC, AS);
-	UUserWidget* Widget = CreateWidget(GetWorld(), OverlayWidgetClass);
-	Widget->AddToViewport();
-	CharStateWidget = Cast<UUserWidgetOverlay>(Widget);
-	checkf(CharStateWidget, TEXT("Overlay ×ª»»Ê§°Ü,ÔÚHUDÖÐ"));
-	CharStateWidget->GetHealthWidget()->SetViewModel(ModelSet);
+	CharStateWidget = CreateWidget<UUserWidgetOverlay>(GetWorld(), OverlayWidgetClass);
+	CharStateWidget->AddToViewport();
+	CharStateWidget->SetCharacterStateViewModel(GetCSViewModel(ModelSet));
 }
 
 void AKitsuneHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+UCharacterStateViewModel* AKitsuneHUD::GetCSViewModel(const FModelSet& ModelSet)
+{
+	if (!CSViewModel)
+	{
+		CSViewModel = NewObject<UCharacterStateViewModel>(this, CSViewModelClass);
+		CSViewModel->Initialize(ModelSet);
+	}
+	return CSViewModel;
 }
