@@ -14,9 +14,6 @@ void UUserWidgetOverlay::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	UUserWidget* Widget = CreateWidget(GetWorld(), WidgetHealthClass);
-	WidgetHealth = Cast<UUserWidgetHealth>(Widget);
-	checkf(WidgetHealth, TEXT("WidgetHealth Cast Ê§°Ü£¬ÔÚOverlayÖĞ"));
 }
 
 

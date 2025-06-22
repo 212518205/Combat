@@ -20,34 +20,21 @@ class KITSUNE_API UUserWidgetHealth : public UUserWidgetBase
 	GENERATED_BODY()
 
 public:
-	void SetViewModel(const FModelSet& ModelSet);
+	/*Function Begin*/
 
-	~UUserWidgetHealth() { UE_LOG(LogTemp, Warning, TEXT("111111111aaaaaaaaaaa")); }
+	virtual void SetCharacterStateViewModel(UCharacterStateViewModel* CS_VM) override;
+	/*Function End*/
 
-	UFUNCTION(BlueprintPure,Category="Attribute")
-	float GetHealthPercent() const { return MaxHealth > 0 ? Health / MaxHealth : 0; }
+	/*Variable Begin*/
 
-	UPROPERTY(BlueprintAssignable)
-	FHealthChangedEvent OnHealthChangedEvent;
-
-	UPROPERTY(BlueprintAssignable)
-	FHealthChangedEvent OnMaxHealthChangedEvent;
+	/*Variable End*/
 protected:
+	/*Function Begin*/
 	virtual void NativeConstruct() override;
 
-	UFUNCTION(BlueprintCallable,Category="Attribute")
-	void UpdateHealthDisplay(float NewHealth);
+	/*Function End*/
 
-	UFUNCTION(BlueprintCallable,Category="Attribute")
-	void UpdateMaxHealthDisplay(float NewMaxHealth);
+	/*Variable Begin*/
 
-	UPROPERTY(EditAnywhere,Category="ViewModel")
-	TSubclassOf<UCharacterStateViewModel> CharStateVMClass;
-
-	UPROPERTY(BlueprintReadOnly,Category="Attribute",meta=(FiledNotify))
-	float Health;
-	 
-	UPROPERTY(EditAnywhere,Category="Attribute",meta=(FieldNotify))
-	float MaxHealth;
-
+	/*Variable End*/
 };

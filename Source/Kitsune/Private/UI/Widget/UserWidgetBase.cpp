@@ -3,3 +3,11 @@
 
 #include "UI/Widget/UserWidgetBase.h"
 
+void UUserWidgetBase::SetCharacterStateViewModel(UCharacterStateViewModel* CS_VM)
+{
+	if (!CSViewModel)
+	{
+		CSViewModel = CS_VM;
+	}
+	CharacterStateViewModelSet();
+}

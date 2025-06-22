@@ -5,44 +5,26 @@
 
 #include "AbilitySyetem/KitsuneAttributeSet.h"
 #include "Characters/KitsuneCharacter.h"
-#include "Components/SphereComponent.h"
+#include"AbilitySystemBlueprintLibrary.h"
 
 // Sets default values
 AEffectActor::AEffectActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	SetRootComponent(Mesh);
-
-	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
-	Sphere->SetupAttachment(Mesh);
+	USceneComponent* Scene = CreateDefaultSubobject<USceneComponent>("SceneRoot");
+	SetRootComponent(Scene);
 }
 
-// Called when the game starts or when spawned
-void AEffectActor::BeginPlay()
+void AEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GEClass)
 {
-	Super::BeginPlay();
-
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AEffectActor::OnOverlap);
-	Sphere->OnComponentEndOverlap.AddDynamic(this, &AEffectActor::EndOverlap);
+	UAbilitySystemComponent* TargetAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!TargetAsc)return;
+	checkf(GEClass, TEXT("GEClass is NULL"));
+	FGameplayEffectContextHandle EffectContextHandle = TargetAsc->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetAsc->MakeOutgoingSpec(GEClass, 1.0, EffectContextHandle);
+	TargetAsc->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
 
-void AEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherCmp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (AKitsuneCharacter* KitsuneCharacter=Cast<AKitsuneCharacter>(OtherActor))
-	{
-		UKitsuneAttributeSet* KitsuneAttributeSet = Cast<UKitsuneAttributeSet>(KitsuneCharacter->GetAttributeSet());
-		checkf(KitsuneAttributeSet, TEXT("KitsuneAttributeSet Cast failed"));
-		KitsuneAttributeSet->SetHealth(KitsuneAttributeSet->GetHealth() + 25.f);
-		KitsuneAttributeSet->SetMaxHealth(KitsuneAttributeSet->GetMaxHealth() + 25.f);
-	}
-}
-
-void AEffectActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-}
 

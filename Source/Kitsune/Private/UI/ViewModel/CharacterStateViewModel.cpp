@@ -13,35 +13,30 @@ void UCharacterStateViewModel::Initialize(const FModelSet& ModelSet)
 	AttributeSet = ModelSet.AttributeSet;
 
 	BindCallbacksToDependencies();
-
-	UKitsuneAttributeSet* KitsuneAttributeSet = CastChecked<UKitsuneAttributeSet>(AttributeSet);
-	KitsuneAttributeSet->SetHealth(59.f);
-	KitsuneAttributeSet->SetMaxHealth(100.f);
-	Health = KitsuneAttributeSet->GetHealth();
-	MaxHealth = KitsuneAttributeSet->GetMaxHealth();
-	OnHealthChanged.Broadcast(KitsuneAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(KitsuneAttributeSet->GetMaxHealth());
 }
 
 void UCharacterStateViewModel::BindCallbacksToDependencies()
 {
-	const UKitsuneAttributeSet* KitsuneAttributeSet = CastChecked<UKitsuneAttributeSet>(AttributeSet);
+	UKitsuneAttributeSet* KitsuneAttributeSet = CastChecked<UKitsuneAttributeSet>(AttributeSet);
+	///初始化方式错误！！
+	KitsuneAttributeSet->InitHealth(50.f);
+	KitsuneAttributeSet->InitMaxHealth(1000.f);
+	Health = KitsuneAttributeSet->GetHealth();
+	MaxHealth = KitsuneAttributeSet->GetMaxHealth();
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		KitsuneAttributeSet->GetHealthAttribute()).AddUObject(this, &UCharacterStateViewModel::HealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		KitsuneAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &UCharacterStateViewModel::MaxHealthChanged);
-
 }
 
 void UCharacterStateViewModel::HealthChanged(const FOnAttributeChangeData& Data) 
 {
 	Health = Data.NewValue;
-	OnHealthChanged.Broadcast(Health);
 }
 
 void UCharacterStateViewModel::MaxHealthChanged(const FOnAttributeChangeData& Data) 
 {
 	MaxHealth = Data.NewValue;
-	OnMaxHealthChanged.Broadcast(MaxHealth);
 }
 

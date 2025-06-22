@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "KitsuneHUD.generated.h"
 
+struct FModelSet;
+class UCharacterStateViewModel;
 class UUserWidgetOverlay;
 class UAttributeSet;
 class UAbilitySystemComponent;
@@ -24,9 +26,20 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere)
+	UFUNCTION(BlueprintCallable,Category="ViewModel")
+	UCharacterStateViewModel* GetCSViewModel(const FModelSet& ModelSet);
+
+	UPROPERTY(EditAnywhere,Category="CharStateWidget")
 	TObjectPtr<UUserWidgetOverlay> CharStateWidget;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="ViewModel")
+	TObjectPtr<UCharacterStateViewModel> CSViewModel;
+
+	UPROPERTY(EditAnywhere,Category="CharStateWidget")
 	TSubclassOf<UUserWidgetOverlay> OverlayWidgetClass;
+
+	UPROPERTY(EditAnywhere,Category="ViewModel")
+	TSubclassOf<UCharacterStateViewModel> CSViewModelClass;
+
+
 };

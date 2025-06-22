@@ -19,11 +19,12 @@ class KITSUNE_API UUserWidgetOverlay : public UUserWidgetBase
 public:
 	UUserWidgetOverlay();
 	virtual void NativeConstruct() override;
-	FORCEINLINE UUserWidgetHealth* GetHealthWidget() { return WidgetHealth; }
-protected:
-	UPROPERTY(BlueprintReadWrite,Category="Widget")
-	TObjectPtr<UUserWidgetHealth> WidgetHealth;
 
-	UPROPERTY(EditAnywhere,Category="Wdiget|Class")
-	TSubclassOf<UUserWidget> WidgetHealthClass;
+	~UUserWidgetOverlay()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UUserWidgetOverlay is Destroyed"));
+	}
+
+
+protected:
 };
