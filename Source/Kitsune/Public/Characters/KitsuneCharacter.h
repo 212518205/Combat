@@ -45,5 +45,5 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UStaticMeshComponent> Sheath;
 private:
-	void InitAbilityInfo();
+	virtual void InitAbilityInfo() override;
 };

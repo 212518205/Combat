@@ -27,4 +27,8 @@ void ACharacterBase::BeginPlay()
 	
 }
 
+void ACharacterBase::InitAbilityInfo()
+{
+}
+
 
