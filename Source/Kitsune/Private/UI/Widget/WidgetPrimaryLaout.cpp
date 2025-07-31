@@ -1,0 +1,25 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "UI/Widget/WidgetPrimaryLaout.h"
+
+#include "FrontendDebugHelper.h"
+
+void UWidgetPrimaryLaout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag,
+                                              UCommonActivatableWidgetContainerBase* InStack)
+{
+	if (!IsDesignTime())
+	{
+		if (!GameplayTagToStackMap.Contains(InGameplayTag))
+		{
+			GameplayTagToStackMap.Add(InGameplayTag, InStack);
+			Debug::Print(TEXT("Widget Stack Registered under the tag ") + InGameplayTag.ToString());
+		}
+	}
+}
+
+UCommonActivatableWidgetContainerBase* UWidgetPrimaryLaout::FindWidgetStackByTag(const FGameplayTag& InTag)const
+{
+	checkf(GameplayTagToStackMap.Contains(InTag), TEXT("GameplayTagToStackMap no find stack by %s"), *InTag.ToString());
+	return GameplayTagToStackMap.FindRef(InTag);
+}

@@ -32,6 +32,12 @@ void AKitsunePlayerController::SetupInputComponent()
 		this,&AKitsunePlayerController::Jump);
 }
 
+void AKitsunePlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+}
+
 void AKitsunePlayerController::Move(const FInputActionValue& Value)
 {
 	const FVector2D InputAxisVector = Value.Get<FVector2D>();

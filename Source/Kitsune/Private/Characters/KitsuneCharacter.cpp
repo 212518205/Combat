@@ -47,11 +47,5 @@ void AKitsuneCharacter::InitAbilityInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(KitsunePlayerState, this);
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
-	if (AKitsunePlayerController* KitsunePlayerController=Cast<AKitsunePlayerController>(GetController()))
-	{
-		if (AKitsuneHUD* KitsuneHUD=Cast<AKitsuneHUD>(KitsunePlayerController->GetHUD()))
-		{
-			KitsuneHUD->InitCharacterState(KitsunePlayerController, KitsunePlayerState, AbilitySystemComponent, AttributeSet);
-		}
-	}
+	Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComponent)->BindDelegateCallback();
 }

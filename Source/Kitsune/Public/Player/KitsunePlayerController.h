@@ -21,6 +21,7 @@ class KITSUNE_API AKitsunePlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void OnPossess(APawn* InPawn) override;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
