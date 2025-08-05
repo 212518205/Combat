@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UI/Widget/Button/KitsuneCommonButtonBase.h"
 #include "UIManagerSubsystem.generated.h"
 
 class UWidgetActivatableBase;
@@ -15,6 +16,8 @@ enum class EAsyncPushWidgetState : uint8
 	OnCreateBeforePush,
 	AfterPush,
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnButtonDescriptionUpdate, UKitsuneCommonButtonBase*, InButton, FText, InDescription);
 
 /**
  * 
@@ -35,6 +38,11 @@ public:
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
 		TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const;
 	/** Function End*/
+	/** Variable Begin*/
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonDescriptionUpdate ButtonDescriptionUpdateDelegate;
+	/** Variable End*/
+
 protected:
 	/** Function Begin*/
 	UPROPERTY()

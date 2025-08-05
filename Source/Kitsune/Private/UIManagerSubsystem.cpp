@@ -34,7 +34,6 @@ void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPr
 {
 	check(InPrimaryLayout);
 	RegisteredPrimaryLayout = InPrimaryLayout;
-	Debug::Print(TEXT("Primary layout widget stored"));
 }
 
 void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
