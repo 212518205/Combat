@@ -1,0 +1,20 @@
+# 引擎自动生成目录
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# 开发环境文件
+.vs/
+*.sln.docstates
+Kitsune.sln.DotSettings.user
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.log
+*.swp

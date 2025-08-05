@@ -13,7 +13,6 @@ void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.W
 		if (!GameplayTagToStackMap.Contains(InGameplayTag))
 		{
 			GameplayTagToStackMap.Add(InGameplayTag, InStack);
-			Debug::Print(TEXT("Widget Stack Registered under the tag ") + InGameplayTag.ToString());
 		}
 	}
 }
