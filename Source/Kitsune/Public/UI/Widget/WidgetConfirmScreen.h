@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,7 +10,26 @@
 class UDynamicEntryBox;
 class UCommonTextBlock;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScreenClosedDelegate, EConfirmScreenButtonResult, Result);
+UCLASS()
+class UConfirmScreenInfoObject : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	static UConfirmScreenInfoObject* CreateOKScreen(const FText& InScreenTitle, const FText& InScreenMsg);
+	static UConfirmScreenInfoObject* CreateYesNoScreen(const FText& InScreenTitle, const FText& InScreenMsg);
+	static UConfirmScreenInfoObject* CreateOkCancelScreen(const FText& InScreenTitle, const FText& InScreenMsg);
+
+	UPROPERTY(Transient)
+	FText ScreenTitle;
+
+	UPROPERTY(Transient)
+	FText ScreenMessage;
+
+	UPROPERTY(Transient)
+	TArray<FConfirmScreenButtonInfo> AvailableScreenButtons;
+};
+
 
 /**
  * 
@@ -22,13 +41,9 @@ class KITSUNE_API UWidgetConfirmScreen : public UWidgetActivatableBase
 
 public:
 	/** Function Begin*/
-	void InitScreenInfo(const FText& InTitle, const FText& InMessage,const TArray<FConfirmScreenButtonInfo>& InButtons);
+	void InitConfirmScreen(UConfirmScreenInfoObject* InScreenInfoObject, TFunction<void(EConfirmScreenButtonResult)> ClickedButtonCallback);
 	/** Function End*/
 
-	/** Variable Begin*/
-	UPROPERTY(BlueprintAssignable)
-	FOnScreenClosedDelegate ScreenClosed;
-	/** Variable End*/
 
 private:
 	/** Variable Begin*/

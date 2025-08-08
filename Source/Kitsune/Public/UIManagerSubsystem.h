@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FrontendTypes/FrontendEnumTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Widget/Button/KitsuneCommonButtonBase.h"
 #include "UIManagerSubsystem.generated.h"
@@ -13,7 +14,7 @@ class UWidgetPrimaryLayout;
 
 enum class EAsyncPushWidgetState : uint8
 {
-	OnCreateBeforePush,
+	OnCreatedBeforePush,
 	AfterPush,
 };
 
@@ -37,6 +38,10 @@ public:
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
 		TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const;
+
+	void PushConfirmScreenToModalStackAsync(
+		const EConfirmScreenType InScreenType, const FText& InScreenTitle, const FText& InScreenMsg, 
+		TFunction<void(EConfirmScreenButtonResult)> ButtonClickedCallback) const ;
 	/** Function End*/
 	/** Variable Begin*/
 	UPROPERTY(BlueprintAssignable)

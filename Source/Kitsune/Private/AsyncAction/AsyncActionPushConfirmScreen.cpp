@@ -2,11 +2,8 @@
 
 
 #include "AsyncAction/AsyncActionPushConfirmScreen.h"
-#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
-#include "GameplayTagContainer.h"
-#include "UIManagerSubsystem.h"
-#include "FrontendTypes/FrontendStructTypes.h"
 #include "UI/Widget/WidgetConfirmScreen.h"
+#include "UIManagerSubsystem.h"
 
 UAsyncActionPushConfirmScreen* UAsyncActionPushConfirmScreen::PushConfirmScreen(const UObject* WorldContextObject,
                                                                                 const EConfirmScreenType ScreenType, const FText Title, const FText Message)
@@ -30,47 +27,14 @@ void UAsyncActionPushConfirmScreen::Activate()
 {
 	Super::Activate();
 
-	const UUIManagerSubsystem* UIManagerSubsystem = UUIManagerSubsystem::GetUIManager(CachedOwningWorld.Get());
-
-	TArray<FConfirmScreenButtonInfo> ButtonInfos;
-	switch (CachedScreenType)
-	{
-	case EConfirmScreenType::Ok:
-		ButtonInfos.Add(FConfirmScreenButtonInfo(FText::FromString(TEXT("确定")), EConfirmScreenButtonResult::Confirmed));
-		break;
-		
-	case EConfirmScreenType::OkCancel:
-		ButtonInfos.Add(FConfirmScreenButtonInfo(FText::FromString(TEXT("确定")), EConfirmScreenButtonResult::Confirmed));
-		ButtonInfos.Add(FConfirmScreenButtonInfo(FText::FromString(TEXT("取消")), EConfirmScreenButtonResult::Cancelled));
-		break;
-
-	case EConfirmScreenType::YesNo:
-		ButtonInfos.Add(FConfirmScreenButtonInfo(FText::FromString(TEXT("是")), EConfirmScreenButtonResult::Confirmed));
-		ButtonInfos.Add(FConfirmScreenButtonInfo(FText::FromString(TEXT("否")), EConfirmScreenButtonResult::Cancelled));
-		break;
-
-	default:
-		break;
-	}
-
-	UIManagerSubsystem->PushSoftWidgetToStackAsync(
-		FGameplayTag::RequestGameplayTag(FName("UI.WidgetStack.ModalStack")),
-		UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(FGameplayTag::RequestGameplayTag(FName("UI.Widget.ConfirmScreen"))),
-		[this,ButtonInfos](EAsyncPushWidgetState InState, UWidgetActivatableBase* PushedWidget)
+	UUIManagerSubsystem::GetUIManager(CachedOwningWorld.Get())->PushConfirmScreenToModalStackAsync(
+		CachedScreenType,
+		CachedTitle,
+		CachedMessage,
+		[this](EConfirmScreenButtonResult ClickedButtonType)
 		{
-			UWidgetConfirmScreen* ConfirmScreen = CastChecked<UWidgetConfirmScreen>(PushedWidget);
-			if (InState==EAsyncPushWidgetState::OnCreateBeforePush)
-			{
-				
-				ConfirmScreen->InitScreenInfo(CachedTitle, CachedMessage, ButtonInfos);
-				ConfirmScreen->ScreenClosed.AddDynamic(this, &UAsyncActionPushConfirmScreen::ConfirmScreenButtonClicked);
-			}
-
+			OnButtonClicked.Broadcast(ClickedButtonType);
 			SetReadyToDestroy();
-		});
-}
-
-void UAsyncActionPushConfirmScreen::ConfirmScreenButtonClicked(const EConfirmScreenButtonResult Result)
-{
-	OnButtonClicked.Broadcast(Result);
+		}
+	);
 }
