@@ -14,3 +14,4 @@ TSoftClassPtr<UWidgetActivatableBase> UFrontendBlueprintFunctionLibrary::GetScre
 
 	return FrontendDeveloperSettings->FrontendWidgetMap.FindRef(InWidgetTag);
 }
+

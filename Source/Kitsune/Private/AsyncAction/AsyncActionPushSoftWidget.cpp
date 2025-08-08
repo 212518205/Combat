@@ -32,7 +32,7 @@ APlayerController* OwningPlayerController, TSoftClassPtr<UWidgetActivatableBase>
 
 void UAsyncActionPushSoftWidget::Activate()
 {
-	UUIManagerSubsystem* UIManagerSubsystem = UUIManagerSubsystem::GetUIManager(CachedOwningWorld.Get());
+	const UUIManagerSubsystem* UIManagerSubsystem = UUIManagerSubsystem::GetUIManager(CachedOwningWorld.Get());
 
 	UIManagerSubsystem->PushSoftWidgetToStackAsync(CachedWidgetStackTag, CachedSoftWidgetClass,
 		[this](EAsyncPushWidgetState InPushState, UWidgetActivatableBase* PushedWidget)
