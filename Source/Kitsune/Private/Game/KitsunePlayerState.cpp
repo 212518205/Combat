@@ -13,7 +13,7 @@ AKitsunePlayerState::AKitsunePlayerState()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	AttributeSet = CreateDefaultSubobject<UKitsuneAttributeSet>("AttributeSet");
 
-	NetUpdateFrequency = 100.f;
+	SetNetUpdateFrequency(100.f);
 }
 
 UAbilitySystemComponent* AKitsunePlayerState::GetAbilitySystemComponent() const
