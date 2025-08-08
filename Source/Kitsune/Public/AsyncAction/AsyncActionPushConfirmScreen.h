@@ -29,8 +29,6 @@ public:
 
 	virtual void Activate() override;
 
-	UFUNCTION(BlueprintCallable)
-	void ConfirmScreenButtonClicked(EConfirmScreenButtonResult Result);
 	/** Function End*/
 
 	/** Variable Begin*/

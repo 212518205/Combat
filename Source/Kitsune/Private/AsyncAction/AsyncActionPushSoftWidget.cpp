@@ -39,7 +39,7 @@ void UAsyncActionPushSoftWidget::Activate()
 		{
 			switch (InPushState)
 			{
-			case EAsyncPushWidgetState::OnCreateBeforePush:
+			case EAsyncPushWidgetState::OnCreatedBeforePush:
 				PushedWidget->SetOwningPlayer(CachedOwningPC.Get());
 				OnWidgetCreatedBeforePush.Broadcast(PushedWidget);
 				break;
