@@ -2,7 +2,7 @@
 
 
 #include "UI/Widget/WidgetConfirmScreen.h"
-#include "UI/Widget/Button/KitsuneCommonButtonBase.h"
+#include "UI/Widget/Components/KitsuneCommonButtonBase.h"
 #include "CommonTextBlock.h"
 #include "Components/DynamicEntryBox.h"
 

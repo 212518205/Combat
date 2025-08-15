@@ -1,11 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UIManagerSubsystem.h"
-#include "FrontendDebugHelper.h"
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "Engine/AssetManager.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "UI/Widget/WidgetConfirmScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
@@ -32,15 +32,25 @@ bool UUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	return false;
 }
 
+void UUIManagerSubsystem::RegisterAttributeViewModel(UAttributeViewModel* InViewModel)
+{
+	AttributeViewModel = InViewModel;
+}
+
 void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout)
 {
 	check(InPrimaryLayout);
 	RegisteredPrimaryLayout = InPrimaryLayout;
 }
 
+void UUIManagerSubsystem::DeActivableStackByTag(FGameplayTag InTag) const
+{
+	RegisteredPrimaryLayout->DeActivableWidgetStackByTag(InTag);
+}
+
 void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
-	TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
-	TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const
+                                                     TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
+                                                     TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const
 {
 	check(!InSoftWidgetClass.IsNull());
 

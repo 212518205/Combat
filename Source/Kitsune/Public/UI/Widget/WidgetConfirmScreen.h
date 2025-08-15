@@ -34,7 +34,7 @@ public:
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract, BlueprintType, meta = (DisableNaiveTick))
 class KITSUNE_API UWidgetConfirmScreen : public UWidgetActivatableBase
 {
 	GENERATED_BODY()

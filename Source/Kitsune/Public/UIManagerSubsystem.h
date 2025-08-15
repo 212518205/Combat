@@ -1,13 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "UI/Widget/Button/KitsuneCommonButtonBase.h"
+#include "UI/Widget/Components/KitsuneCommonButtonBase.h"
 #include "UIManagerSubsystem.generated.h"
 
+class UAttributeViewModel;
 class UWidgetActivatableBase;
 struct FGameplayTag;
 class UWidgetPrimaryLayout;
@@ -32,8 +33,7 @@ public:
 	static UUIManagerSubsystem* GetUIManager(const UObject* WorldContextObject);
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
-	UFUNCTION(BlueprintCallable)
-	void RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout);
+	void RegisterAttributeViewModel(UAttributeViewModel* InViewModel);
 
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
@@ -42,7 +42,15 @@ public:
 	void PushConfirmScreenToModalStackAsync(
 		const EConfirmScreenType InScreenType, const FText& InScreenTitle, const FText& InScreenMsg, 
 		TFunction<void(EConfirmScreenButtonResult)> ButtonClickedCallback) const ;
+
+	UFUNCTION(BlueprintCallable)
+	void RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout);
+
+
+	UFUNCTION(BlueprintCallable)
+	void DeActivableStackByTag(FGameplayTag InTag)const;
 	/** Function End*/
+
 	/** Variable Begin*/
 	UPROPERTY(BlueprintAssignable)
 	FOnButtonDescriptionUpdate ButtonDescriptionUpdateDelegate;
@@ -52,5 +60,8 @@ protected:
 	/** Function Begin*/
 	UPROPERTY()
 	UWidgetPrimaryLayout* RegisteredPrimaryLayout=nullptr;
+
+	UPROPERTY(BlueprintReadOnly,Category = "ViewModel")
+	UAttributeViewModel* AttributeViewModel = nullptr;
 	/** Function End*/
 };
