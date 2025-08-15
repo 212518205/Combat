@@ -1,12 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/KitsuneCharacter.h"
+
+#include "UIManagerSubsystem.h"
 #include"GameFramework/CharacterMovementComponent.h"
 #include"AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Player/KitsunePlayerController.h"
 #include "UI/HUD/KitsuneHUD.h"
+#include "UI/ViewModel/AttributeViewModel.h"
 
 AKitsuneCharacter::AKitsuneCharacter()
 {
@@ -48,4 +51,11 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
 	Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComponent)->BindDelegateCallback();
+
+	if (APlayerController* PlayerController=Cast<APlayerController>(GetController()))
+	{
+		UAttributeViewModel* ViewModel = UAttributeViewModel::GetViewModel<UAttributeViewModel>(KitsunePlayerState, PlayerController,
+			AbilitySystemComponent, AttributeSet);
+		UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterAttributeViewModel(ViewModel);
+	}
 }

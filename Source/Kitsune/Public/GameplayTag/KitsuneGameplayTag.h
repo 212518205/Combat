@@ -1,0 +1,26 @@
+﻿// Vince Petrelli All Rights Reserved
+
+#pragma once
+
+#include "NativeGameplayTags.h"
+
+namespace KitsuneGameplayTags
+{
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Message_LiangYiPaste);
+	//UI widget stack
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_WidgetStack_ModalStack);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_WidgetStack_GameMenu);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_WidgetStack_HudStack);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_WidgetStack_FrontendStack);
+
+	//UI widgets
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_PressAnyKeyScreen);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_MainMenuScreen);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_OptionsScreen);
+
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_ConfirmScreen);
+
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_MainHudScreen);
+
+}
+
