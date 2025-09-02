@@ -52,10 +52,13 @@ void AKitsuneCharacter::InitAbilityInfo()
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
 	Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComponent)->BindDelegateCallback();
 
-	if (APlayerController* PlayerController=Cast<APlayerController>(GetController()))
+	if (IsLocallyControlled()&&GetNetMode()!=NM_DedicatedServer)
 	{
-		UAttributeViewModel* ViewModel = UAttributeViewModel::GetViewModel<UAttributeViewModel>(KitsunePlayerState, PlayerController,
-			AbilitySystemComponent, AttributeSet);
-		UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterAttributeViewModel(ViewModel);
+		if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
+			UAttributeViewModel* ViewModel = UAttributeViewModel::GetViewModel<UAttributeViewModel>(KitsunePlayerState, PlayerController,
+				AbilitySystemComponent, AttributeSet);
+			UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterAttributeViewModel(ViewModel);
+			InitializeAttributes();
+		}
 	}
 }
