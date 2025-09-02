@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,5 +13,27 @@ UCLASS()
 class KITSUNE_API UAttributeViewModel : public UViewModelBase
 {
 	GENERATED_BODY()
+
+public:
+	/** Function Begin*/
+	virtual void BindCallback() override;
+	/** Function End*/
+
+protected:
+	/** Variable Begin*/
+	UPROPERTY(BlueprintReadOnly,Category = "Main Attribute Value")
+	float Health = 0.f;
 	
+	UPROPERTY(BlueprintReadOnly,Category = "Main Attribute Value")
+	float MaxHealth = 0.f;
+	
+	UPROPERTY(BlueprintReadOnly,Category = "Main Attribute Value")
+	float Stamina = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Main Attribute Value")
+	float MaxStamina = 0.f;
+
+
+
+	/** Variable End*/
 };

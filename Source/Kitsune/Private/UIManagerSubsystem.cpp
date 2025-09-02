@@ -6,6 +6,7 @@
 #include "Engine/AssetManager.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
+#include "UI/ViewModel/AttributeViewModel.h"
 #include "UI/Widget/WidgetConfirmScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
@@ -35,6 +36,7 @@ bool UUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 void UUIManagerSubsystem::RegisterAttributeViewModel(UAttributeViewModel* InViewModel)
 {
 	AttributeViewModel = InViewModel;
+	AttributeViewModel->BindCallback();
 }
 
 void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout)

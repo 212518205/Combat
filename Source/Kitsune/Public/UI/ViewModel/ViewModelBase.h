@@ -23,9 +23,16 @@ public:
 	template<typename T>
 	static T* GetViewModel(APlayerState* InPS, APlayerController* InPC,
 		UAbilitySystemComponent* InASC, UAttributeSet* InAS);
+
+
+	virtual void BindCallback() {}
 	/** Function End*/
 
-private:
+protected:
+	/** Function Begin*/
+	/** Function End*/
+
+protected:
 	/** Variable Begin*/
 	UPROPERTY(BlueprintReadOnly,Category="Player",meta = (AllowPrivateAccess = "true"))
 	AKitsunePlayerState* PlayerState = nullptr;
