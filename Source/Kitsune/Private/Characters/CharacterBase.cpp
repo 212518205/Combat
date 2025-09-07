@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectTypes.h"
+#include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -39,6 +40,14 @@ void ACharacterBase::InitializeAttributes() const
 	const FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 	const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(DefaultAttributes, 1.f, ContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), GetAbilitySystemComponent());
+}
+
+void ACharacterBase::AddInitialAbility() const
+{
+	if (!HasAuthority())return;
+
+	UKitsuneAbilitySystemComponent* KitsuneAbilitySystemComponent = Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComponent);
+	KitsuneAbilitySystemComponent->AddInitialAbilities(CharacterAbilities);
 }
 
 

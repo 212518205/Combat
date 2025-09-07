@@ -7,6 +7,7 @@
 #include"AbilitySystemInterface.h"
 #include "CharacterBase.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -27,6 +28,8 @@ protected:
 	virtual void InitAbilityInfo();
 
 	void InitializeAttributes() const;
+
+	void AddInitialAbility() const;
 	/** Function End*/
 
 	/** Variable Begin*/
@@ -39,5 +42,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Attribute")
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
 	/** Variable End*/
 };

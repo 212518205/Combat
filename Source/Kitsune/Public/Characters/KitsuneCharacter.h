@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
+#include "Input/KitsuneInputConfig.h"
 #include "KitsuneCharacter.generated.h"
 
 
@@ -20,6 +21,7 @@ public:
 	AKitsuneCharacter();
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UStaticMeshComponent> Sword;

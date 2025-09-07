@@ -1,10 +1,31 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/KitsunePlayerController.h"
 #include"EnhancedInputSubsystems.h"
 #include"EnhancedInputComponent.h"
+#include "FrontendDebugHelper.h"
 #include"Characters/KitsuneCharacter.h"
+#include "Input/KitsuneInputComponent.h"
+
+FKey AKitsunePlayerController::GetActionKeyByAction(const FName& InActionName, const FKey& InActionKey, const bool bLogNoFind)
+{
+	for (auto& [ActionName,ActionKey]:MappableAction)
+	{
+		if (ActionName==InActionName)
+		{
+			ActionKey = InActionKey;
+			return ActionKey;
+		}
+	}
+
+	if (bLogNoFind)
+	{
+		Debug::Print(TEXT("No find Action, ActionName = ") + InActionName.ToString());
+	}
+
+	return FKey{};
+}
 
 void AKitsunePlayerController::BeginPlay()
 {
@@ -22,14 +43,16 @@ void AKitsunePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputCmp = CastChecked<UEnhancedInputComponent>(
-		InputComponent);
-	EnhancedInputCmp->BindAction(MoveAction, ETriggerEvent::Triggered, 
+	UKitsuneInputComponent* KitsuneInputComponent = CastChecked<UKitsuneInputComponent>(InputComponent);
+	KitsuneInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, 
 		this,&AKitsunePlayerController::Move);
-	EnhancedInputCmp->BindAction(LookAction, ETriggerEvent::Triggered, 
+	KitsuneInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, 
 		this,&AKitsunePlayerController::Look);
-	EnhancedInputCmp->BindAction(JumpAction, ETriggerEvent::Triggered, 
+	KitsuneInputComponent->BindAction(JumpAction, ETriggerEvent::Started, 
 		this,&AKitsunePlayerController::Jump);
+
+	KitsuneInputComponent->BindAbilityActions(InputConfig, this,
+		&ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
 void AKitsunePlayerController::OnPossess(APawn* InPawn)
@@ -67,4 +90,19 @@ void AKitsunePlayerController::Jump(const FInputActionValue& Value)
 			ControlledCharacter->Jump();
 		}
 	}
+}
+
+void AKitsunePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	Debug::Print(InputTag.ToString() + TEXT("Is Pressed"), 1,FColor::Red);
+}
+
+void AKitsunePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	Debug::Print(InputTag.ToString() + TEXT("Is Released"),3,FColor::Blue);
+}
+
+void AKitsunePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	Debug::Print(InputTag.ToString() + TEXT("Is Held"),2,FColor::Yellow);
 }

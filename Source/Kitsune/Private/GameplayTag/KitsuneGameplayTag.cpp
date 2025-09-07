@@ -18,9 +18,12 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_PressAnyKeyScreen, "UI.Widget.PressAnyKeyScreen");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_MainMenuScreen, "UI.Widget.MainMenuScreen");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_OptionsScreen, "UI.Widget.OptionsScreen");
-
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_ConfirmScreen, "UI.Widget.ConfirmScreen");
-
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_MainHudScreen, "UI.Widget.MainHudScreen");
+
+	/** Input Tag*/
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_LMB, "InputTag.LMB");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_RMB, "InputTag.RMB");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Space, "InputTag.Space");
 
 }

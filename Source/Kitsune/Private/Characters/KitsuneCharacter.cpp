@@ -7,8 +7,6 @@
 #include"GameFramework/CharacterMovementComponent.h"
 #include"AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
-#include "Player/KitsunePlayerController.h"
-#include "UI/HUD/KitsuneHUD.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 
 AKitsuneCharacter::AKitsuneCharacter()
@@ -33,6 +31,7 @@ void AKitsuneCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	InitAbilityInfo();
+	AddInitialAbility();
 }
 
 void AKitsuneCharacter::OnRep_PlayerState()

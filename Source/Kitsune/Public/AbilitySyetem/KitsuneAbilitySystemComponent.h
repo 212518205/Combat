@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,13 +19,15 @@ class KITSUNE_API UKitsuneAbilitySystemComponent : public UAbilitySystemComponen
 public:
 	/** Public Function Begin*/
 	void BindDelegateCallback();
+
+	void AddInitialAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 	/** Public Function End*/
 	/** Public Variable Begin*/
 	FEffectAssetTags EffectAssetTags;
 	/** Public Variable End*/
 protected:
 	/** Protected Function Begin*/
-	void GameplayEffectAppliedCallback(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle Handle);
+	void GameplayEffectAppliedCallback(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle Handle) const;
 	/** Protected Function End*/
 
 };
