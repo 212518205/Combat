@@ -13,12 +13,43 @@ void UOptionsDataRegistry::InitOptionsDataRegistry(ULocalPlayer* InOwningLocalPl
 	InitControlTab();
 }
 
+TArray<UListDataObjectBase*> UOptionsDataRegistry::GetAllListDataByTabID(const FName& InTabID)
+{
+	TArray<UListDataObjectBase*> OutListDataset;
+	if (!InTabID.IsValid())return OutListDataset;
+
+	const auto FoundCollectionPtr = RegisteredOptionsTabCollections.FindByPredicate(
+		[InTabID](const UListDataObjectCollection* Element)
+		{
+			return Element->GetDataID() == InTabID;
+		}
+	);
+
+	UListDataObjectCollection* FoundCollection = *FoundCollectionPtr;
+
+	for (UListDataObjectBase* ChildListData:FoundCollection->GetChildListData())
+	{
+		if (ChildListData)
+		{
+			OutListDataset.Add(ChildListData);
+		}
+		if (ChildListData->HasChildListData())
+		{
+			FindChildListDataRecursively(ChildListData, OutListDataset);
+		}
+	}
+
+	return OutListDataset;
+}
+
 void UOptionsDataRegistry::InitGameplayTab()
 {
 	UListDataObjectCollection* GameplayTabCollection = NewObject<UListDataObjectCollection>();
 	GameplayTabCollection->SetDataID(FName("GameplayTabCollection"));
 	GameplayTabCollection->SetDataDisplayName(FText::FromString(TEXT("游戏")));
 	RegisteredOptionsTabCollections.Add(GameplayTabCollection);
+
+
 }
 
 void UOptionsDataRegistry::InitAudioTab()
@@ -43,4 +74,22 @@ void UOptionsDataRegistry::InitControlTab()
 	ControlTabCollection->SetDataID(FName("ControlTabCollection"));
 	ControlTabCollection->SetDataDisplayName(FText::FromString(TEXT("控制")));
 	RegisteredOptionsTabCollections.Add(ControlTabCollection);
+}
+
+void UOptionsDataRegistry::FindChildListDataRecursively(UListDataObjectBase* InParentData,
+	TArray<UListDataObjectBase*>& OutFoundChildListData)
+{
+	if (!InParentData||!InParentData->HasChildListData())return;
+
+	for (UListDataObjectBase* ChildListData:InParentData->GetChildListData())
+	{
+		if (ChildListData)
+		{
+			OutFoundChildListData.Add(ChildListData);
+		}
+		if (ChildListData->HasChildListData())
+		{
+			FindChildListDataRecursively(InParentData, OutFoundChildListData);
+		}
+	}
 }

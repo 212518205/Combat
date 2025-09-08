@@ -20,6 +20,9 @@ protected:
 	/** Function Begin*/
 	virtual void NativeOnInitialized() override;
 	virtual void NativeOnActivated() override;
+
+	UFUNCTION()
+	void OnTabSelected(FName TabId);
 	/** Function End*/
 
 private:

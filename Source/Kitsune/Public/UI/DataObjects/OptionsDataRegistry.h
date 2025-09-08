@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "OptionsDataRegistry.generated.h"
 
+class UListDataObjectBase;
 class UListDataObjectCollection;
 /**
  * 
@@ -16,10 +17,11 @@ class KITSUNE_API UOptionsDataRegistry : public UObject
 	GENERATED_BODY()
 	
 public:
-	/** Function Begin*/
+	/** Function Begin ***/
 	void InitOptionsDataRegistry(ULocalPlayer* InOwningLocalPlayer);
 	const TArray<UListDataObjectCollection*>& GetRegisteredOptionsTabCollections() const { return RegisteredOptionsTabCollections; }
-	/** Function End*/
+	TArray<UListDataObjectBase*> GetAllListDataByTabID(const FName& InTabID);
+	/** Function End ***/
 
 private:
 	/** Function Begin*/
@@ -27,6 +29,8 @@ private:
 	void InitAudioTab();
 	void InitVideoTab();
 	void InitControlTab();
+
+	static void FindChildListDataRecursively(UListDataObjectBase* InParentData, TArray<UListDataObjectBase*>& OutFoundChildListData);
 	/** Function End*/
 
 	/** Variable Begin*/

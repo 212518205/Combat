@@ -32,6 +32,7 @@ void UWidgetOptionScreen::NativeOnInitialized()
 		)
 	);
 
+	TabListWidget_OptionsTabs->OnTabSelected.AddUniqueDynamic(this, &ThisClass::OnTabSelected);
 }
 
 void UWidgetOptionScreen::NativeOnActivated()
@@ -47,6 +48,13 @@ void UWidgetOptionScreen::NativeOnActivated()
 
 		TabListWidget_OptionsTabs->RequestRegisterTab(TabID, Collection->GetDataDisplayName());
 	}
+}
+
+void UWidgetOptionScreen::OnTabSelected(const FName TabId)
+{
+	TArray<UListDataObjectBase*> FoundListData = GetDataRegistry()->GetAllListDataByTabID(TabId);
+
+	Debug::Print(TabId.ToString() + TEXT(" Tab is selected"));
 }
 
 UOptionsDataRegistry* UWidgetOptionScreen::GetDataRegistry()
