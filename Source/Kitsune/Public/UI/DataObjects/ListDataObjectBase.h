@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FrontendTypes/FrontendEnumTypes.h"
 #include "UObject/NoExportTypes.h"
 #include "ListDataObjectBase.generated.h"
 
@@ -28,13 +29,15 @@ public:
 	DATA_ACCESSOR(UListDataObjectBase*, ParentData);
 
 	virtual TArray<UListDataObjectBase*> GetChildListData() const {
-		return TArray<UListDataObjectBase*>();
+		return {};
 	}
 
 	virtual bool HasChildListData() const { return false; }
 
 	void InitDataObject();
 	/** Function End*/
+	/** Variable Begin*/
+	/** Variable End*/
 
 protected:
 	/** Function Begin*/

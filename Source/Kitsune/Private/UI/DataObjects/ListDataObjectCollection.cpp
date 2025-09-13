@@ -13,10 +13,10 @@ void UListDataObjectCollection::AddChildListData(UListDataObjectBase* InChildLis
 
 TArray<UListDataObjectBase*> UListDataObjectCollection::GetChildListData() const
 {
-	return Super::GetChildListData();
+	return ChildListData;
 }
 
 bool UListDataObjectCollection::HasChildListData() const
 {
-	return Super::HasChildListData();
+	return !ChildListData.IsEmpty();
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CoreMinimal.h"
 #include "FrontendEnumTypes.generated.h"
 
@@ -19,5 +19,12 @@ enum class EConfirmScreenButtonResult : uint8
 	Unknown UMETA(Hidden)
 };
 
+UENUM(BlueprintType)
+enum class EOptionsListDataModifyReason : uint8
+{
+	DirectlyModified,
+	DependencyModified,
+	ResetToDefault
+};
 
 

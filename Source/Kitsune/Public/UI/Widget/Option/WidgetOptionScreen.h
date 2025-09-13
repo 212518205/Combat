@@ -6,6 +6,7 @@
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "WidgetOptionScreen.generated.h"
 
+class UKitsuneCommonListView;
 class UKitsuneTabListWidgetBase;
 class UOptionsDataRegistry;
 /**
@@ -35,6 +36,9 @@ private:
 	/** Variable Begin*/
 	UPROPERTY(meta = (BindWidget))
 	UKitsuneTabListWidgetBase* TabListWidget_OptionsTabs;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget,AllowPrivateAccess="true"))
+	UKitsuneCommonListView* CommonListView_OptionsList;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Frontend Options Screen", meta = (RowType = "/Script/CommonUI.CommonInputActionDataBase"))
 	FDataTableRowHandle ResetAction;

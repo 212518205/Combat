@@ -8,6 +8,7 @@
 #include "ICommonInputModule.h"
 #include "UI/DataObjects/ListDataObjectCollection.h"
 #include "UI/DataObjects/OptionsDataRegistry.h"
+#include "UI/Widget/Components/KitsuneCommonListView.h"
 #include "UI/Widget/Components/KitsuneTabListWidgetBase.h"
 
 
@@ -52,9 +53,11 @@ void UWidgetOptionScreen::NativeOnActivated()
 
 void UWidgetOptionScreen::OnTabSelected(const FName TabId)
 {
-	TArray<UListDataObjectBase*> FoundListData = GetDataRegistry()->GetAllListDataByTabID(TabId);
 
-	Debug::Print(TabId.ToString() + TEXT(" Tab is selected"));
+	const TArray<UListDataObjectBase*> FoundListData = GetDataRegistry()->GetAllListDataByTabID(TabId);
+
+	CommonListView_OptionsList->SetListItems(FoundListData);
+	CommonListView_OptionsList->RequestRefresh();
 }
 
 UOptionsDataRegistry* UWidgetOptionScreen::GetDataRegistry()

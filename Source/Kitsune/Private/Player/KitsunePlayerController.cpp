@@ -7,6 +7,7 @@
 #include "FrontendDebugHelper.h"
 #include"Characters/KitsuneCharacter.h"
 #include "Input/KitsuneInputComponent.h"
+#include "UserSettings/EnhancedInputUserSettings.h"
 
 FKey AKitsunePlayerController::GetActionKeyByAction(const FName& InActionName, const FKey& InActionKey, const bool bLogNoFind)
 {
@@ -35,7 +36,11 @@ void AKitsunePlayerController::BeginPlay()
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (Subsystem) {
-		Subsystem->AddMappingContext(KitsuneContext, 0);
+		//Subsystem->AddMappingContext(KitsuneContext, 0);
+		if (const auto InputUserSettings = Subsystem->GetUserSettings())
+		{
+			InputUserSettings->RegisterInputMappingContext(KitsuneContext);
+		}
 	}
 }
 
