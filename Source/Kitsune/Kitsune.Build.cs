@@ -17,7 +17,8 @@ public class Kitsune : ModuleRules
 			"GameplayTasks",
 			"GameplayTags",
 			"CommonInput",
-			"PropertyPath"
+			"PropertyPath",
+            "UMG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -15,5 +15,5 @@ void UWidgetListEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 void UWidgetListEntryBase::OnOwningListDataHandle(UListDataObjectBase* ItemData)
 {
-	
+	CommonTextBlock_ListEntryTitle->SetText(ItemData->GetDataDisplayName());
 }

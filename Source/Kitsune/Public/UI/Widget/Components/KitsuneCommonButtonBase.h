@@ -8,6 +8,7 @@
 #include "KitsuneCommonButtonBase.generated.h"
 
 class UCommonTextBlock;
+class UCommonLazyImage;
 
 /**
  * 
@@ -21,6 +22,9 @@ public:
 	/** Function Begin*/
 	UFUNCTION(BlueprintCallable)
 	void SetButtonText(const FText InText)const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetButtonStyle(const FSlateBrush& InSlateBrush);
 	/** Function End*/
 
 protected:
@@ -34,6 +38,9 @@ protected:
 	/** Variable Begin*/
 	UPROPERTY(meta = (BindWidgetOptional))
 	UCommonTextBlock* CommonTextBlock_ButtonText;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UCommonLazyImage> CommonLazyImage_ButtonImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Button", meta = (AllowPrivateAccess))
 	FText ButtonDisplayText;

@@ -14,7 +14,6 @@ void UWidgetListEntryString::OnOwningListDataHandle(UListDataObjectBase* ItemDat
 
 
 	CachedDataObjectString = CastChecked<UListDataObjectString>(ItemData);
-	CommonTextBlock_ListEntryTitle->SetText(ItemData->GetDataDisplayName());
 
 	ComboBoxString_OptionalData->AddOptions(CachedDataObjectString->GetDisplayOptions());
 	ComboBoxString_OptionalData->ClearSelection();

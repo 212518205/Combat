@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,6 +21,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Frontend Function Library")
 	static TSoftClassPtr<UWidgetActivatableBase> GetScreenSoftWidgetClassByTag(UPARAM(meta=(Categories="UI.Widget")) const FGameplayTag InWidgetTag);
 
-
+	UFUNCTION(BlueprintPure, Category = "Frontend Function Library")
+	static TSoftObjectPtr<UTexture2D> GetKeyIconByFKey(const FKey& InCurrentKey);
 	/** Function End*/
 };

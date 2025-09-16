@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
@@ -13,5 +13,14 @@ TSoftClassPtr<UWidgetActivatableBase> UFrontendBlueprintFunctionLibrary::GetScre
 		TEXT("Could not find the corresponding widget under the tag %s"), *InWidgetTag.ToString());
 
 	return FrontendDeveloperSettings->FrontendWidgetMap.FindRef(InWidgetTag);
+}
+
+TSoftObjectPtr<UTexture2D> UFrontendBlueprintFunctionLibrary::GetKeyIconByFKey(const FKey& InCurrentKey)
+{
+	const UFrontendDeveloperSettings* FrontendDeveloperSettings = GetDefault<UFrontendDeveloperSettings>();
+	checkf(FrontendDeveloperSettings->KeyIconMapping.Contains(InCurrentKey),
+		TEXT("Could not find the key icon under the key %s"), *InCurrentKey.ToString());
+
+	return FrontendDeveloperSettings->KeyIconMapping.FindRef(InCurrentKey);
 }
 

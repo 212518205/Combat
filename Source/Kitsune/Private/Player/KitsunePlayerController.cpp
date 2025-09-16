@@ -36,7 +36,7 @@ void AKitsunePlayerController::BeginPlay()
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (Subsystem) {
-		//Subsystem->AddMappingContext(KitsuneContext, 0);
+		Subsystem->AddMappingContext(KitsuneContext, 0);
 		if (const auto InputUserSettings = Subsystem->GetUserSettings())
 		{
 			InputUserSettings->RegisterInputMappingContext(KitsuneContext);

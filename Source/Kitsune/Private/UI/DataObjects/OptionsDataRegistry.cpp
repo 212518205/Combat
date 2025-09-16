@@ -9,6 +9,7 @@
 #include "GameSettings/KitsuneGameUserSettings.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 #include "UI/DataObjects/ListDataObjectCollection.h"
+#include "UI/DataObjects/ListDataObjectRemap.h"
 #include "UI/DataObjects/ListDataObjectString.h"
 
 #define MAKE_SETTINGS_SAVE_HELPER_SHARED_PTR(GetOrSetFunctionName) MakeShared<FGameSettingsSaveHelper>(	\
@@ -142,25 +143,46 @@ void UOptionsDataRegistry::InitControlTab(const ULocalPlayer* InLocalPlayer)
 	ControlTabCollection->SetDataDisplayName(FText::FromString(TEXT("控制")));
 	RegisteredOptionsTabCollections.Add(ControlTabCollection);
 
+	UListDataObjectCollection* KeyboardMouseCollection = NewObject<UListDataObjectCollection>();
+	KeyboardMouseCollection->SetDataID(FName("KeyboardMouseCollection"));
+	KeyboardMouseCollection->SetDataDisplayName(FText::FromString(TEXT("键鼠")));
+
+	UListDataObjectCollection* GamepadCollection = NewObject<UListDataObjectCollection>();
+	GamepadCollection->SetDataID(FName("GamepadCollection"));
+	GamepadCollection->SetDataDisplayName(FText::FromString(TEXT("手柄")));
+
 	{
 		const UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = InLocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-		for (const UEnhancedInputUserSettings* InputUserSettings = EnhancedInputSubsystem->GetUserSettings(); const auto
+		for (UEnhancedInputUserSettings* InputUserSettings = EnhancedInputSubsystem->GetUserSettings(); const auto
 		     & [
 			     ProfilesName,Profiles] : InputUserSettings->GetAllAvailableKeyProfiles())
 		{
-			
-			//Debug::Print(TEXT("Profiles content :")+Profiles->ToString());
 			for (const auto& [RowName,MappingRow] :Profiles->GetPlayerMappingRows())
 			{
 				for (const FPlayerKeyMapping& Mapping:MappingRow.Mappings)
 				{
-					/*Debug::Print(Mapping.ToString());
-					Debug::Print(FString::Printf(TEXT("%s是%s"), *Mapping.GetCurrentKey().GetDisplayName().ToString(), Mapping.GetCurrentKey().IsGamepadKey() ? TEXT("手柄按键") : TEXT("非手柄按键")));
-					Debug::Print(TEXT("DisplayName:") + Mapping.GetDisplayName().ToString());*/
+					UListDataObjectRemap* UserMappableKey = NewObject<UListDataObjectRemap>();
+					UserMappableKey->SetDataID(Mapping.GetMappingName());
+					UserMappableKey->SetDataDisplayName(Mapping.GetDisplayName());
+					UserMappableKey->SetCurrentKey(Mapping.GetCurrentKey());
+					UserMappableKey->SetDefaultKey(Mapping.GetDefaultKey());
+					UserMappableKey->SetCurrentKeySlot(Mapping.GetSlot());
+					UserMappableKey->SetProfiles(Profiles);
+					UserMappableKey->SetInputUserSettings(InputUserSettings);
+					if (Mapping.GetCurrentKey().IsGamepadKey())
+					{
+						GamepadCollection->AddChildListData(UserMappableKey);
+					}else
+					{
+						KeyboardMouseCollection->AddChildListData(UserMappableKey);
+					}
 				}
 			}
 		}
 	}
+
+	ControlTabCollection->AddChildListData(KeyboardMouseCollection);
+	ControlTabCollection->AddChildListData(GamepadCollection);
 }
 
 void UOptionsDataRegistry::FindChildListDataRecursively(UListDataObjectBase* InParentData,

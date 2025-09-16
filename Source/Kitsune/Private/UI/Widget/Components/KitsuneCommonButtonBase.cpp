@@ -2,7 +2,7 @@
 
 
 #include "UI/Widget/Components/KitsuneCommonButtonBase.h"
-
+#include "CommonLazyImage.h"
 #include "UIManagerSubsystem.h"
 
 void UKitsuneCommonButtonBase::SetButtonText(const FText InText) const
@@ -10,6 +10,14 @@ void UKitsuneCommonButtonBase::SetButtonText(const FText InText) const
 	if (CommonTextBlock_ButtonText && !InText.IsEmpty())
 	{
 		CommonTextBlock_ButtonText->SetText(InText);
+	}
+}
+
+void UKitsuneCommonButtonBase::SetButtonStyle(const FSlateBrush& InSlateBrush)
+{
+	if (CommonLazyImage_ButtonImage)
+	{
+		CommonLazyImage_ButtonImage->SetBrush(InSlateBrush);
 	}
 }
 
