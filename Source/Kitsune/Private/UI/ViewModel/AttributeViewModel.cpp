@@ -3,32 +3,35 @@
 
 #include "UI/ViewModel/AttributeViewModel.h"
 
+#include "FrontendDebugHelper.h"
+
 void UAttributeViewModel::BindCallback()
 {
 	Super::BindCallback();
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Health = Data.NewValue;
+			Debug::Print(TEXT("New Value: %f")+FString::FromInt(Health));
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetMaxHealthAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxHealth = Data.NewValue;
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetStaminaAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetStaminaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Stamina = Data.NewValue;
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetMaxStaminaAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxStaminaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxStamina = Data.NewValue;

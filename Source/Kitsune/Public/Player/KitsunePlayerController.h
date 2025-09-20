@@ -12,17 +12,6 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
-USTRUCT(BlueprintType)
-struct FActionInfo
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FName ActionName;
-
-	UPROPERTY(EditAnywhere)
-	FKey ActionKey;
-};
 
 /**
  * 
@@ -33,9 +22,6 @@ class KITSUNE_API AKitsunePlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Action Mapping")
-	FKey GetActionKeyByAction(const FName& InActionName, const FKey& InActionKey = FKey(), const bool bLogNoFind = false);
-
 protected:
 	/** Function Begin*/
 	virtual void BeginPlay() override;
@@ -56,11 +42,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> JumpAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InputConfig")
-	TObjectPtr<UKitsuneInputConfig> InputConfig;
-
-	UPROPERTY(EditAnywhere, Category = "Action Mapping")
-	TArray<FActionInfo> MappableAction;
 
 	/** Variable End*/
 private:
@@ -70,8 +51,5 @@ private:
 	void Look(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 
-	void AbilityInputTagPressed(FGameplayTag InputTag);
-	void AbilityInputTagReleased(FGameplayTag InputTag);
-	void AbilityInputTagHeld(FGameplayTag InputTag);
 	/** Function End*/
 };

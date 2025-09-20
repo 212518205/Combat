@@ -5,7 +5,7 @@
 
 #include "FrontendDebugHelper.h"
 
-const UInputAction* UKitsuneInputConfig::FindAbilityInputActionByTag(const FGameplayTag& InTag, const bool bNoFindLog)
+const UInputAction* UKitsuneInputConfig::FindInputActionByTag(const FGameplayTag& InTag, const bool bNoFindLog)
 {
 	for (const auto [InputAction, InputTag]:InputActions)
 	{

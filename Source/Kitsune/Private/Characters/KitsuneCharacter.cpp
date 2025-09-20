@@ -4,8 +4,9 @@
 #include "Characters/KitsuneCharacter.h"
 
 #include "UIManagerSubsystem.h"
+#include "Characters/Data/DataAssetStartDataBase.h"
+#include "Component/Combat/PlayerCombatComponent.h"
 #include"GameFramework/CharacterMovementComponent.h"
-#include"AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 
@@ -18,12 +19,7 @@ AKitsuneCharacter::AKitsuneCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	Sheath = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sheath"));
-	Sheath->SetupAttachment(GetMesh(), FName("HipsSheathSocket"));
-	Sheath->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Sword = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sword"));
-	Sword->SetupAttachment(GetMesh(), FName("HandSwordSocket"));
-	Sword->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
 }
 
 void AKitsuneCharacter::PossessedBy(AController* NewController)
@@ -31,7 +27,6 @@ void AKitsuneCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	InitAbilityInfo();
-	AddInitialAbility();
 }
 
 void AKitsuneCharacter::OnRep_PlayerState()
@@ -41,15 +36,21 @@ void AKitsuneCharacter::OnRep_PlayerState()
 	InitAbilityInfo();
 }
 
+UPlayerCombatComponent* AKitsuneCharacter::GetCombatComponent()
+{
+	return CombatComponent;
+}
+
 void AKitsuneCharacter::InitAbilityInfo()
 {
+	Super::InitAbilityInfo();
+
 	AKitsunePlayerState* KitsunePlayerState = GetPlayerState<AKitsunePlayerState>();
 	check(KitsunePlayerState);
 	AbilitySystemComponent = KitsunePlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(KitsunePlayerState, this);
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
-	Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComponent)->BindDelegateCallback();
 
 	if (IsLocallyControlled()&&GetNetMode()!=NM_DedicatedServer)
 	{
@@ -57,7 +58,11 @@ void AKitsuneCharacter::InitAbilityInfo()
 			UAttributeViewModel* ViewModel = UAttributeViewModel::GetViewModel<UAttributeViewModel>(KitsunePlayerState, PlayerController,
 				AbilitySystemComponent, AttributeSet);
 			UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterAttributeViewModel(ViewModel);
-			InitializeAttributes();
 		}
+	}
+
+	if (InitialInfoData && GetAbilitySystemComponent())
+	{
+		InitialInfoData->InitializeForASC(GetAbilitySystemComponent(), CharacterLevel);
 	}
 }

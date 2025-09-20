@@ -19,9 +19,7 @@ class KITSUNE_API UFrontendBlueprintFunctionLibrary : public UBlueprintFunctionL
 public:
 	/** Function Begin*/
 	UFUNCTION(BlueprintPure, Category = "Frontend Function Library")
-	static TSoftClassPtr<UWidgetActivatableBase> GetScreenSoftWidgetClassByTag(UPARAM(meta=(Categories="UI.Widget")) const FGameplayTag InWidgetTag);
-
-	UFUNCTION(BlueprintPure, Category = "Frontend Function Library")
-	static TSoftObjectPtr<UTexture2D> GetKeyIconByFKey(const FKey& InCurrentKey);
+	static TSoftClassPtr<UWidgetActivatableBase> GetScreenSoftWidgetClassByTag(UPARAM(meta=(Categories="UI.Widget"))
+		const FGameplayTag InWidgetTag);
 	/** Function End*/
 };

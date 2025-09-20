@@ -15,12 +15,4 @@ TSoftClassPtr<UWidgetActivatableBase> UFrontendBlueprintFunctionLibrary::GetScre
 	return FrontendDeveloperSettings->FrontendWidgetMap.FindRef(InWidgetTag);
 }
 
-TSoftObjectPtr<UTexture2D> UFrontendBlueprintFunctionLibrary::GetKeyIconByFKey(const FKey& InCurrentKey)
-{
-	const UFrontendDeveloperSettings* FrontendDeveloperSettings = GetDefault<UFrontendDeveloperSettings>();
-	checkf(FrontendDeveloperSettings->KeyIconMapping.Contains(InCurrentKey),
-		TEXT("Could not find the key icon under the key %s"), *InCurrentKey.ToString());
-
-	return FrontendDeveloperSettings->KeyIconMapping.FindRef(InCurrentKey);
-}
 

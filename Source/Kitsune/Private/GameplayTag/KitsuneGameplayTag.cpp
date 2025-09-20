@@ -22,8 +22,8 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_MainHudScreen, "UI.Widget.MainHudScreen");
 
 	/** Input Tag*/
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_LMB, "InputTag.LMB");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_RMB, "InputTag.RMB");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Space, "InputTag.Space");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Attack_Light, "InputTag.Attack.Light");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Heavy, "InputTag.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Jump, "InputTag.Jump");
 
 }

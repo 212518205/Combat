@@ -16,18 +16,5 @@ class KITSUNE_API UKitsuneAbilitySystemComponent : public UAbilitySystemComponen
 {
 	GENERATED_BODY()
 
-public:
-	/** Public Function Begin*/
-	void BindDelegateCallback();
-
-	void AddInitialAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
-	/** Public Function End*/
-	/** Public Variable Begin*/
-	FEffectAssetTags EffectAssetTags;
-	/** Public Variable End*/
-protected:
-	/** Protected Function Begin*/
-	void GameplayEffectAppliedCallback(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle Handle) const;
-	/** Protected Function End*/
 
 };

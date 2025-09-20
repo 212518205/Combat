@@ -7,6 +7,7 @@
 #include"AbilitySystemInterface.h"
 #include "CharacterBase.generated.h"
 
+class UDataAssetStartDataBase;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -27,9 +28,6 @@ protected:
 
 	virtual void InitAbilityInfo();
 
-	void InitializeAttributes() const;
-
-	void AddInitialAbility() const;
 	/** Function End*/
 
 	/** Variable Begin*/
@@ -39,10 +37,11 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Attribute")
-	TSubclassOf<UGameplayEffect> DefaultAttributes;
+	/*** `@BC`   Description: 初始化角色能力、属性等信息   `BC@` ***/
+	UPROPERTY(EditDefaultsOnly, Category = "Initial Info")
+	TObjectPtr<UDataAssetStartDataBase> InitialInfoData;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
-	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Initial Info")
+	int32 CharacterLevel = 1;
 	/** Variable End*/
 };

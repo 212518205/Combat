@@ -21,7 +21,7 @@ struct FKitsuneInputAction
 	UPROPERTY(EditDefaultsOnly)
 	const UInputAction* InputAction = nullptr;
 
-	UPROPERTY(EditDefaultsOnly,meta = (Categories = "UI.WidgetStack"))
+	UPROPERTY(EditDefaultsOnly,meta = (Categories = "InputTag"))
 	FGameplayTag InputTag = FGameplayTag();
 
 };
@@ -32,11 +32,8 @@ class KITSUNE_API UKitsuneInputConfig : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	/** Variable Begin*/
 	UPROPERTY(EditDefaultsOnly,Category="Input")
 	TArray<FKitsuneInputAction> InputActions;
-	/** Variable End*/
-	/** Function Begin*/
-	const UInputAction* FindAbilityInputActionByTag(const FGameplayTag& InTag, const bool bNoFindLog = false);
-	/** Function End*/
+
+	const UInputAction* FindInputActionByTag(const FGameplayTag& InTag, const bool bNoFindLog = false);
 };

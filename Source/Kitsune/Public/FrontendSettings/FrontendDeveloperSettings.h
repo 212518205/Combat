@@ -21,7 +21,5 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Widget Reference", meta = (ForceInlineRow, Categories = "UI.Widget"))
 	TMap<FGameplayTag, TSoftClassPtr<UWidgetActivatableBase>> FrontendWidgetMap;
 
-	UPROPERTY(config,EditAnywhere,Category="Key Image Mapping",meta = (ForceInlineRow))
-	TMap<FKey, TSoftObjectPtr<UTexture2D>> KeyIconMapping;
 	/** Variable End*/	
 };

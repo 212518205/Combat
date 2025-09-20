@@ -9,25 +9,6 @@
 #include "Input/KitsuneInputComponent.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 
-FKey AKitsunePlayerController::GetActionKeyByAction(const FName& InActionName, const FKey& InActionKey, const bool bLogNoFind)
-{
-	for (auto& [ActionName,ActionKey]:MappableAction)
-	{
-		if (ActionName==InActionName)
-		{
-			ActionKey = InActionKey;
-			return ActionKey;
-		}
-	}
-
-	if (bLogNoFind)
-	{
-		Debug::Print(TEXT("No find Action, ActionName = ") + InActionName.ToString());
-	}
-
-	return FKey{};
-}
-
 void AKitsunePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -56,8 +37,6 @@ void AKitsunePlayerController::SetupInputComponent()
 	KitsuneInputComponent->BindAction(JumpAction, ETriggerEvent::Started, 
 		this,&AKitsunePlayerController::Jump);
 
-	KitsuneInputComponent->BindAbilityActions(InputConfig, this,
-		&ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
 void AKitsunePlayerController::OnPossess(APawn* InPawn)
@@ -66,6 +45,7 @@ void AKitsunePlayerController::OnPossess(APawn* InPawn)
 
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AKitsunePlayerController::Move(const FInputActionValue& Value)
 {
 	const FVector2D InputAxisVector = Value.Get<FVector2D>();
@@ -88,6 +68,7 @@ void AKitsunePlayerController::Look(const FInputActionValue& Value)
 	AddYawInput(InputAxisVector.X);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AKitsunePlayerController::Jump(const FInputActionValue& Value)
 {
 	if (APawn* ControlledPawn = GetPawn<APawn>()) {
@@ -97,17 +78,3 @@ void AKitsunePlayerController::Jump(const FInputActionValue& Value)
 	}
 }
 
-void AKitsunePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
-{
-	Debug::Print(InputTag.ToString() + TEXT("Is Pressed"), 1,FColor::Red);
-}
-
-void AKitsunePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
-{
-	Debug::Print(InputTag.ToString() + TEXT("Is Released"),3,FColor::Blue);
-}
-
-void AKitsunePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
-{
-	Debug::Print(InputTag.ToString() + TEXT("Is Held"),2,FColor::Yellow);
-}

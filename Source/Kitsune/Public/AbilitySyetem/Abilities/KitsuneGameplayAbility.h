@@ -6,6 +6,15 @@
 #include "Abilities/GameplayAbility.h"
 #include "KitsuneGameplayAbility.generated.h"
 
+class UKitsuneCombatComponent;
+
+UENUM()
+enum class EKitsuneAbilityActivationPolicy :uint8
+{
+	OnTriggered,
+	OnGiven,
+};
+
 /**
  * 
  */
@@ -15,8 +24,21 @@ class KITSUNE_API UKitsuneGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-	/** Variable Begin*/
-	UPROPERTY(EditDefaultsOnly,Category="Input")
-	FGameplayTag StartupInputTag;
-	/** Variable End*/
+	/*** `@BC`   描述: 蓝图纯函数   `BC@` ***/
+	UFUNCTION(BlueprintPure, Category = "Ability")
+	UKitsuneCombatComponent* GetPawnCombatComponentFromActorInfo() const;
+
+protected:
+	/***   ...UGameplayAbility Interface Begin...   ***/
+	/*** `@BC`   描述: 追加能力Give是否激活策略   `BC@` ***/
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+	                        bool bWasCancelled) override;
+	/***   ...UGameplayAbility Interface End...     ***/
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune|Policy")
+	EKitsuneAbilityActivationPolicy ActivationPolicy = EKitsuneAbilityActivationPolicy::OnTriggered;
+
 };
