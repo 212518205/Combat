@@ -5,6 +5,7 @@
 #include"EnhancedInputSubsystems.h"
 #include"EnhancedInputComponent.h"
 #include "FrontendDebugHelper.h"
+#include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Characters/KitsuneCharacter.h"
 #include "Input/KitsuneInputComponent.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
@@ -37,6 +38,7 @@ void AKitsunePlayerController::SetupInputComponent()
 	KitsuneInputComponent->BindAction(JumpAction, ETriggerEvent::Started, 
 		this,&AKitsunePlayerController::Jump);
 
+	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
 }
 
 void AKitsunePlayerController::OnPossess(APawn* InPawn)
@@ -76,5 +78,27 @@ void AKitsunePlayerController::Jump(const FInputActionValue& Value)
 			ControlledCharacter->Jump();
 		}
 	}
+}
+
+void AKitsunePlayerController::AbilityInputPressed(const FGameplayTag TriggeredTag)
+{
+	GetKitsuneASCFromPawn()->OnAbilityInputPressed(TriggeredTag);
+}
+
+void AKitsunePlayerController::AbilityInputReleased(const FGameplayTag TriggeredTag)
+{
+}
+
+UKitsuneAbilitySystemComponent* AKitsunePlayerController::GetKitsuneASCFromPawn()
+{
+	if (!CachedKitsuneAbilitySystemComponent)
+	{
+		if (const AKitsuneCharacter* KitsuneCharacter = GetPawn<AKitsuneCharacter>()) {
+			CachedKitsuneAbilitySystemComponent = CastChecked<UKitsuneAbilitySystemComponent>(
+				KitsuneCharacter->GetAbilitySystemComponent());
+		}
+	}
+
+	return CachedKitsuneAbilitySystemComponent;
 }
 

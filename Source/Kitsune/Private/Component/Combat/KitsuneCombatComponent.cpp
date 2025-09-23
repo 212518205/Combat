@@ -3,22 +3,27 @@
 
 #include "Component/Combat/KitsuneCombatComponent.h"
 
+#include "Actor/Weapon/WeaponBase.h"
+#include "Characters/KitsuneCharacter.h"
 
 
 void UKitsuneCombatComponent::RegisterCarriedWeapon(const FGameplayTag InWeaponTag, AWeaponBase* NewWeapon,
 	const bool bRegisterAndEquip)
 {
-	if (InWeaponTag.IsValid()&&NewWeapon)
+	if (InWeaponTag.IsValid() && NewWeapon)
 	{
 		CarriedWeaponMap.Add(InWeaponTag, NewWeapon);
+		if (const AKitsuneCharacter* KitsuneCharacter = CastChecked<AKitsuneCharacter>(GetOwningPawn())) {
+			NewWeapon->GiveWeaponInitialAbilityToASC(KitsuneCharacter->GetAbilitySystemComponent());
+		}
 		if (bRegisterAndEquip)
 		{
-			CurrentWeaponTag = InWeaponTag;
+			SetCurrentWeapon(InWeaponTag);
 		}
 	}
 }
 
-TObjectPtr<AWeaponBase> UKitsuneCombatComponent::FindWeaponByTag(const FGameplayTag& WeaponTag) const
+AWeaponBase* UKitsuneCombatComponent::FindWeaponByTag(const FGameplayTag& WeaponTag) const
 {
 	if (const TObjectPtr<AWeaponBase>* FoundWeapon = CarriedWeaponMap.Find(WeaponTag))
 	{
@@ -27,11 +32,33 @@ TObjectPtr<AWeaponBase> UKitsuneCombatComponent::FindWeaponByTag(const FGameplay
 	return nullptr;
 }
 
-TObjectPtr<AWeaponBase> UKitsuneCombatComponent::GetCurrentCarriedWeapon() const
+AWeaponBase* UKitsuneCombatComponent::GetCurrentCarriedWeapon() const
 {
 	if (CurrentWeaponTag.IsValid())
 	{
 		return FindWeaponByTag(CurrentWeaponTag);
 	}
 	return nullptr;
+}
+
+AWeaponBase* UKitsuneCombatComponent::SetCurrentWeapon(const FGameplayTag& WeaponTag)
+{
+	AWeaponBase* NewWeaponBase = FindWeaponByTag(WeaponTag);
+	const AWeaponBase* OldWeaponBase = GetCurrentCarriedWeapon();
+	UAbilitySystemComponent* AbilitySystemComponent = CastChecked<AKitsuneCharacter>(GetOwningPawn())->
+		GetAbilitySystemComponent();
+
+	if (OldWeaponBase)
+	{
+		OldWeaponBase->ClearWeaponAbilitiesFromASC(AbilitySystemComponent);
+	}
+
+	CurrentWeaponTag = WeaponTag;
+
+	if (NewWeaponBase)
+	{
+		NewWeaponBase->GiveWeaponAbilitiesToASC(AbilitySystemComponent);
+	}
+
+	return NewWeaponBase;
 }

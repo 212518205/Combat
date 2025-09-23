@@ -63,6 +63,6 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 	if (InitialInfoData && GetAbilitySystemComponent())
 	{
-		InitialInfoData->InitializeForASC(GetAbilitySystemComponent(), CharacterLevel);
+		InitialInfoData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), CharacterLevel);
 	}
 }

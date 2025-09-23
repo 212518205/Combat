@@ -15,7 +15,6 @@ void UListDataObjectString::SetCurrentDisplayOption(FString InDisplayOption)
 {
 	CurrentDisplayOption = InDisplayOption;
 
-	//T0D0 使用GameUserSettings保存当前内容
 	NotifySettingsModified(InDisplayOption);
 }
 

@@ -6,25 +6,25 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilitySpec.h"
 
-void UDataAssetStartDataBase::InitializeForASC(UAbilitySystemComponent* InTargetASC, const int32 AbilityLevel)
+void UDataAssetStartDataBase::InitAbilityAndEffectToASC(UAbilitySystemComponent* InTargetASC, const int32 AbilityLevel)
 {
 	check(InTargetASC);
 
-	GrantAbilitiesToASC(InTargetASC, GiveAndActiveAbilities, AbilityLevel);
-	GrantAbilitiesToASC(InTargetASC, ReactivableAbilities, AbilityLevel);
+	GrantAbilitiesToASC(InTargetASC, OwningAbilities, AbilityLevel);
 
 	ApplyGameplayEffectToASC(InTargetASC, DefaultGameplayEffects, AbilityLevel);
 }
 
 void UDataAssetStartDataBase::GrantAbilitiesToASC(UAbilitySystemComponent* TargetASC,
-	TArray<TSubclassOf<UGameplayAbility>>& UnassignedAbilities, const int32 AbilityLevel)
+                                                  TArray<FAbilityInfo>& UnassignedAbilities, int32 AbilityLevel)
 {
-	for (const auto& AbilityClass:UnassignedAbilities)
+	for (const auto& [AbilityClass,AbilityTag] : UnassignedAbilities)
 	{
 		if (!AbilityClass)continue;
 
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass,AbilityLevel);
 		AbilitySpec.SourceObject = TargetASC->GetAvatarActor();
+		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityTag);
 
 		TargetASC->GiveAbility(AbilitySpec);
 	}

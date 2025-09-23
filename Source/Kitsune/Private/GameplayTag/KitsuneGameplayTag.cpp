@@ -22,8 +22,18 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_MainHudScreen, "UI.Widget.MainHudScreen");
 
 	/** Input Tag*/
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Attack_Light, "InputTag.Attack.Light");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Heavy, "InputTag.Heavy");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Jump, "InputTag.Jump");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Light, "InputTag.Weapon.Light");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Heavy, "InputTag.Weapon.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Unequip, "InputTag.Weapon.Unequip");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Hero_Jump, "InputTag.Hero.Jump");
 
+	/*** `@BC`   描述: 角色能力标签   `BC@` ***/
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Equip, "Player.Ability.Sword.Equip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Unequip, "Player.Ability.Sword.Unequip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Attack_Light, "Player.Ability.Sword.Attack.Light");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Attack_Heavy, "Player.Ability.Sword.Attack.Heavy");
+
+	/*** `@BC`   描述: 角色事件标签   `BC@` ***/
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Sword_Equip, "Player.Event.Sword.Equip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Sword_Unequip, "Player.Event.Sword.Unequip");
 }

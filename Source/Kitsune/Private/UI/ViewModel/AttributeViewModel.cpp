@@ -13,7 +13,6 @@ void UAttributeViewModel::BindCallback()
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Health = Data.NewValue;
-			Debug::Print(TEXT("New Value: %f")+FString::FromInt(Health));
 		}
 	);
 

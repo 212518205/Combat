@@ -6,8 +6,6 @@
 #include "AbilitySystemComponent.h"
 #include "KitsuneAbilitySystemComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer&);
-
 /**
  * 
  */
@@ -16,5 +14,8 @@ class KITSUNE_API UKitsuneAbilitySystemComponent : public UAbilitySystemComponen
 {
 	GENERATED_BODY()
 
-
+public:
+	/*** `@BC`   描述: 输入触发依据InputTag激活对应能力   `BC@` ***/
+	void OnAbilityInputPressed(const FGameplayTag& InputTag);
+	void OnAbilityInputReleased(const FGameplayTag& InputTag);
 };
