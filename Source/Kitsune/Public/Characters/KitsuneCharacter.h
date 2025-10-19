@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
-#include "Input/KitsuneInputConfig.h"
+#include "Interfaces/PawnCombatInterface.h"
 #include "KitsuneCharacter.generated.h"
 
 
@@ -13,7 +13,7 @@ class UPlayerCombatComponent;
  * 
  */
 UCLASS(Abstract)
-class KITSUNE_API AKitsuneCharacter : public ACharacterBase
+class KITSUNE_API AKitsuneCharacter : public ACharacterBase, public IPawnCombatInterface
 {
 	GENERATED_BODY()
 	
@@ -24,9 +24,9 @@ public:
 	virtual void OnRep_PlayerState() override;
 	/***   ...ACharacterBase Interface End...     ***/
 
-	/*** `@BC`   描述: Getter 函数   `BC@` ***/
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	UPlayerCombatComponent* GetCombatComponent();
+	/***   ...IPawnCombatInterface Interface Begin...   ***/
+	virtual UKitsuneCombatComponent* GetKitsuneCombatComponent() const override;
+	/***   ...IPawnCombatComponent Interface End...     ***/
 
 protected:
 	/*** `@BC`   描述: 初始化Gameplay框架相关信息   `BC@` ***/

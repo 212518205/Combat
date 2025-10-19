@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,5 +13,7 @@ UCLASS()
 class KITSUNE_API UPlayerCombatComponent : public UKitsuneCombatComponent
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void OnHitTargetActor(AActor* HitActor) override;
 };

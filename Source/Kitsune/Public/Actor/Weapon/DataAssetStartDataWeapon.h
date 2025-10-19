@@ -6,6 +6,7 @@
 #include "Characters/Data/DataAssetStartDataBase.h"
 #include "DataAssetStartDataWeapon.generated.h"
 
+class AKitsuneCharacter;
 /**
  * 
  */
@@ -15,10 +16,8 @@ class KITSUNE_API UDataAssetStartDataWeapon : public UDataAssetStartDataBase
 	GENERATED_BODY()
 
 public:
-	/*** [2025年9月23日 16:27:55 来自`@BC@`]
-	* TODO: 提供接口 ModifyCharacterData(ACharacter){ 调用修改移动方面数据、属性等 }
-	* ResetCharacterData(ACharacter) { CharacterGetDefaultData(包括但不限于移动数据，属性值) }
-	***/
+	void ModifyCharacterData(AKitsuneCharacter* KitsuneCharacter);
+	void ResetCharacterData(AKitsuneCharacter* KitsuneCharacter);
 
 	void GiveAbilitiesToASC(UAbilitySystemComponent* TargetASC, int32 AbilityLevel);
 	void ClearAbilitiesFromASC(UAbilitySystemComponent* TargetASC) const;

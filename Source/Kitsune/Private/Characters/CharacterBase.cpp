@@ -3,9 +3,7 @@
 
 #include "Characters/CharacterBase.h"
 
-#include "AbilitySystemComponent.h"
-#include "GameplayEffectTypes.h"
-#include "Characters/Data/DataAssetStartDataBase.h"
+#include "Component/Combat/PlayerCombatComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -23,6 +21,7 @@ UAttributeSet* ACharacterBase::GetAttributeSet() const
 {
 	return AttributeSet;
 }
+
 
 // Called when the game starts or when spawned
 void ACharacterBase::BeginPlay()

@@ -36,7 +36,7 @@ void AKitsuneCharacter::OnRep_PlayerState()
 	InitAbilityInfo();
 }
 
-UPlayerCombatComponent* AKitsuneCharacter::GetCombatComponent()
+UKitsuneCombatComponent* AKitsuneCharacter::GetKitsuneCombatComponent() const
 {
 	return CombatComponent;
 }

@@ -27,13 +27,17 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Hero_Jump);
 
 	/*** `@BC`   描述: PlayerTag   `BC@` ***/
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Sword_Equip);
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Sword_Unequip);
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Sword_Attack_Light);
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Sword_Attack_Heavy);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Equip_Sword);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Unequip_Sword);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Weapon_Light);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Weapon_Heavy);
 
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Sword_Equip);
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Sword_Unequip);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Weapon_Equip_Sword);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Weapon_Unequip_Sword);
+
+	/*** `@BC`   描述: Shared 玩家敌人公用   `BC@` ***/
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_BaseDamage);
 
 }
 

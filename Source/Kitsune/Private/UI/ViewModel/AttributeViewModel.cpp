@@ -3,7 +3,6 @@
 
 #include "UI/ViewModel/AttributeViewModel.h"
 
-#include "FrontendDebugHelper.h"
 
 void UAttributeViewModel::BindCallback()
 {

@@ -6,7 +6,18 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilitySpec.h"
 
+/*** [2025年9月26日 8:41:28 来自`@BC@`]
+	* TODO: KitsuneCharacter->GetDefaultLocomotionData();
+	* KitsuneCharacter->SetLocomotionData(FPawnMoveData);
+	* 当前类有Weapon附加增益
+	***/
+void UDataAssetStartDataWeapon::ModifyCharacterData(AKitsuneCharacter* KitsuneCharacter)
+{
+}
 
+void UDataAssetStartDataWeapon::ResetCharacterData(AKitsuneCharacter* KitsuneCharacter)
+{
+}
 
 void UDataAssetStartDataWeapon::GiveAbilitiesToASC(UAbilitySystemComponent* TargetASC, int32 AbilityLevel)
 {

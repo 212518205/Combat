@@ -7,6 +7,7 @@
 #include"AbilitySystemInterface.h"
 #include "CharacterBase.generated.h"
 
+class UPlayerCombatComponent;
 class UDataAssetStartDataBase;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -20,17 +21,16 @@ class KITSUNE_API ACharacterBase : public ACharacter , public IAbilitySystemInte
 
 public:
 	ACharacterBase();
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const;
-protected:
-	/** Function Begin*/
-	virtual void BeginPlay() override;
 
+	/***   ...IAbilitySystemInterface Interface Begin...   ***/
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	/***   ...IAbilitySystemInterface Interface End...     ***/
+	UAttributeSet* GetAttributeSet() const;
+
+protected:
+	virtual void BeginPlay() override;
 	virtual void InitAbilityInfo();
 
-	/** Function End*/
-
-	/** Variable Begin*/
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -43,5 +43,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Initial Info")
 	int32 CharacterLevel = 1;
-	/** Variable End*/
 };

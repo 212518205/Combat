@@ -8,9 +8,12 @@
 #include "WeaponBase.generated.h"
 
 
+class AKitsuneCharacter;
 class UDataAssetStartDataWeapon;
 class UKitsuneAbilitySystemComponent;
 class UBoxComponent;
+
+DECLARE_DELEGATE_OneParam(FOnWeaponOverlapChangedDelegate, AActor*);
 
 /**
  * 
@@ -23,17 +26,16 @@ class KITSUNE_API AWeaponBase : public AItemBase
 public:
 	AWeaponBase();
 
-	/*** REFACTOR: 需修改接口名字
-	 *	EquipWeaponToCharacter{调用GiveWeaponAbilitiesToASC && ModifyCharacterData }
-	 *	UnequipWeaponFromCharacter{ 调用ClearWeaponAbilityFromASC }
-	 *	将下面两个函数替换
-	 *. [2025年9月23日 16:12:01 来自`@BC@`] ***/
+	void EquipWeaponToCharacter(AKitsuneCharacter* TargetCharacter) const;
+	void UnequipWeaponFromCharacter(AKitsuneCharacter* TargetCharacter) const;
 
-	void GiveWeaponAbilitiesToASC(UAbilitySystemComponent* TargetASC) const;
-	void ClearWeaponAbilitiesFromASC(UAbilitySystemComponent* TargetASC) const;
-
-	/*** TODO: 须保留给生成或拾取时由CombatComponent中RegisterWeapon调用. [2025年9月23日 16:16:31 来自`@BC@`] ***/
 	void GiveWeaponInitialAbilityToASC(UAbilitySystemComponent* TargetASC) const;
+
+	FORCEINLINE UBoxComponent* GetWeaponBoxCollision() { return ItemOverlapBox; }
+
+public:
+	FOnWeaponOverlapChangedDelegate WeaponBeginOverlap;
+	FOnWeaponOverlapChangedDelegate WeaponEndOverlap;
 
 protected:
 	/*** `@BC`   描述: 	基类基础上添加盒体检测   `BC@` ***/
@@ -42,6 +44,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay Ability System")
 	TObjectPtr<UDataAssetStartDataWeapon> WeaponDataInfo;
+
+	/*** `@BC`   描述: 重叠开始结束回调   `BC@` ***/
+	UFUNCTION()
+	void OnWeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	int32 WeaponLevel = 1;
 };

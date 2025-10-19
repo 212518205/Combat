@@ -18,7 +18,8 @@ public class Kitsune : ModuleRules
 			"GameplayTags",
 			"CommonInput",
 			"PropertyPath",
-            "UMG"
+            "UMG",
+			"AnimGraphRuntime"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

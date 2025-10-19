@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "FrontendTypes/FrontendEnumTypes.h"
 #include "KitsuneGameplayAbility.generated.h"
 
 class UKitsuneCombatComponent;
@@ -25,7 +26,7 @@ class KITSUNE_API UKitsuneGameplayAbility : public UGameplayAbility
 
 public:
 	/*** `@BC`   描述: 蓝图纯函数   `BC@` ***/
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure, Category = "Kitsune|Ability")
 	UKitsuneCombatComponent* GetPawnCombatComponentFromActorInfo() const;
 
 protected:
@@ -41,4 +42,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune|Policy")
 	EKitsuneAbilityActivationPolicy ActivationPolicy = EKitsuneAbilityActivationPolicy::OnTriggered;
 
+	UFUNCTION(BlueprintPure, Category = "Kitsune|Ability")
+	FGameplayEffectSpecHandle MakeWeaponDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass,
+		FGameplayTag AttackType,
+		int32 WeaponAttackCount) const;
+
+	static FActiveGameplayEffectHandle NativeApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,
+	                                                                   AActor* TargetActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Kitsune|Ability",
+		meta = (DesplayName = "ApplyGameplayEffectSpecToTarget", ExpandEnumAsExecs = ApplySuccessType))
+	static FActiveGameplayEffectHandle BP_ApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,
+		AActor* TargetActor, EKitsuneSuccessType& ApplySuccessType);
 };

@@ -32,11 +32,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AWeaponBase* SetCurrentWeapon(const FGameplayTag& WeaponTag);
 
+	UFUNCTION(BlueprintCallable)
+	void ToggleWeaponCollision(bool bEnable);
+
 protected:
 	/*** `@BC`   描述: 角色已拥有武器   `BC@` ***/
 	TMap<FGameplayTag, TObjectPtr<AWeaponBase>> CarriedWeaponMap;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Weapon")
 	FGameplayTag CurrentWeaponTag = FGameplayTag();
+
+	TArray<TObjectPtr<AActor>> OverlappedActors;
+
+protected:
+	virtual void OnHitTargetActor(AActor* HitActor);
+	virtual void OnPulledFromTargetActor(AActor* InteractedActor);
 
 };

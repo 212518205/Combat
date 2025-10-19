@@ -28,12 +28,18 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Hero_Jump, "InputTag.Hero.Jump");
 
 	/*** `@BC`   描述: 角色能力标签   `BC@` ***/
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Equip, "Player.Ability.Sword.Equip");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Unequip, "Player.Ability.Sword.Unequip");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Attack_Light, "Player.Ability.Sword.Attack.Light");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Sword_Attack_Heavy, "Player.Ability.Sword.Attack.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Equip_Sword, "Player.Ability.Equip.Sword");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Unequip_Sword, "Player.Ability.Unequip.Sword");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Light, "Player.Ability.Light.Sword");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Heavy, "Player.Ability.Heavy.Sword");
 
 	/*** `@BC`   描述: 角色事件标签   `BC@` ***/
-	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Sword_Equip, "Player.Event.Sword.Equip");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Sword_Unequip, "Player.Event.Sword.Unequip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Weapon_Equip_Sword, "Player.Event.Weapon.Equip.Sword");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Weapon_Unequip_Sword, "Player.Event.Weapon.Unequip.Sword");
+
+	/*** `@BC`   描述: Shared 玩家敌人公用   `BC@` ***/
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_BaseDamage, "Shared.SetByCaller.BaseDamage");
+	
+
 }

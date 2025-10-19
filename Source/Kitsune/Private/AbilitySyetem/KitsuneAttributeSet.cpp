@@ -19,11 +19,12 @@ void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SpiritWisdom, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MaxSpiritWisdom, COND_None, REPNOTIFY_Always);
-
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, Vigor, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MaxVigor, COND_None, REPNOTIFY_Always);
+
+	/*** `@BC`   描述: 战斗资源   `BC@` ***/
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SpiritPower, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, AttackPower, COND_None, REPNOTIFY_Always);
 
 	// 战斗属性（Combat Attribute）复制配置
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, Toughness, COND_None, REPNOTIFY_Always);
@@ -31,13 +32,13 @@ void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MentalFocus, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, Armor, COND_None, REPNOTIFY_Always);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, CriticalStrikeChance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, CriticalStrikeMultiplier, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MentalCriticalChance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MentalCriticalMultiplier, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, CriticalChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, CriticalDamage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SoulCritical, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SoulCriticalDamage, COND_None, REPNOTIFY_Always);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, MentalBurn, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SoulFlare, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, DodgeChance, COND_None, REPNOTIFY_Always);
 }
 
@@ -45,10 +46,7 @@ void UKitsuneAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribut
 {
 	Super::PreAttributeChange(Attribute, NewValue);
 
-	if (Attribute==GetHealthAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
-	}
+	
 }
 
 void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCallbackData& Data)
@@ -113,14 +111,14 @@ void UKitsuneAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMax
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, MaxStamina, OldMaxStamina);
 }
 
-void UKitsuneAttributeSet::OnRep_SpiritWisdom(const FGameplayAttributeData& OldSpiritWisdom) const
+void UKitsuneAttributeSet::OnRep_SpiritPower(const FGameplayAttributeData& OldSpiritPower) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SpiritWisdom, OldSpiritWisdom);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SpiritPower, OldSpiritPower);
 }
 
-void UKitsuneAttributeSet::OnRep_MaxSpiritWisdom(const FGameplayAttributeData& OldMaxSpiritWisdom) const
+void UKitsuneAttributeSet::OnRep_AttackPower(const FGameplayAttributeData& OldAttackPower) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, MaxSpiritWisdom, OldMaxSpiritWisdom);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, AttackPower, OldAttackPower);
 }
 
 void UKitsuneAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
@@ -153,26 +151,26 @@ void UKitsuneAttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor) c
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, Armor, OldArmor);
 }
 
-void UKitsuneAttributeSet::OnRep_CriticalStrikeChance(const FGameplayAttributeData& OldCriticalStrikeChance) const
+void UKitsuneAttributeSet::OnRep_CriticalChance(const FGameplayAttributeData& OldCriticalChance) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, CriticalStrikeChance, OldCriticalStrikeChance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, CriticalChance, OldCriticalChance);
 }
 
-void UKitsuneAttributeSet::OnRep_CriticalStrikeMultiplier(
-	const FGameplayAttributeData& OldCriticalStrikeMultiplier) const
+void UKitsuneAttributeSet::OnRep_CriticalDamage(
+	const FGameplayAttributeData& OldCriticalDamage) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, CriticalStrikeMultiplier, OldCriticalStrikeMultiplier);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, CriticalDamage, OldCriticalDamage);
 }
 
-void UKitsuneAttributeSet::OnRep_MentalCriticalChance(const FGameplayAttributeData& OldMentalCriticalChance) const
+void UKitsuneAttributeSet::OnRep_SoulCritical(const FGameplayAttributeData& OldSoulCritical) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, MentalCriticalChance, OldMentalCriticalChance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SoulCritical, OldSoulCritical);
 }
 
-void UKitsuneAttributeSet::OnRep_MentalCriticalMultiplier(
-	const FGameplayAttributeData& OldMentalCriticalMultiplier) const
+void UKitsuneAttributeSet::OnRep_SoulCriticalDamage(
+	const FGameplayAttributeData& OldSoulCriticalDamage) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, MentalCriticalMultiplier, OldMentalCriticalMultiplier);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SoulCriticalDamage, OldSoulCriticalDamage);
 }
 
 void UKitsuneAttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const
@@ -180,12 +178,14 @@ void UKitsuneAttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& 
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, ArmorPenetration, OldArmorPenetration);
 }
 
-void UKitsuneAttributeSet::OnRep_MentalBurn(const FGameplayAttributeData& OldMentalBurn) const
+void UKitsuneAttributeSet::OnRep_SoulFlare(const FGameplayAttributeData& OldSoulFlare) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, MentalBurn, OldMentalBurn);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SoulFlare, OldSoulFlare);
 }
 
 void UKitsuneAttributeSet::OnRep_DodgeChance(const FGameplayAttributeData& OldDodgeChance) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, DodgeChance, OldDodgeChance);
 }
+
+
