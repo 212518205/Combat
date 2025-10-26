@@ -45,7 +45,7 @@ void UKitsuneGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle
 }
 
 FGameplayEffectSpecHandle UKitsuneGameplayAbility::MakeWeaponDamageEffectSpecHandle(
-	const TSubclassOf<UGameplayEffect> EffectClass, const FGameplayTag AttackType, const int32 WeaponAttackCount) const
+	const TSubclassOf<UGameplayEffect> EffectClass, const FGameplayTag AttackType, const float AttackPowerMultiplier) const
 {
 	check(EffectClass);
 
@@ -61,7 +61,7 @@ FGameplayEffectSpecHandle UKitsuneGameplayAbility::MakeWeaponDamageEffectSpecHan
 		EffectContextHandle
 	);
 
-	EffectSpecHandle.Data->SetSetByCallerMagnitude(AttackType, WeaponAttackCount);
+	EffectSpecHandle.Data->SetSetByCallerMagnitude(AttackType, AttackPowerMultiplier);
 	return EffectSpecHandle;
 }
 
@@ -79,7 +79,7 @@ FActiveGameplayEffectHandle UKitsuneGameplayAbility::NativeApplyGameplayEffectSp
 FActiveGameplayEffectHandle UKitsuneGameplayAbility::BP_ApplyGameplayEffectSpecToTarget(
 	const FGameplayEffectSpecHandle& SpecHandle, AActor* TargetActor, EKitsuneSuccessType& ApplySuccessType)
 {
-	FActiveGameplayEffectHandle ActiveEffectHandle = NativeApplyGameplayEffectSpecToTarget(SpecHandle, TargetActor);
+	const FActiveGameplayEffectHandle ActiveEffectHandle = NativeApplyGameplayEffectSpecToTarget(SpecHandle, TargetActor);
 
 	ApplySuccessType = ActiveEffectHandle.IsValid() ? EKitsuneSuccessType::Successful : EKitsuneSuccessType::Failed;
 

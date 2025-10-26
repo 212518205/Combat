@@ -17,9 +17,4 @@ void UKitsuneComboBoxString::AddOptions(const TArray<FString>& InOptions)
 void UKitsuneComboBoxString::HandleOpening()
 {
 	Super::HandleOpening();
-	Debug::Print(GetSelectedOption() + TEXT("被点击,index == ")+ FString::FromInt(GetSelectedIndex()));
-	for (const auto& OptionName : Options)
-	{
-		Debug::Print(*OptionName);
-	}
 }

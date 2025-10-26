@@ -8,7 +8,7 @@
 #include "WeaponBase.generated.h"
 
 
-class AKitsuneCharacter;
+class ACharacterBase;
 class UDataAssetStartDataWeapon;
 class UKitsuneAbilitySystemComponent;
 class UBoxComponent;
@@ -26,8 +26,8 @@ class KITSUNE_API AWeaponBase : public AItemBase
 public:
 	AWeaponBase();
 
-	void EquipWeaponToCharacter(AKitsuneCharacter* TargetCharacter) const;
-	void UnequipWeaponFromCharacter(AKitsuneCharacter* TargetCharacter) const;
+	void EquipWeaponToCharacter(ACharacterBase* TargetCharacter) const;
+	void UnequipWeaponFromCharacter(ACharacterBase* TargetCharacter) const;
 
 	void GiveWeaponInitialAbilityToASC(UAbilitySystemComponent* TargetASC) const;
 

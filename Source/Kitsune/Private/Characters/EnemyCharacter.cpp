@@ -9,6 +9,7 @@
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include "AbilitySyetem/KitsuneAttributeSet.h"
 #include "Characters/Data/DataAssetStartDataEnemy.h"
+#include "Component/Combat/EnemyKitsuneCombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AEnemyCharacter::AEnemyCharacter()
@@ -25,7 +26,7 @@ AEnemyCharacter::AEnemyCharacter()
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-
+	CombatComponent = CreateDefaultSubobject<UEnemyKitsuneCombatComponent>(TEXT("CombatComponent"));
 
 	SetNetUpdateFrequency(100.f);
 }
@@ -43,4 +44,9 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	InitAbilityInfo();
+}
+
+UKitsuneCombatComponent* AEnemyCharacter::GetKitsuneCombatComponent() const
+{
+	return CombatComponent;
 }

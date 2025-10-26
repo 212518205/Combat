@@ -37,7 +37,12 @@ namespace KitsuneGameplayTags
 
 	/*** `@BC`   描述: Shared 玩家敌人公用   `BC@` ***/
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
-	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_BaseDamage);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_DamageBonusMultiplier);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_HitReact);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Dead);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_HitReact);
 
 }
 

@@ -11,11 +11,11 @@
 	* KitsuneCharacter->SetLocomotionData(FPawnMoveData);
 	* 当前类有Weapon附加增益
 	***/
-void UDataAssetStartDataWeapon::ModifyCharacterData(AKitsuneCharacter* KitsuneCharacter)
+void UDataAssetStartDataWeapon::ModifyCharacterData(ACharacterBase* KitsuneCharacter)
 {
 }
 
-void UDataAssetStartDataWeapon::ResetCharacterData(AKitsuneCharacter* KitsuneCharacter)
+void UDataAssetStartDataWeapon::ResetCharacterData(ACharacterBase* KitsuneCharacter)
 {
 }
 

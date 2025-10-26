@@ -45,7 +45,7 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "Kitsune|Ability")
 	FGameplayEffectSpecHandle MakeWeaponDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass,
 		FGameplayTag AttackType,
-		int32 WeaponAttackCount) const;
+		float AttackPowerMultiplier) const;
 
 	static FActiveGameplayEffectHandle NativeApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,
 	                                                                   AActor* TargetActor);

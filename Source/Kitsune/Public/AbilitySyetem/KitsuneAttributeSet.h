@@ -61,86 +61,90 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	/*** ``   基础资源   `` ***/
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Main Attribute")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Attribute|Combat")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet,Health)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Main Attribute")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Attribute|Combat")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, MaxHealth)
 
 	/*** `@BC`   描述: 耐力值   `BC@` ***/
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Main Attribute|Vitality")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Attribute|Combat")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Stamina)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina, Category = "Main Attribute|Vitality")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina, Category = "Attribute|Combat")
 	FGameplayAttributeData MaxStamina;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, MaxStamina)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vigor, Category = "Main Attribute|Physique")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vigor, Category = "Attribute|Combat")
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Vigor)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxVigor, Category = "Main Attribute|Physique")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxVigor, Category = "Attribute|Combat")
 	FGameplayAttributeData MaxVigor;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, MaxVigor)
 	/*** ``   基础资源   `` ***/
 
 	/*** ``   战斗资源   `` ***/
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AttackPower, Category = "Main Attribute|Magic")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AttackPower, Category = "Attribute|Combat")
 	FGameplayAttributeData AttackPower;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, AttackPower)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpiritPower, Category = "Main Attribute|Magic")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpiritPower, Category = "Attribute|Combat")
 	FGameplayAttributeData SpiritPower;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, SpiritPower)
 	/*** ``   战斗资源   `` ***/
 
 	/*** ``   战斗属性   `` ***/
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Toughness, Category = "Combat Attribute|Defense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Toughness, Category = "Attribute|Combat")
 	FGameplayAttributeData Toughness;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Toughness)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Shield, Category = "Combat Attribute|Defense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Shield, Category = "Attribute|Combat")
 	FGameplayAttributeData Shield;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Shield)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MentalFocus, Category = "Combat Attribute|Defense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MentalFocus, Category = "Attribute|Combat")
 	FGameplayAttributeData MentalFocus;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, MentalFocus)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category = "Combat Attribute|Defense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category = "Attribute|Combat")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Armor)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalChance, Category = "Combat Attribute|Offense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalChance, Category = "Attribute|Combat")
 	FGameplayAttributeData CriticalChance;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, CriticalChance)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalDamage, Category = "Combat Attribute|Offense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalDamage, Category = "Attribute|Combat")
 	FGameplayAttributeData CriticalDamage;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, CriticalDamage)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SoulCritical, Category = "Combat Attribute|Offense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SoulCritical, Category = "Attribute|Combat")
 	FGameplayAttributeData SoulCritical;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, SoulCritical)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SoulCriticalDamage, Category = "Combat Attribute|Offense")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SoulCriticalDamage, Category = "Attribute|Combat")
 	FGameplayAttributeData SoulCriticalDamage;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, SoulCriticalDamage)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorPenetration, Category = "Combat Attribute|Penetration")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorPenetration, Category = "Attribute|Combat")
 	FGameplayAttributeData ArmorPenetration;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, ArmorPenetration)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SoulFlare, Category = "Combat Attribute|Penetration")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SoulFlare, Category = "Attribute|Combat")
 	FGameplayAttributeData SoulFlare;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, SoulFlare)
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DodgeChance, Category = "Combat Attribute|Evasion")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DodgeChance, Category = "Attribute|Combat")
 	FGameplayAttributeData DodgeChance;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, DodgeChance)
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DamageTaken, Category = "Attribute|Combat")
+	FGameplayAttributeData DamageTaken;
+	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, DamageTaken)
 	/*** ``   战斗属性   `` ***/
 protected:
 	/*** `@BC`   描述: 修改前修约属性数值   `BC@` ***/
@@ -148,7 +152,7 @@ protected:
 
 	virtual void PostGameplayEffectExecute(const  FGameplayEffectModCallbackData& Data) override;
 
-	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
+	static void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 
 
 	UFUNCTION()
@@ -208,6 +212,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_DodgeChance(const FGameplayAttributeData& OldDodgeChance) const;
+
+	UFUNCTION()
+	void OnRep_DamageTaken(const FGameplayAttributeData& OldDamageTaken) const;
 };
 
 

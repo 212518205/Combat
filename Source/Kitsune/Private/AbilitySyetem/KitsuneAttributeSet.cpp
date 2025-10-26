@@ -4,9 +4,12 @@
 #include "AbilitySyetem/KitsuneAttributeSet.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "FrontendDebugHelper.h"
 #include"Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
+#include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "GameFramework/Character.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 
 
 void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -40,6 +43,7 @@ void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SoulFlare, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, DodgeChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, DamageTaken, COND_None, REPNOTIFY_Always);
 }
 
 void UKitsuneAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -56,6 +60,52 @@ void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCa
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		const float CurrentHealth = FMath::Clamp(GetHealth(), 0.f, GetMaxHealth());
+		SetHealth(CurrentHealth);
+	}
+
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		const float CurrentStamina = FMath::Clamp(GetStamina(), 0.f, GetMaxStamina());
+		SetStamina(CurrentStamina);
+	}
+
+	if (Data.EvaluatedData.Attribute == GetVigorAttribute())
+	{
+		const float CurrentVigor = FMath::Clamp(GetVigor(), 0.f, GetMaxVigor());
+		SetVigor(CurrentVigor);
+	}
+
+
+	if (const float a = GetDamageTaken(); Data.EvaluatedData.Attribute == GetDamageTakenAttribute() && a !=0.f)
+	{
+		const float CurrentDamageTaken = GetDamageTaken();
+		if (CurrentDamageTaken <= 0)
+		{
+			/*** TODO: 伤害值不足以击穿护甲，将造成1的伤害... [2025年10月25日 23:32:58 来自`@BC@`] ***/
+		}
+		const float CurrentHealth = GetHealth();
+		const float FinalHealth = FMath::Clamp(CurrentHealth - CurrentDamageTaken, 0.f, GetMaxHealth());
+		SetHealth(FinalHealth);
+		if ( FinalHealth == 0.f)
+		{
+			UKitsuneFunctionLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), KitsuneGameplayTags::Shared_Status_Dead);
+			Debug::Print(TEXT("被打死了"));
+		}else
+		{
+			FGameplayEventData EventData;
+			EventData.Instigator = Data.EffectSpec.GetContext().GetInstigator();
+			EventData.Target = Data.Target.GetAvatarActor();
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.Target.GetAvatarActor(),
+				KitsuneGameplayTags::Shared_Event_HitReact,
+				EventData);
+		}
+
+	}
 }
 
 void UKitsuneAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallbackData& Data,
@@ -156,8 +206,7 @@ void UKitsuneAttributeSet::OnRep_CriticalChance(const FGameplayAttributeData& Ol
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, CriticalChance, OldCriticalChance);
 }
 
-void UKitsuneAttributeSet::OnRep_CriticalDamage(
-	const FGameplayAttributeData& OldCriticalDamage) const
+void UKitsuneAttributeSet::OnRep_CriticalDamage(const FGameplayAttributeData& OldCriticalDamage) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, CriticalDamage, OldCriticalDamage);
 }
@@ -167,8 +216,7 @@ void UKitsuneAttributeSet::OnRep_SoulCritical(const FGameplayAttributeData& OldS
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SoulCritical, OldSoulCritical);
 }
 
-void UKitsuneAttributeSet::OnRep_SoulCriticalDamage(
-	const FGameplayAttributeData& OldSoulCriticalDamage) const
+void UKitsuneAttributeSet::OnRep_SoulCriticalDamage(const FGameplayAttributeData& OldSoulCriticalDamage) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, SoulCriticalDamage, OldSoulCriticalDamage);
 }
@@ -186,6 +234,11 @@ void UKitsuneAttributeSet::OnRep_SoulFlare(const FGameplayAttributeData& OldSoul
 void UKitsuneAttributeSet::OnRep_DodgeChance(const FGameplayAttributeData& OldDodgeChance) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, DodgeChance, OldDodgeChance);
+}
+
+void UKitsuneAttributeSet::OnRep_DamageTaken(const FGameplayAttributeData& OldDamageTaken) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, DamageTaken, OldDamageTaken);
 }
 
 

@@ -19,7 +19,7 @@ AWeaponBase::AWeaponBase()
 	ItemOverlapBox->OnComponentEndOverlap.AddUniqueDynamic(this, &ThisClass::OnWeaponEndOverlap);
 }
 
-void AWeaponBase::EquipWeaponToCharacter(AKitsuneCharacter* TargetCharacter) const
+void AWeaponBase::EquipWeaponToCharacter(ACharacterBase* TargetCharacter) const
 {
 	WeaponDataInfo->GiveAbilitiesToASC(TargetCharacter->GetAbilitySystemComponent(), WeaponLevel);
 	WeaponDataInfo->ModifyCharacterData(TargetCharacter);
@@ -54,7 +54,7 @@ void AWeaponBase::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 	}
 }
 
-void AWeaponBase::UnequipWeaponFromCharacter(AKitsuneCharacter* TargetCharacter) const
+void AWeaponBase::UnequipWeaponFromCharacter(ACharacterBase* TargetCharacter) const
 {
 	WeaponDataInfo->ClearAbilitiesFromASC(TargetCharacter->GetAbilitySystemComponent());
 	WeaponDataInfo->ResetCharacterData(TargetCharacter);

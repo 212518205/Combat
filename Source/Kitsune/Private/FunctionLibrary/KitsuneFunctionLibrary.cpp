@@ -7,6 +7,34 @@
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include "Interfaces/PawnCombatInterface.h"
 
+void UKitsuneFunctionLibrary::AddGameplayTagToActorIfNone(AActor* TargetActor, const FGameplayTag ActorTag)
+{
+	if (UKitsuneAbilitySystemComponent* TargetASC = NativeGetKitsuneASCFromActor(TargetActor); !TargetASC->HasMatchingGameplayTag(ActorTag))
+	{
+		TargetASC->AddLooseGameplayTag(ActorTag);
+	}
+}
+
+void UKitsuneFunctionLibrary::TryRemoveGameplayTagFromActor(AActor* TargetActor, const FGameplayTag ActorTag)
+{
+	if (UKitsuneAbilitySystemComponent* TargetASC = NativeGetKitsuneASCFromActor(TargetActor); TargetASC->HasMatchingGameplayTag(ActorTag))
+	{
+		TargetASC->RemoveLooseGameplayTag(ActorTag);
+	}
+}
+
+bool UKitsuneFunctionLibrary::NativeDoesActorHaveTag(AActor* TargetActor, const FGameplayTag CheckedTag)
+{
+	return  NativeGetKitsuneASCFromActor(TargetActor)->HasMatchingGameplayTag(CheckedTag);
+}
+
+bool UKitsuneFunctionLibrary::BP_DoesActorHaveTag(AActor* TargetActor, const FGameplayTag CheckedTag, bool& OutCheckResult)
+{
+	OutCheckResult = NativeDoesActorHaveTag(TargetActor, CheckedTag);
+
+	return OutCheckResult;
+}
+
 UKitsuneCombatComponent* UKitsuneFunctionLibrary::NativeGetKitsuneCombatComponentFromActor(AActor* Actor)
 {
 	if (!Actor)return nullptr;

@@ -4,12 +4,14 @@
 #include "Component/Combat/PlayerCombatComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "FrontendDebugHelper.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 
 void UPlayerCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
 	Super::OnHitTargetActor(HitActor);
 
+	if (HitActor == GetOwningPawn())return;
 	if (OverlappedActors.Contains(HitActor))return;
 	OverlappedActors.AddUnique(HitActor);
 

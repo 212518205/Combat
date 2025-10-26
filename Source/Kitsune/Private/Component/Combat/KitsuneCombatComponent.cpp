@@ -22,8 +22,8 @@ void UKitsuneCombatComponent::RegisterCarriedWeapon(const FGameplayTag InWeaponT
 		NewWeapon->WeaponBeginOverlap.BindUObject(this, &ThisClass::OnHitTargetActor);
 		NewWeapon->WeaponEndOverlap.BindUObject(this, &ThisClass::OnPulledFromTargetActor);
 
-		if (const AKitsuneCharacter* KitsuneCharacter = CastChecked<AKitsuneCharacter>(GetOwningPawn())) {
-			NewWeapon->GiveWeaponInitialAbilityToASC(KitsuneCharacter->GetAbilitySystemComponent());
+		if (const ACharacterBase* CharacterBase = Cast<ACharacterBase>(GetOwningPawn())) {
+			NewWeapon->GiveWeaponInitialAbilityToASC(CharacterBase->GetAbilitySystemComponent());
 		}
 		if (bRegisterAndEquip)
 		{
@@ -54,18 +54,18 @@ AWeaponBase* UKitsuneCombatComponent::SetCurrentWeapon(const FGameplayTag& Weapo
 {
 	AWeaponBase* NewWeaponBase = FindWeaponByTag(WeaponTag);
 	const AWeaponBase* OldWeaponBase = GetCurrentCarriedWeapon();
-	AKitsuneCharacter* KitsuneCharacter = CastChecked<AKitsuneCharacter>(GetOwningPawn());
+	ACharacterBase* CharacterBase = Cast<ACharacterBase>(GetOwningPawn());
 
 	if (OldWeaponBase)
 	{
-		OldWeaponBase->UnequipWeaponFromCharacter(KitsuneCharacter);
+		OldWeaponBase->UnequipWeaponFromCharacter(CharacterBase);
 	}
 
 	CurrentWeaponTag = WeaponTag;
 
 	if (NewWeaponBase)
 	{
-		NewWeaponBase->EquipWeaponToCharacter(KitsuneCharacter);
+		NewWeaponBase->EquipWeaponToCharacter(CharacterBase);
 	}
 
 	return NewWeaponBase;
@@ -88,22 +88,8 @@ void UKitsuneCombatComponent::ToggleWeaponCollision(const bool bEnable)
 void UKitsuneCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
 
-	Debug::Print(GetOwningPawn()->GetName() + TEXT(" Hit-->") + HitActor->GetName(),-1,FColor::Green);
-	if (const AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(HitActor))
-	{
-		if (const UKitsuneAttributeSet* KitsuneAttributeSet = Cast<UKitsuneAttributeSet>(Enemy->GetAttributeSet()))
-		{
-			Debug::Print(TEXT("MaxHealth"), KitsuneAttributeSet->GetMaxHealth());
-			Debug::Print(TEXT("Health"), KitsuneAttributeSet->GetHealth());
-			Debug::Print(TEXT("AttackPower"), KitsuneAttributeSet->GetAttackPower());
-			Debug::Print(TEXT("GetCriticalDamage"), KitsuneAttributeSet->GetCriticalChance());
-			Debug::Print(TEXT("GetCriticalDamage"), KitsuneAttributeSet->GetCriticalDamage());
-		}
-
-	}
 }
 
 void UKitsuneCombatComponent::OnPulledFromTargetActor(AActor* InteractedActor)
 {
-	Debug::Print(GetOwningPawn()->GetName() + TEXT(" Hit-->") + InteractedActor->GetName(),-1,FColor::Red);
 }
