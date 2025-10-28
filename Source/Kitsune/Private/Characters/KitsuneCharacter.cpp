@@ -55,9 +55,8 @@ void AKitsuneCharacter::InitAbilityInfo()
 	if (IsLocallyControlled()&&GetNetMode()!=NM_DedicatedServer)
 	{
 		if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
-			UAttributeViewModel* ViewModel = UAttributeViewModel::GetViewModel<UAttributeViewModel>(KitsunePlayerState, PlayerController,
-				AbilitySystemComponent, AttributeSet);
-			UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterAttributeViewModel(ViewModel);
+			UPlayerViewModel* ViewModel = UAttributeViewModel::GetViewModel<UPlayerViewModel>(AbilitySystemComponent, AttributeSet);
+			UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterPlayerViewModel(ViewModel);
 		}
 	}
 

@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "UIManagerSubsystem.h"
+#include "Characters/CharacterBase.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/ViewModel/ViewModelBase.h"
 #include "FrontendBlueprintFunctionLibrary.generated.h"
 
+class UKitsuneAttributeSet;
 class UWidgetActivatableBase;
 /**
  * 
@@ -17,9 +21,9 @@ class KITSUNE_API UFrontendBlueprintFunctionLibrary : public UBlueprintFunctionL
 	GENERATED_BODY()
 
 public:
-	/** Function Begin*/
-	UFUNCTION(BlueprintPure, Category = "Frontend Function Library")
+	UFUNCTION(BlueprintPure, Category = "Frontend | Screen")
 	static TSoftClassPtr<UWidgetActivatableBase> GetScreenSoftWidgetClassByTag(UPARAM(meta=(Categories="UI.Widget"))
 		const FGameplayTag InWidgetTag);
-	/** Function End*/
+
 };
+

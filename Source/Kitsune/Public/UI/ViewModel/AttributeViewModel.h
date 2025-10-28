@@ -15,9 +15,7 @@ class KITSUNE_API UAttributeViewModel : public UViewModelBase
 	GENERATED_BODY()
 
 public:
-	/** Function Begin*/
 	virtual void BindCallback() override;
-	/** Function End*/
 
 protected:
 	/** Variable Begin*/
