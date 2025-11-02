@@ -27,12 +27,12 @@ UCommonActivatableWidgetContainerBase* UWidgetPrimaryLayout::FindWidgetStackByTa
 
 void UWidgetPrimaryLayout::DeActivableWidgetStackByTag(const FGameplayTag& InTag)const
 {
-	const UCommonActivatableWidgetContainerBase* WidgetStack = GameplayTagToStackMap.FindRef(InTag);
+	UCommonActivatableWidgetContainerBase* WidgetStack = GameplayTagToStackMap.FindRef(InTag);
 	check(WidgetStack);
-
-	for (UCommonActivatableWidget* ActivatableWidget:WidgetStack->GetWidgetList())
-	{
-		ActivatableWidget->DeactivateWidget();
-		ActivatableWidget->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	WidgetStack->ClearWidgets();
+	//for (UCommonActivatableWidget* ActivatableWidget:WidgetStack->GetWidgetList())
+	//{
+	//	ActivatableWidget->DeactivateWidget();
+	//	ActivatableWidget->SetVisibility(ESlateVisibility::Collapsed);
+	//}
 }

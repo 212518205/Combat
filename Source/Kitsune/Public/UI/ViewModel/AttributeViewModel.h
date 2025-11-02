@@ -6,6 +6,8 @@
 #include "UI/ViewModel/ViewModelBase.h"
 #include "AttributeViewModel.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttributeChangedDelegate);
+
 /**
  * 
  */
@@ -17,21 +19,26 @@ class KITSUNE_API UAttributeViewModel : public UViewModelBase
 public:
 	virtual void BindCallback() override;
 
+	/*** `@BC`   描述: 已捕获的属性值变化后需在蓝图处理   `BC@` ***/
+	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
+	FOnAttributeChangedDelegate OnHealthPercentChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
+	FOnAttributeChangedDelegate OnStaminaPercentChanged;
+
 protected:
-	/** Variable Begin*/
-	UPROPERTY(BlueprintReadOnly,Category = "Main Attribute Value")
+	/*** `@BC`   描述: ViewModel需捕获的属性值   `BC@` ***/
+	UPROPERTY(BlueprintReadOnly,Category = "ViewModel | Attribute")
 	float Health = 0.f;
 	
-	UPROPERTY(BlueprintReadOnly,Category = "Main Attribute Value")
+	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
 	float MaxHealth = 0.f;
 	
-	UPROPERTY(BlueprintReadOnly,Category = "Main Attribute Value")
+	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
 	float Stamina = 0.f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Main Attribute Value")
+	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
 	float MaxStamina = 0.f;
 
 
-
-	/** Variable End*/
 };

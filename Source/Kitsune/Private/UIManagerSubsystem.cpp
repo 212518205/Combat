@@ -51,6 +51,18 @@ void UUIManagerSubsystem::DeActivableStackByTag(FGameplayTag InTag) const
 	RegisteredPrimaryLayout->DeActivableWidgetStackByTag(InTag);
 }
 
+UPlayerViewModel* UUIManagerSubsystem::GetPlayerViewModel() const
+{
+	return PlayerViewModel;
+}
+
+UAttributeViewModel* UUIManagerSubsystem::GetViewModelByActor(AActor* InActor, bool& OutViewModelIsValid)
+{
+	UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InActor);
+	OutViewModelIsValid = FoundViewModel != nullptr;
+	return FoundViewModel ? *FoundViewModel : nullptr;
+}
+
 void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
                                                      TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
                                                      TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const

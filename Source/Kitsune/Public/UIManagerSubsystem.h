@@ -6,6 +6,7 @@
 #include "Characters/CharacterBase.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UI/ViewModel/EnemyViewModel.h"
 #include "UI/ViewModel/PlayerViewModel.h"
 #include "UI/Widget/Components/KitsuneCommonButtonBase.h"
 #include "UIManagerSubsystem.generated.h"
@@ -41,6 +42,9 @@ public:
 	void RegisterPlayerViewModel(UPlayerViewModel* InViewModel);
 	template<typename T = UAttributeViewModel>
 	T* TryGetViewModelByActor(AActor* InActor);
+	UPlayerViewModel* GetPlayerViewModel() const;
+	UFUNCTION(BlueprintCallable, Category = "ViewModel", meta = (ExpandBoolAsExecs = "OutViewModelIsValid"))
+	UAttributeViewModel* GetViewModelByActor(AActor* InActor, bool& OutViewModelIsValid);
 
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
@@ -72,7 +76,7 @@ protected:
 	UPlayerViewModel* PlayerViewModel = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Registered ViewModel")
-	TMap<TObjectPtr<AActor>, UAttributeViewModel*> RegisteredViewModels;
+	TMap<AActor*, UAttributeViewModel*> RegisteredViewModels;
 	/** Function End*/
 };
 

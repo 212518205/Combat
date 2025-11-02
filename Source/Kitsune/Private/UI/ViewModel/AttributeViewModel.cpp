@@ -12,6 +12,7 @@ void UAttributeViewModel::BindCallback()
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Health = Data.NewValue;
+			OnHealthPercentChanged.Broadcast();
 		}
 	);
 
@@ -19,6 +20,7 @@ void UAttributeViewModel::BindCallback()
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxHealth = Data.NewValue;
+			OnHealthPercentChanged.Broadcast();
 		}
 	);
 
@@ -26,6 +28,7 @@ void UAttributeViewModel::BindCallback()
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Stamina = Data.NewValue;
+			OnStaminaPercentChanged.Broadcast();
 		}
 	);
 
@@ -33,6 +36,7 @@ void UAttributeViewModel::BindCallback()
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxStamina = Data.NewValue;
+			OnStaminaPercentChanged.Broadcast();
 		}
 	);
 }

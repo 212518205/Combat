@@ -7,8 +7,11 @@
 #include "Interfaces/PawnCombatInterface.h"
 #include "EnemyCharacter.generated.h"
 
+class UEnemyViewModel;
 class UEnemyKitsuneCombatComponent;
 class UDataAssetStartDataEnemy;
+class UWidgetComponent;
+
 /**
  * 
  */
@@ -30,10 +33,19 @@ protected:
 	virtual UKitsuneCombatComponent* GetKitsuneCombatComponent() const override;
 	/***   ...IPawnCombatInterface Interface End...     ***/
 
+	UFUNCTION(BlueprintCallable, Category = "UI|ViewModel")
+	UEnemyViewModel* GetEnemyViewModel();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TObjectPtr<UDataAssetStartDataEnemy> StartData;
 
 	/*** `@BC`   描述: 角色扩展组件   `BC@` ***/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component|Combat")
 	TObjectPtr<UEnemyKitsuneCombatComponent> CombatComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component|UI")
+	TObjectPtr<UWidgetComponent> EnemyWidgetComponent;
+
+	UPROPERTY(BlueprintReadOnly)
+	UEnemyViewModel* EnemyViewModel;
 };
