@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "KitsunePlayerController.generated.h"
 
@@ -18,11 +19,16 @@ struct FInputActionValue;
  * 
  */
 UCLASS()
-class KITSUNE_API AKitsunePlayerController : public APlayerController
+class KITSUNE_API AKitsunePlayerController : public APlayerController, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 public:
+	AKitsunePlayerController();
+
+	/***   ...IGenericTeamAgentInterface Interface Begin...   ***/
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	/***   ...IGenericTeamAgentInterface Interface End...     ***/
 
 protected:
 	/***   ...APlayerController Interface Begin...   ***/
@@ -30,6 +36,7 @@ protected:
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	/***   ...APlayerController Interface End...     ***/
+
 
 	/*** `@BC`   描述: 输入上下文以及输入动作   `BC@` ***/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -58,8 +65,11 @@ protected:
 
 	/*** `@BC`   描述: 缓存所控制角色，减少消耗   `BC@` ***/
 	UPROPERTY(Transient)
-	UKitsuneAbilitySystemComponent* CachedKitsuneAbilitySystemComponent;
+	UKitsuneAbilitySystemComponent* CachedKitsuneAbilitySystemComponent = nullptr;
 
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	UKitsuneAbilitySystemComponent* GetKitsuneASCFromPawn();
+
+private:
+	FGenericTeamId PlayerTeamId;
 };

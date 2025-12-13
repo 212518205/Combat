@@ -23,5 +23,28 @@ void UKitsuneAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
 
 void UKitsuneAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InputTag)
 {
+	 
+}
+
+bool UKitsuneAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag ActivateAbilityTag)
+{
+	check(ActivateAbilityTag.IsValid());
+
+	TArray<FGameplayAbilitySpec*> FoundAbilitySpec;
+	GetActivatableGameplayAbilitySpecsByAllMatchingTags(ActivateAbilityTag.GetSingleTagContainer(), FoundAbilitySpec);
+
+	if (!FoundAbilitySpec.IsEmpty())
+	{
+		const int32 ActivatableAbilityIndex = FMath::RandRange(0, FoundAbilitySpec.Num() - 1);
+		FGameplayAbilitySpec* SpecToActive = FoundAbilitySpec[ActivatableAbilityIndex];
+
+		if (!SpecToActive->IsActive())
+		{
+			return TryActivateAbility(SpecToActive->Handle);
+		}
+
+	}
+
+	return false;
 }
 

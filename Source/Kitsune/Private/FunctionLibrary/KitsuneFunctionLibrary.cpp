@@ -4,6 +4,7 @@
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GenericTeamAgentInterface.h"
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include "Interfaces/PawnCombatInterface.h"
 
@@ -74,4 +75,19 @@ bool UKitsuneFunctionLibrary::NativeCheckHitResult(const float HitChance)
 void UKitsuneFunctionLibrary::BP_CheckHitResult(const float HitChance, bool& OutHitResult)
 {
 	OutHitResult = NativeCheckHitResult(HitChance);
+}
+
+bool UKitsuneFunctionLibrary::IsHostileToPawn(const APawn* QueryPawn, const APawn* TargetPawn)
+{
+	check(QueryPawn && TargetPawn);
+
+	IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
+	IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
+
+	if (QueryTeamAgent && TargetTeamAgent)
+	{
+		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
+	}
+
+	return false;
 }

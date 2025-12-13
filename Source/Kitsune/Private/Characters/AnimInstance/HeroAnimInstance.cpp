@@ -10,7 +10,7 @@ void UHeroAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	OwningCharacter = Cast<AKitsuneCharacter>(TryGetPawnOwner());
+	OwningCharacter = Cast<ACharacterBase>(TryGetPawnOwner());
 	if (OwningCharacter)
 	{
 		OwningMovementComponent = OwningCharacter->GetCharacterMovement();

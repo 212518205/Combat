@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
-#include "Interfaces/PawnCombatInterface.h"
 #include "KitsuneCharacter.generated.h"
 
 
@@ -13,7 +12,7 @@ class UPlayerCombatComponent;
  * 
  */
 UCLASS(Abstract)
-class KITSUNE_API AKitsuneCharacter : public ACharacterBase, public IPawnCombatInterface
+class KITSUNE_API AKitsuneCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 	

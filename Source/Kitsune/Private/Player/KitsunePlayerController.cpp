@@ -47,6 +47,16 @@ void AKitsunePlayerController::OnPossess(APawn* InPawn)
 
 }
 
+AKitsunePlayerController::AKitsunePlayerController()
+{
+	PlayerTeamId = FGenericTeamId(0);
+}
+
+FGenericTeamId AKitsunePlayerController::GetGenericTeamId() const
+{
+	return PlayerTeamId;
+}
+
 // ReSharper disable once CppMemberFunctionMayBeConst
 void AKitsunePlayerController::Move(const FInputActionValue& Value)
 {

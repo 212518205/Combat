@@ -26,7 +26,7 @@ class KITSUNE_API UKitsuneGameplayAbility : public UGameplayAbility
 
 public:
 	/*** `@BC`   描述: 蓝图纯函数   `BC@` ***/
-	UFUNCTION(BlueprintPure, Category = "Kitsune|Ability")
+	UFUNCTION(BlueprintPure, Category = "Kitsune | Ability")
 	UKitsuneCombatComponent* GetPawnCombatComponentFromActorInfo() const;
 
 protected:
@@ -39,16 +39,19 @@ protected:
 	                        bool bWasCancelled) override;
 	/***   ...UGameplayAbility Interface End...     ***/
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune|Policy")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune | Policy")
 	EKitsuneAbilityActivationPolicy ActivationPolicy = EKitsuneAbilityActivationPolicy::OnTriggered;
 
-	UFUNCTION(BlueprintPure, Category = "Kitsune|Ability")
+	UFUNCTION(BlueprintPure, Category = "Kitsune | Player")
 	FGameplayEffectSpecHandle MakeWeaponDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass,
 		FGameplayTag AttackType,
 		float AttackPowerMultiplier) const;
 
-	static FActiveGameplayEffectHandle NativeApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,
-	                                                                   AActor* TargetActor);
+	UFUNCTION(BlueprintPure, Category = "KItsune | Enemy")
+	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& DamageScalableFloat) const;
+
+
+	static FActiveGameplayEffectHandle NativeApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,AActor* TargetActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Kitsune|Ability",
 		meta = (DesplayName = "ApplyGameplayEffectSpecToTarget", ExpandEnumAsExecs = ApplySuccessType))

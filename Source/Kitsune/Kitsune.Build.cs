@@ -19,7 +19,9 @@ public class Kitsune : ModuleRules
 			"CommonInput",
 			"PropertyPath",
             "UMG",
-			"AnimGraphRuntime"
+			"AnimGraphRuntime",
+			"AIModule",
+			"MotionWarping"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -11,3 +11,4 @@ void UWidgetMainHudScreen::InitializeMainHudScreen()
 	CachedPlayerViewModel->OnHealthPercentChanged.Broadcast();
 	CachedPlayerViewModel->OnStaminaPercentChanged.Broadcast();
 }
+  

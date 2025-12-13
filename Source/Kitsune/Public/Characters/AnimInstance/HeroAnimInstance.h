@@ -6,6 +6,7 @@
 #include "Characters/AnimInstance/KitsuneAnimInstance.h"
 #include "HeroAnimInstance.generated.h"
 
+class ACharacterBase;
 class UCharacterMovementComponent;
 class AKitsuneCharacter;
 /**
@@ -24,7 +25,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LocomotionData")
-	AKitsuneCharacter* OwningCharacter = nullptr;
+	ACharacterBase* OwningCharacter = nullptr;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LocomotionData")
 	UCharacterMovementComponent* OwningMovementComponent;

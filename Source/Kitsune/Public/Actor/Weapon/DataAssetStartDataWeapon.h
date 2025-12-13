@@ -26,8 +26,12 @@ public:
 	void GiveWeaponInitialAbilityToASC(UAbilitySystemComponent* TargetASC) const;
 	void RemoveWeaponInitialAbilityFromASC(UAbilitySystemComponent* TargetASC) const;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UTexture2D> WeaponIcon;
 protected:
 	/*** `@BC`   描述: 拾取或携带武器后初始能力   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly,Category = "Ability", meta = (ForceInlineRow, Categories = "InputTag.Weapon"))
 	FAbilityInfo InitialCarriedAbility;
+
+
 };

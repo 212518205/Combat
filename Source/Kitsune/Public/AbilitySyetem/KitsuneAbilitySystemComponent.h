@@ -18,4 +18,7 @@ public:
 	/*** `@BC`   描述: 输入触发依据InputTag激活对应能力   `BC@` ***/
 	void OnAbilityInputPressed(const FGameplayTag& InputTag);
 	void OnAbilityInputReleased(const FGameplayTag& InputTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Trriger")
+	bool TryActivateAbilityByTag(FGameplayTag ActivateAbilityTag);
 };

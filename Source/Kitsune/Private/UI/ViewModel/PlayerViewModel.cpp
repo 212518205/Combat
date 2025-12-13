@@ -7,3 +7,9 @@ void UPlayerViewModel::BindCallback()
 {
 	Super::BindCallback();
 }
+
+void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWeaponIcon)
+{
+	WeaponIcon = InWeaponIcon;
+	OnWeaponChanged.Broadcast();
+}

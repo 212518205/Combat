@@ -49,4 +49,7 @@ public:
 		meta = (DisplayName = "Check Chance Hit Result", ExpandBoolAsExecs = "OutHitResult"))
 	static void BP_CheckHitResult(const float HitChance, bool& OutHitResult);
 
+	UFUNCTION(BlueprintPure, Category = "FunctionLibrary|")
+	static bool IsHostileToPawn(const APawn* QueryPawn, const APawn* TargetPawn);
+
 };

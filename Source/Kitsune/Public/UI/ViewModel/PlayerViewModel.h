@@ -16,4 +16,13 @@ class KITSUNE_API UPlayerViewModel : public UAttributeViewModel
 
 public:
 	virtual void BindCallback() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerWeaponIcon(TSoftObjectPtr<UTexture2D> InWeaponIcon);
+
+	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
+	FOnAttributeChangedDelegate OnWeaponChanged;
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
+	TSoftObjectPtr<UTexture2D> WeaponIcon;
 };

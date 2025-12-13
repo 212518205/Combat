@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
-#include "Interfaces/PawnCombatInterface.h"
 #include "EnemyCharacter.generated.h"
 
 class UEnemyViewModel;
@@ -16,7 +15,7 @@ class UWidgetComponent;
  * 
  */
 UCLASS()
-class KITSUNE_API AEnemyCharacter : public ACharacterBase, public IPawnCombatInterface
+class KITSUNE_API AEnemyCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 

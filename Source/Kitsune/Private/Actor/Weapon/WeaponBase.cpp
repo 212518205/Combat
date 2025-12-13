@@ -1,11 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
+// ReSharper disable CppMemberFunctionMayBeConst
 #include "Actor/Weapon/WeaponBase.h"
 
 #include "Actor/Weapon/DataAssetStartDataWeapon.h"
 #include "Characters/KitsuneCharacter.h"
 #include "Components/BoxComponent.h"
+#include "FunctionLibrary/KitsuneFunctionLibrary.h"
 
 AWeaponBase::AWeaponBase()
 {
@@ -38,7 +40,10 @@ void AWeaponBase::OnWeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	if (APawn* HitPawn=Cast<APawn>(OtherActor))
 	{
-		WeaponBeginOverlap.ExecuteIfBound(HitPawn);
+		if (UKitsuneFunctionLibrary::IsHostileToPawn(GetInstigator(),HitPawn))
+		{
+			WeaponBeginOverlap.ExecuteIfBound(HitPawn);
+		}
 	}
 }
 
@@ -46,11 +51,14 @@ void AWeaponBase::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	const APawn* WeaponPawn = GetInstigator<APawn>();
-	check(WeaponPawn)
+	check(WeaponPawn);
 
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		WeaponEndOverlap.ExecuteIfBound(HitPawn);
+		if (UKitsuneFunctionLibrary::IsHostileToPawn(GetInstigator(), HitPawn))
+		{
+			WeaponBeginOverlap.ExecuteIfBound(HitPawn);
+		}
 	}
 }
 

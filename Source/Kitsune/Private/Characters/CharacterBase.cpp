@@ -2,14 +2,14 @@
 
 
 #include "Characters/CharacterBase.h"
-
-#include "Component/Combat/PlayerCombatComponent.h"
+#include "MotionWarpingComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
  	PrimaryActorTick.bCanEverTick = false;
 
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarpingComponent");
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
