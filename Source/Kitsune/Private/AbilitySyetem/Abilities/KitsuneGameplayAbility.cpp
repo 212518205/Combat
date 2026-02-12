@@ -5,14 +5,18 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "Chaos/Deformable/MuscleActivationConstraints.h"
+#include "UIManagerSubsystem.h"
 #include "Component/Combat/KitsuneCombatComponent.h"
-#include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 
 UKitsuneCombatComponent* UKitsuneGameplayAbility::GetPawnCombatComponentFromActorInfo() const
 {
 	return GetAvatarActorFromActorInfo()->FindComponentByClass<UKitsuneCombatComponent>();
+}
+
+UPlayerViewModel* UKitsuneGameplayAbility::GetOwningViewModel() const
+{
+	return Cast<UPlayerViewModel>(UUIManagerSubsystem::GetUIManager(GetWorld())->GetViewModelByActor(GetAvatarActorFromActorInfo()));
 }
 
 void UKitsuneGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,

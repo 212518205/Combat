@@ -3,13 +3,58 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FrontendDebugHelper.h"
 #include "GameplayTagContainer.h"
+#include "Component/KitsuneExtensionComponent.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "KitsuneFunctionLibrary.generated.h"
 
+class UKitsuneExtensionComponent;
 class UKitsuneAbilitySystemComponent;
 class UKitsuneCombatComponent;
+
+namespace KitsuneNet
+{
+	template<typename ObjectType, typename PropertyType>
+	FORCEINLINE bool SetReplicatedProperty(ObjectType* Object, PropertyType& Property, const PropertyType& NewValue, void (ObjectType::*OnRep)() = nullptr)
+	{
+		if (!IsValid(Object))
+		{
+			Debug::Print(TEXT("SetReplicatedProperty: Object 无效"));
+			return false;
+		}
+
+		const APawn* Pawn = nullptr;
+		if (const UKitsuneExtensionComponent* Owner = Cast<UKitsuneExtensionComponent>(Object))
+		{
+			Pawn = Owner->GetOwningPawn();
+		}else
+		{
+			Debug::Print(TEXT("Object 不是 KitsuneExtensionComponent!"));
+			return false;
+		}
+
+		if (!Pawn->HasAuthority())
+		{
+			Debug::Print(TEXT("SetReplicatedProperty: 客户端尝试设置"));
+				return false;
+		}
+		Property = NewValue;
+		if (UWorld* World = Pawn->GetWorld();World && OnRep)
+		{
+			if (const ENetMode NetMode = World->GetNetMode(); NetMode == NM_ListenServer || NetMode == NM_Standalone)
+			{
+				if (NetMode != NM_ListenServer || Pawn->IsLocallyControlled())
+				{
+					(Object->*OnRep)();
+				}
+			}
+		}
+		return true;
+	}
+}
+
 /**
  * 
  */

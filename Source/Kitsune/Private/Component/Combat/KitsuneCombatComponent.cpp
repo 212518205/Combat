@@ -5,19 +5,23 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "FrontendDebugHelper.h"
+#include "UIManagerSubsystem.h"
 #include "AbilitySyetem/KitsuneAttributeSet.h"
+#include "Actor/Weapon/DataAssetStartDataWeapon.h"
 #include "Actor/Weapon/WeaponBase.h"
 #include "Characters/EnemyCharacter.h"
 #include "Characters/KitsuneCharacter.h"
 #include "Components/BoxComponent.h"
+#include "FunctionLibrary/KitsuneFunctionLibrary.h"
+#include "Net/UnrealNetwork.h"
+#include "UI/ViewModel/PlayerViewModel.h"
 
 
-void UKitsuneCombatComponent::RegisterCarriedWeapon(const FGameplayTag InWeaponTag, AWeaponBase* NewWeapon,
-                                                    const bool bRegisterAndEquip)
+void UKitsuneCombatComponent::RegisterCarriedWeapon_Implementation(AWeaponBase* NewWeapon, const bool bRegisterAndEquip)
 {
-	if (InWeaponTag.IsValid() && NewWeapon)
+	if (NewWeapon)
 	{
-		CarriedWeaponMap.Add(InWeaponTag, NewWeapon);
+		CarriedWeapons.Add(NewWeapon);
 
 		NewWeapon->WeaponBeginOverlap.BindUObject(this, &ThisClass::OnHitTargetActor);
 		NewWeapon->WeaponEndOverlap.BindUObject(this, &ThisClass::OnPulledFromTargetActor);
@@ -27,18 +31,25 @@ void UKitsuneCombatComponent::RegisterCarriedWeapon(const FGameplayTag InWeaponT
 		}
 		if (bRegisterAndEquip)
 		{
-			SetCurrentWeapon(InWeaponTag);
+			SetCurrentWeapon(NewWeapon->WeaponTag);
 		}
 	}
 }
 
+UKitsuneCombatComponent::UKitsuneCombatComponent()
+{
+	SetIsReplicated(true);
+}
+
 AWeaponBase* UKitsuneCombatComponent::FindWeaponByTag(const FGameplayTag& WeaponTag) const
 {
-	if (const TObjectPtr<AWeaponBase>* FoundWeapon = CarriedWeaponMap.Find(WeaponTag))
-	{
-		return *FoundWeapon;
-	}
-	return nullptr;
+	const TObjectPtr<AWeaponBase>* FoundWeapon = CarriedWeapons.FindByPredicate(
+		[&WeaponTag](const TObjectPtr<AWeaponBase>& Weapon)
+		{
+			return Weapon && Weapon->WeaponTag == WeaponTag;
+		});
+
+	return FoundWeapon ? *FoundWeapon : nullptr;
 }
 
 AWeaponBase* UKitsuneCombatComponent::GetCurrentCarriedWeapon() const
@@ -50,38 +61,70 @@ AWeaponBase* UKitsuneCombatComponent::GetCurrentCarriedWeapon() const
 	return nullptr;
 }
 
-AWeaponBase* UKitsuneCombatComponent::SetCurrentWeapon(const FGameplayTag& WeaponTag)
+void UKitsuneCombatComponent::SetCurrentWeapon_Implementation(const FGameplayTag& WeaponTag)
 {
-	AWeaponBase* NewWeaponBase = FindWeaponByTag(WeaponTag);
-	const AWeaponBase* OldWeaponBase = GetCurrentCarriedWeapon();
-	ACharacterBase* CharacterBase = Cast<ACharacterBase>(GetOwningPawn());
+	ACharacterBase* OwningCharacter = Cast<ACharacterBase>(GetOwningPawn());
 
-	if (OldWeaponBase)
+
+
+	if (const AWeaponBase* LastWeapon = GetCurrentCarriedWeapon())
 	{
-		OldWeaponBase->UnequipWeaponFromCharacter(CharacterBase);
+		LastWeapon->UnequipWeaponFromCharacter(OwningCharacter);
+	}
+	if (const AWeaponBase* CurrentFoundWeapon = FindWeaponByTag(WeaponTag))
+	{
+		CurrentFoundWeapon->EquipWeaponToCharacter(OwningCharacter);
 	}
 
-	CurrentWeaponTag = WeaponTag;
-
-	if (NewWeaponBase)
-	{
-		NewWeaponBase->EquipWeaponToCharacter(CharacterBase);
-	}
-
-	return NewWeaponBase;
+	KitsuneNet::SetReplicatedProperty(this, CurrentWeaponTag, WeaponTag, &ThisClass::SwitchWeaponIcon);
+	
 }
 
-void UKitsuneCombatComponent::ToggleWeaponCollision(const bool bEnable)
+
+
+void UKitsuneCombatComponent::ToggleWeaponCollision_Implementation(bool bEnable)
 {
 	AWeaponBase* ToggledWeapon = GetCurrentCarriedWeapon();
 	if (!ToggledWeapon)return;
 	if (bEnable)
 	{
 		ToggledWeapon->GetWeaponBoxCollision()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	}else
+	}
+	else
 	{
 		ToggledWeapon->GetWeaponBoxCollision()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		OverlappedActors.Empty();
+	}
+}
+
+void UKitsuneCombatComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(UKitsuneCombatComponent, CurrentWeaponTag, COND_None);
+	DOREPLIFETIME_CONDITION(UKitsuneCombatComponent, CarriedWeapons, COND_None);
+}
+
+void UKitsuneCombatComponent::OnRep_CurrentWeaponTag()
+{
+
+	if (GetOwnerRole() == ROLE_AutonomousProxy)
+	{
+		SwitchWeaponIcon();
+	}
+}
+
+void UKitsuneCombatComponent::SwitchWeaponIcon() 
+{
+	const AWeaponBase* CurrentWeapon = GetCurrentCarriedWeapon();
+	TSoftObjectPtr<UTexture2D> WeaponIcon;
+	if (CurrentWeapon)
+	{
+		WeaponIcon = CurrentWeapon->GetWeaponInfo()->WeaponIcon;
+	}
+	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->GetPlayerViewModel())
+	{
+		LocalViewModel->SetPlayerWeaponIcon(WeaponIcon);
 	}
 }
 

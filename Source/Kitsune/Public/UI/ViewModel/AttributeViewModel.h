@@ -17,6 +17,7 @@ class KITSUNE_API UAttributeViewModel : public UViewModelBase
 	GENERATED_BODY()
 
 public:
+
 	virtual void BindCallback() override;
 
 	/*** `@BC`   描述: 已捕获的属性值变化后需在蓝图处理   `BC@` ***/

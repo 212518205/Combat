@@ -13,6 +13,8 @@ AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	bReplicates = true;
+
 	ItemOverlapBox = CreateDefaultSubobject<UBoxComponent>(TEXT("ItemOverlapBox"));
 	ItemOverlapBox->SetupAttachment(GetRootComponent());
 	ItemOverlapBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);

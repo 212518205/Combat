@@ -32,8 +32,11 @@ public:
 	void GiveWeaponInitialAbilityToASC(UAbilitySystemComponent* TargetASC) const;
 
 	FORCEINLINE UBoxComponent* GetWeaponBoxCollision() { return ItemOverlapBox; }
+	FORCEINLINE UDataAssetStartDataWeapon* GetWeaponInfo() const { return WeaponDataInfo; }
 
-public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	FGameplayTag WeaponTag;
+
 	FOnWeaponOverlapChangedDelegate WeaponBeginOverlap;
 	FOnWeaponOverlapChangedDelegate WeaponEndOverlap;
 
@@ -55,4 +58,5 @@ protected:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	int32 WeaponLevel = 1;
+
 };

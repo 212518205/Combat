@@ -12,7 +12,7 @@ class KITSUNE_API UKitsuneExtensionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	template<class T>
 	T* GetOwningPawn() const
 	{

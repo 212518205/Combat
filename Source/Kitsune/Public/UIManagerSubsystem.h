@@ -40,11 +40,14 @@ public:
 
 	/*** `@BC`   描述: ViewModel相关   `BC@` ***/
 	void RegisterPlayerViewModel(UPlayerViewModel* InViewModel);
+
 	template<typename T = UAttributeViewModel>
 	T* TryGetViewModelByActor(AActor* InActor);
+
 	UPlayerViewModel* GetPlayerViewModel() const;
-	UFUNCTION(BlueprintCallable, Category = "ViewModel", meta = (ExpandBoolAsExecs = "OutViewModelIsValid"))
-	UAttributeViewModel* GetViewModelByActor(AActor* InActor, bool& OutViewModelIsValid);
+
+	UFUNCTION(BlueprintCallable, Category = "ViewModel")
+	UAttributeViewModel* GetViewModelByActor(AActor* InActor);
 
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,

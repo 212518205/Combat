@@ -56,10 +56,13 @@ UPlayerViewModel* UUIManagerSubsystem::GetPlayerViewModel() const
 	return PlayerViewModel;
 }
 
-UAttributeViewModel* UUIManagerSubsystem::GetViewModelByActor(AActor* InActor, bool& OutViewModelIsValid)
+UAttributeViewModel* UUIManagerSubsystem::GetViewModelByActor(AActor* InActor)
 {
+	if (!InActor)return nullptr;
+
+	if (const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); PlayerController && PlayerController->GetPawn() == InActor)return PlayerViewModel;
+
 	UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InActor);
-	OutViewModelIsValid = FoundViewModel != nullptr;
 	return FoundViewModel ? *FoundViewModel : nullptr;
 }
 
