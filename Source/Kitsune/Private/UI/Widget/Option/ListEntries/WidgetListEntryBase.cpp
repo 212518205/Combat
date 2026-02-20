@@ -10,10 +10,9 @@ void UWidgetListEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
 	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
 
-	OnOwningListDataHandle(CastChecked<UListDataObjectBase>(ListItemObject));
+	OnOwningListDataHandle(ListItemObject);
 }
 
-void UWidgetListEntryBase::OnOwningListDataHandle(UListDataObjectBase* ItemData)
+void UWidgetListEntryBase::OnOwningListDataHandle(UObject* ItemData)
 {
-	CommonTextBlock_ListEntryTitle->SetText(ItemData->GetDataDisplayName());
 }

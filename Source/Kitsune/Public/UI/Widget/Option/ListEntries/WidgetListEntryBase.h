@@ -19,10 +19,7 @@ class KITSUNE_API UWidgetListEntryBase : public UCommonUserWidget,public IUserOb
 
 protected:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
-	virtual void OnOwningListDataHandle(UListDataObjectBase* ItemData);
+	virtual void OnOwningListDataHandle(UObject* ItemData);
 
-	/** Variable Begin*/
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> CommonTextBlock_ListEntryTitle;
-	/** Variable End*/
+	
 };

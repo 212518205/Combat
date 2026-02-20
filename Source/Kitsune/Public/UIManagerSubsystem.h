@@ -39,15 +39,14 @@ public:
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
 	/*** `@BC`   描述: ViewModel相关   `BC@` ***/
-	void RegisterPlayerViewModel(UPlayerViewModel* InViewModel);
+	UFUNCTION(BlueprintCallable, Category = "ViewModel", meta = (ExpandBoolAsExecs = "bIsValid"))
+	UPlayerViewModel* GetLocalViewModel(bool& bIsValid);
 
 	template<typename T = UAttributeViewModel>
-	T* TryGetViewModelByActor(AActor* InActor);
-
-	UPlayerViewModel* GetPlayerViewModel() const;
+	T* TryGetViewModelByActor(APawn* InPawn);
 
 	UFUNCTION(BlueprintCallable, Category = "ViewModel")
-	UAttributeViewModel* GetViewModelByActor(AActor* InActor);
+	UAttributeViewModel* GetViewModelByPawn(APawn* InPawn);
 
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
@@ -75,30 +74,23 @@ protected:
 	UPROPERTY()
 	UWidgetPrimaryLayout* RegisteredPrimaryLayout=nullptr;
 
-	UPROPERTY(BlueprintReadOnly,Category = "ViewModel")
-	UPlayerViewModel* PlayerViewModel = nullptr;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Registered ViewModel")
-	TMap<AActor*, UAttributeViewModel*> RegisteredViewModels;
+	TMap<APawn*, UAttributeViewModel*> RegisteredViewModels;
 	/** Function End*/
 };
 
-template <typename T>
-T* UUIManagerSubsystem::TryGetViewModelByActor(AActor* InActor)
+template <class T>
+T* UUIManagerSubsystem::TryGetViewModelByActor(APawn* InPawn)
 {
-	if (UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InActor))
+	if (UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InPawn))
 	{
 		return CastChecked<T>(*FoundViewModel);
 	}
 
 	/*** REFACTOR: 需要添加继承自AbilityInterface的类，并且把获取属性集和能力系统组件的接口用接口类替换... [2025年10月28日 21:18:55 来自`@BC@`] ***/
-	const ACharacterBase* CharacterBase = CastChecked<ACharacterBase>(InActor);
 
-	UAbilitySystemComponent* AbilitySystemComponent = CharacterBase->GetAbilitySystemComponent();
-	UAttributeSet* AttributeSet = CharacterBase->GetAttributeSet();
-
-	T* ViewModel = UViewModelBase::GetViewModel<T>(AbilitySystemComponent, AttributeSet);
-	RegisteredViewModels.Add(InActor, ViewModel);
+	T* ViewModel = UViewModelBase::GetViewModel<T>(InPawn->GetController(), InPawn);
+	RegisteredViewModels.Add(InPawn, ViewModel);
 
 	return ViewModel;
 }

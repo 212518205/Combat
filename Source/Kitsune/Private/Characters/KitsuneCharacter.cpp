@@ -3,10 +3,12 @@
 
 #include "Characters/KitsuneCharacter.h"
 
+#include "FrontendDebugHelper.h"
 #include "UIManagerSubsystem.h"
 #include "Characters/Data/DataAssetStartDataBase.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 #include"GameFramework/CharacterMovementComponent.h"
+#include "Component/Interaction/InteractionComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 
@@ -20,6 +22,7 @@ AKitsuneCharacter::AKitsuneCharacter()
 	bUseControllerRotationRoll = false;
 
 	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
+	InteractComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractComponent"));
 }
 
 void AKitsuneCharacter::PossessedBy(AController* NewController)
@@ -41,6 +44,11 @@ UKitsuneCombatComponent* AKitsuneCharacter::GetKitsuneCombatComponent() const
 	return CombatComponent;
 }
 
+UInteractionComponent* AKitsuneCharacter::GetInteractionComp()
+{
+	return InteractComponent;
+}
+
 void AKitsuneCharacter::InitAbilityInfo()
 {
 	Super::InitAbilityInfo();
@@ -52,11 +60,10 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
 
-	if (IsLocallyControlled()&&GetNetMode()!=NM_DedicatedServer)
+	if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
 	{
 		if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
-			UPlayerViewModel* ViewModel = UAttributeViewModel::GetViewModel<UPlayerViewModel>(AbilitySystemComponent, AttributeSet);
-			UUIManagerSubsystem::GetUIManager(GetWorld())->RegisterPlayerViewModel(ViewModel);
+			UPlayerViewModel* ViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
 		}
 	}
 

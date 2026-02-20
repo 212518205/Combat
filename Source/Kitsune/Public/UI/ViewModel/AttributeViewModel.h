@@ -18,7 +18,7 @@ class KITSUNE_API UAttributeViewModel : public UViewModelBase
 
 public:
 
-	virtual void BindCallback() override;
+	virtual void NativeInitialize() override;
 
 	/*** `@BC`   描述: 已捕获的属性值变化后需在蓝图处理   `BC@` ***/
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
@@ -40,6 +40,13 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
 	float MaxStamina = 0.f;
+
+	/*** `@BC`   描述: Pawn衍生变量   `BC@` ***/
+	UPROPERTY(BlueprintReadWrite, Category = "Character")
+	TObjectPtr<UKitsuneAbilitySystemComponent> CachedKitsuneASC;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Character")
+	TObjectPtr<UKitsuneAttributeSet> CachedKitsuneAttributeSet;
 
 
 };

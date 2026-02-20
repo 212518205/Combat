@@ -3,7 +3,7 @@
 
 #include "UI/ViewModel/EnemyViewModel.h"
 
-void UEnemyViewModel::BindCallback()
+void UEnemyViewModel::NativeInitialize()
 {
-	Super::BindCallback();
+	Super::NativeInitialize();
 }

@@ -18,7 +18,7 @@ class KITSUNE_API UWidgetListEntryString : public UWidgetListEntryBase
 	GENERATED_BODY()
 
 protected:
-	virtual void OnOwningListDataHandle(UListDataObjectBase* ItemData) override;
+	virtual void OnOwningListDataHandle(UObject* ItemData) override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UKitsuneComboBoxString> ComboBoxString_OptionalData;
@@ -30,5 +30,8 @@ private:
 	/** Variable Begin*/
 	UPROPERTY(Transient)
 	TObjectPtr<UListDataObjectString> CachedDataObjectString;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> CommonTextBlock_ListEntryTitle;
 	/** Variable End*/
 };

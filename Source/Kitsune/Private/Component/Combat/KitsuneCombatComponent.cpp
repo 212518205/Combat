@@ -114,15 +114,16 @@ void UKitsuneCombatComponent::OnRep_CurrentWeaponTag()
 	}
 }
 
-void UKitsuneCombatComponent::SwitchWeaponIcon() 
+void UKitsuneCombatComponent::SwitchWeaponIcon()
 {
 	const AWeaponBase* CurrentWeapon = GetCurrentCarriedWeapon();
+	if (!GetOwningPawn()->IsA(AKitsuneCharacter::StaticClass()))return;
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
 	if (CurrentWeapon)
 	{
 		WeaponIcon = CurrentWeapon->GetWeaponInfo()->WeaponIcon;
 	}
-	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->GetPlayerViewModel())
+	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPawn()))
 	{
 		LocalViewModel->SetPlayerWeaponIcon(WeaponIcon);
 	}

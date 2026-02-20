@@ -9,12 +9,12 @@
 
 
 
-void UWidgetListEntryRemap::OnOwningListDataHandle(UListDataObjectBase* ItemData)
+void UWidgetListEntryRemap::OnOwningListDataHandle(UObject* ItemData)
 {
 	Super::OnOwningListDataHandle(ItemData);
 
 	CachedDataObjectRemap = CastChecked<UListDataObjectRemap>(ItemData);
-
+	CommonTextBlock_ListEntryTitle->SetText(CachedDataObjectRemap->GetDataDisplayName());
 	InputKeySelector_MappableKey->SetSelectedKey(CachedDataObjectRemap->GetCurrentKey());
 	InputKeySelector_MappableKey->OnKeySelected.AddUniqueDynamic(this, &ThisClass::OnMappableKeyChanged);
 

@@ -16,25 +16,25 @@ class KITSUNE_API UViewModelBase : public UObject
 	GENERATED_BODY()
 
 public:
-	template<typename T>
-	static T* GetViewModel(UAbilitySystemComponent* InASC, UAttributeSet* InAS);
+	virtual void NativeInitialize() {}
 
-
-	virtual void BindCallback() {}
+	template <class T = UViewModelBase>
+	static T* GetViewModel(AController* InController, APawn* InPawn);
 
 protected:
-	UPROPERTY(BlueprintReadOnly,Category="Player",meta = (AllowPrivateAccess = "true"))
-	UKitsuneAbilitySystemComponent* AbilitySystemComponent = nullptr;
+	UPROPERTY(BlueprintReadOnly,Category="Player")
+	AController* OwningController = nullptr;
 
-	UPROPERTY(BlueprintReadOnly,Category="Player",meta = (AllowPrivateAccess = "true"))
-	UKitsuneAttributeSet* AttributeSet = nullptr;
+	UPROPERTY(BlueprintReadOnly,Category="Player")
+	APawn* OwningPawn = nullptr;
 };
 
-template<typename T>
-inline T* UViewModelBase::GetViewModel(UAbilitySystemComponent* InASC, UAttributeSet* InAS)
+template<class T>
+inline T* UViewModelBase::GetViewModel(AController* InController, APawn* InPawn)
 {
 	T* ViewModel = NewObject<T>();
-	ViewModel->AbilitySystemComponent = Cast<UKitsuneAbilitySystemComponent>(InASC);
-	ViewModel->AttributeSet = Cast<UKitsuneAttributeSet>(InAS);
+	ViewModel->OwningController = InController;
+	ViewModel->OwningPawn = InPawn;
+	ViewModel->NativeInitialize();
 	return ViewModel;
 }

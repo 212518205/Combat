@@ -3,6 +3,9 @@
 
 #include "UI/Widget/Components/KitsuneCommonListView.h"
 
+#include "FrontendDebugHelper.h"
+#include "Inventory/InventoryItemInstance.h"
+#include "Inventory/InventoryItemTrait.h"
 #include "UI/DataObjects/ListDataObjectCollection.h"
 #include "UI/Widget/Components/ListEntryMapping.h"
 #include "UI/Widget/Option/ListEntries/WidgetListEntryBase.h"
@@ -15,9 +18,19 @@ UUserWidget& UKitsuneCommonListView::OnGenerateEntryWidgetInternal(UObject* Item
 		return Super::OnGenerateEntryWidgetInternal(Item, DesiredEntryClass, OwnerTable);
 	}
 
-	if (const auto FoundEntryClass=ListEntryMapping->FindEntryClassByDataObject(CastChecked<UListDataObjectBase>(Item)))
+	if (Item->IsA(UInventoryItemInstance::StaticClass()))
 	{
-		return GenerateTypedEntry<UWidgetListEntryBase>(FoundEntryClass, OwnerTable);
+		if (const auto FoundEntryClass = ListEntryMapping->FindEntryClassByItemInstance(CastChecked<UInventoryItemInstance>(Item)))
+		{
+			return GenerateTypedEntry<UWidgetListEntryBase>(FoundEntryClass, OwnerTable);
+		}
+	}
+	else
+	{
+		if (const auto FoundEntryClass = ListEntryMapping->FindEntryClassByDataObject(CastChecked<UListDataObjectBase>(Item)))
+		{
+			return GenerateTypedEntry<UWidgetListEntryBase>(FoundEntryClass, OwnerTable);
+		}
 	}
 	return Super::OnGenerateEntryWidgetInternal(Item, DesiredEntryClass, OwnerTable);
 }

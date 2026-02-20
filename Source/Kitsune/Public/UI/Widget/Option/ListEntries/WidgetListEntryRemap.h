@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "ButtonStyle")
 	void OnSetupButtonStyle(const FKey& InCurrentKey);
 protected:
-	virtual void OnOwningListDataHandle(UListDataObjectBase* ItemData) override;
+	virtual void OnOwningListDataHandle(UObject* ItemData) override;
 
 	UFUNCTION()
 	void OnMappableKeyChanged(FInputChord SelectedKey);
@@ -33,6 +33,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UInputKeySelector> InputKeySelector_MappableKey;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> CommonTextBlock_ListEntryTitle;
 
 private:
 	UPROPERTY(Transient)

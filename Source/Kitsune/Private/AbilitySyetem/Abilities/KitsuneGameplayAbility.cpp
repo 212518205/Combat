@@ -16,7 +16,7 @@ UKitsuneCombatComponent* UKitsuneGameplayAbility::GetPawnCombatComponentFromActo
 
 UPlayerViewModel* UKitsuneGameplayAbility::GetOwningViewModel() const
 {
-	return Cast<UPlayerViewModel>(UUIManagerSubsystem::GetUIManager(GetWorld())->GetViewModelByActor(GetAvatarActorFromActorInfo()));
+	return Cast<UPlayerViewModel>(UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor(Cast<APawn>(GetAvatarActorFromActorInfo())));
 }
 
 void UKitsuneGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,

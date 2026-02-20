@@ -6,6 +6,9 @@
 #include "Engine/DataAsset.h"
 #include "ListEntryMapping.generated.h"
 
+class UInventoryItemInstance;
+class UInventoryItemTrait;
+class UListEntry_Interact;
 class UListDataObjectBase;
 class UWidgetListEntryBase;
 /**
@@ -19,7 +22,11 @@ class KITSUNE_API UListEntryMapping : public UDataAsset
 public:
 	TSubclassOf<UWidgetListEntryBase> FindEntryClassByDataObject(const UListDataObjectBase* InListDataObject) const;
 
+	TSubclassOf<UWidgetListEntryBase> FindEntryClassByItemInstance(UInventoryItemInstance* InItemInstance) const;
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TSubclassOf<UListDataObjectBase>, TSubclassOf<UWidgetListEntryBase>> ListEntryClassMapping;
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TSubclassOf<UInventoryItemInstance>, TSubclassOf<UWidgetListEntryBase>> InteractListEntryMapping;
 };

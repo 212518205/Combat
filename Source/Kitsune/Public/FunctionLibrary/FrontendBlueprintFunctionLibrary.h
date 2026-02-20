@@ -25,8 +25,5 @@ public:
 	static TSoftClassPtr<UWidgetActivatableBase> GetScreenSoftWidgetClassByTag(UPARAM(meta=(Categories="UI.Widget"))
 		const FGameplayTag InWidgetTag);
 
-	UFUNCTION(BlueprintPure, Category = "Frontend | ViewModel", meta = (WorldContext = "WorldContextObject"))
-	static UPlayerViewModel* GetPlayerViewModel(const UObject* WorldContextObject);
-
 };
 

@@ -6,6 +6,7 @@
 #include "Engine/AssetManager.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
+#include "Kismet/GameplayStatics.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 #include "UI/ViewModel/PlayerViewModel.h"
 #include "UI/Widget/WidgetConfirmScreen.h"
@@ -34,11 +35,31 @@ bool UUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	return false;
 }
 
-void UUIManagerSubsystem::RegisterPlayerViewModel(UPlayerViewModel* InViewModel)
+UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
 {
-	PlayerViewModel = InViewModel;
-	PlayerViewModel->BindCallback();
+	bIsValid = false;
+
+	const UGameInstance* GameInstance = GetGameInstance();
+	if (!GameInstance) return nullptr;
+
+	const UWorld* World = GameInstance->GetWorld();
+	if (!World) return nullptr;
+
+	const APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
+	if (!PC) return nullptr;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return nullptr;
+
+	UPlayerViewModel* VM = TryGetViewModelByActor<UPlayerViewModel>(Pawn);
+	if (VM)
+	{
+		bIsValid = true;
+	}
+	return VM;
 }
+
+
 
 void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout)
 {
@@ -51,18 +72,12 @@ void UUIManagerSubsystem::DeActivableStackByTag(FGameplayTag InTag) const
 	RegisteredPrimaryLayout->DeActivableWidgetStackByTag(InTag);
 }
 
-UPlayerViewModel* UUIManagerSubsystem::GetPlayerViewModel() const
+
+UAttributeViewModel* UUIManagerSubsystem::GetViewModelByPawn(APawn* InPawn)
 {
-	return PlayerViewModel;
-}
+	if (!InPawn)return nullptr;
 
-UAttributeViewModel* UUIManagerSubsystem::GetViewModelByActor(AActor* InActor)
-{
-	if (!InActor)return nullptr;
-
-	if (const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); PlayerController && PlayerController->GetPawn() == InActor)return PlayerViewModel;
-
-	UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InActor);
+	UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InPawn);
 	return FoundViewModel ? *FoundViewModel : nullptr;
 }
 

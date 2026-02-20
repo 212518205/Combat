@@ -17,6 +17,7 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+
 UAttributeSet* ACharacterBase::GetAttributeSet() const
 {
 	return AttributeSet;

@@ -59,7 +59,6 @@ UEnemyViewModel* AEnemyCharacter::GetEnemyViewModel()
 {
 	if (EnemyViewModel)return EnemyViewModel;
 	EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModelByActor<UEnemyViewModel>(this);
-	EnemyViewModel->BindCallback();
 
 	return EnemyViewModel;
 }

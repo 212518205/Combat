@@ -8,12 +8,12 @@
 #include "UI/DataObjects/ListDataObjectString.h"
 #include "UI/Widget/Components/KitsuneComboBoxString.h"
 
-void UWidgetListEntryString::OnOwningListDataHandle(UListDataObjectBase* ItemData)
+void UWidgetListEntryString::OnOwningListDataHandle(UObject* ItemData)
 {
 	Super::OnOwningListDataHandle(ItemData);
 
-
 	CachedDataObjectString = CastChecked<UListDataObjectString>(ItemData);
+	CommonTextBlock_ListEntryTitle->SetText(CachedDataObjectString->GetDataDisplayName());
 
 	ComboBoxString_OptionalData->AddOptions(CachedDataObjectString->GetDisplayOptions());
 	ComboBoxString_OptionalData->ClearSelection();

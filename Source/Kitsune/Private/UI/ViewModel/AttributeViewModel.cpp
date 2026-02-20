@@ -3,12 +3,22 @@
 
 #include "UI/ViewModel/AttributeViewModel.h"
 
+#include "FrontendDebugHelper.h"
+#include "Characters/KitsuneCharacter.h"
 
-void UAttributeViewModel::BindCallback()
+
+void UAttributeViewModel::NativeInitialize()
 {
-	Super::BindCallback();
+	Super::NativeInitialize();
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetHealthAttribute()).AddLambda(
+	if (const ACharacterBase* OwningCharacter = Cast<ACharacterBase>(OwningPawn))
+	{
+		CachedKitsuneASC = Cast<UKitsuneAbilitySystemComponent>(OwningCharacter->GetAbilitySystemComponent());
+		CachedKitsuneAttributeSet = Cast<UKitsuneAttributeSet>(OwningCharacter->GetAttributeSet());
+	}
+
+	if (!(CachedKitsuneAttributeSet && CachedKitsuneASC))return;
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Health = Data.NewValue;
@@ -16,7 +26,7 @@ void UAttributeViewModel::BindCallback()
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxHealthAttribute()).AddLambda(
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxHealth = Data.NewValue;
@@ -24,7 +34,7 @@ void UAttributeViewModel::BindCallback()
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetStaminaAttribute()).AddLambda(
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetStaminaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Stamina = Data.NewValue;
@@ -32,7 +42,7 @@ void UAttributeViewModel::BindCallback()
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxStaminaAttribute()).AddLambda(
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxStaminaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxStamina = Data.NewValue;

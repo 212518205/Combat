@@ -15,9 +15,5 @@ TSoftClassPtr<UWidgetActivatableBase> UFrontendBlueprintFunctionLibrary::GetScre
 	return FrontendDeveloperSettings->FrontendWidgetMap.FindRef(InWidgetTag);
 }
 
-UPlayerViewModel* UFrontendBlueprintFunctionLibrary::GetPlayerViewModel(const UObject* WorldContextObject)
-{
-	return UUIManagerSubsystem::GetUIManager(WorldContextObject)->GetPlayerViewModel();
-}
 
 
