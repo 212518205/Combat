@@ -2,9 +2,12 @@
 
 
 #include "Player/KitsunePlayerController.h"
+
+#include "CommonInputModeTypes.h"
 #include"EnhancedInputSubsystems.h"
 #include"EnhancedInputComponent.h"
 #include "FrontendDebugHelper.h"
+#include "UIManagerSubsystem.h"
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Characters/KitsuneCharacter.h"
 #include "Input/KitsuneInputComponent.h"
@@ -19,9 +22,11 @@ void AKitsunePlayerController::BeginPlay()
 		UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (Subsystem) {
 		Subsystem->AddMappingContext(KitsuneContext, 0);
+		Subsystem->AddMappingContext(UIInputMappingContext, 50);
 		if (const auto InputUserSettings = Subsystem->GetUserSettings())
 		{
 			InputUserSettings->RegisterInputMappingContext(KitsuneContext);
+			InputUserSettings->RegisterInputMappingContext(UIInputMappingContext);
 		}
 	}
 }
@@ -37,6 +42,9 @@ void AKitsunePlayerController::SetupInputComponent()
 		this,&AKitsunePlayerController::Look);
 	KitsuneInputComponent->BindAction(JumpAction, ETriggerEvent::Started, 
 		this,&AKitsunePlayerController::Jump);
+
+	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Started, this, &ThisClass::OnPressed_ShowMouse);
+	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::OnReleased_ShowMouse);
 
 	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
 }
@@ -74,6 +82,8 @@ void AKitsunePlayerController::Move(const FInputActionValue& Value)
 
 void AKitsunePlayerController::Look(const FInputActionValue& Value)
 {
+	if (bForceMouse)return;
+
 	const FVector2D InputAxisVector = Value.Get<FVector2D>();
 
 	AddPitchInput(InputAxisVector.Y);
@@ -97,6 +107,40 @@ void AKitsunePlayerController::AbilityInputPressed(const FGameplayTag TriggeredT
 
 void AKitsunePlayerController::AbilityInputReleased(const FGameplayTag TriggeredTag)
 {
+}
+
+void AKitsunePlayerController::OnPressed_ShowMouse(const FInputActionValue& Value)
+{
+	bForceMouse = true;
+	UpdateMouse();
+}
+
+void AKitsunePlayerController::OnReleased_ShowMouse(const FInputActionValue& Value)
+{
+	bForceMouse = false;
+	UpdateMouse();
+}
+
+void AKitsunePlayerController::UpdateMouse()
+{
+	if (bForceMouse)
+	{
+		UUIManagerSubsystem::ExistedSetInputMode(
+			this,
+			ECommonInputMode::All,                        // 或 ECommonInputMode::GameAndMenu
+			EMouseCaptureMode::CaptureDuringMouseDown,
+			false   
+		);
+	}
+	else
+	{
+		UUIManagerSubsystem::ExistedSetInputMode(
+			this,
+			ECommonInputMode::Game,
+			EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown,
+			true   
+		);
+	}
 }
 
 UKitsuneAbilitySystemComponent* AKitsunePlayerController::GetKitsuneASCFromPawn()

@@ -11,6 +11,7 @@
 #include "UI/ViewModel/PlayerViewModel.h"
 #include "UI/Widget/WidgetConfirmScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
+#include "Input/CommonUIActionRouterBase.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
 
 UUIManagerSubsystem* UUIManagerSubsystem::GetUIManager(const UObject* WorldContextObject)
@@ -146,4 +147,47 @@ void UUIManagerSubsystem::PushConfirmScreenToModalStackAsync(const EConfirmScree
 			}
 		}
 	);
+}
+
+UCommonUIActionRouterBase* GetCommonUIActionRouter(const APlayerController* InPC)
+{
+	if (!InPC)
+	{
+		return nullptr;
+	}
+
+	ULocalPlayer* LocalPlayer = InPC->GetLocalPlayer();
+	if (!LocalPlayer)
+	{
+		return nullptr;
+	}
+
+	return LocalPlayer->GetSubsystem<UCommonUIActionRouterBase>();
+}
+
+void UUIManagerSubsystem::ExistedSetInputMode(
+	APlayerController* InPC,
+	const ECommonInputMode InMode,
+	const EMouseCaptureMode InCaptureMode,
+	const bool bHideCursor)
+{
+	if (!InPC || !InPC->GetWorld())
+	{
+		return;
+	}
+
+	const FUIInputConfig Config(InMode, InCaptureMode, bHideCursor);
+
+	if (UCommonUIActionRouterBase* Router = GetCommonUIActionRouter(InPC))
+	{
+		Router->SetActiveUIInputConfig(Config, InPC);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ExistedSetInputMode: Failed to get CommonUIActionRouterBase"));
+	}
+
+	InPC->bShowMouseCursor = !bHideCursor;
+	InPC->bEnableMouseOverEvents = !bHideCursor;
+	InPC->bEnableClickEvents = !bHideCursor;
 }

@@ -43,6 +43,9 @@ protected:
 	TObjectPtr<UInputMappingContext> KitsuneContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputMappingContext> UIInputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -50,6 +53,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputAction> ShowOrHiddenMouseAction;
 
 	/*** `@BC`   描述: 技能相关输入数据，需要在蓝图指定   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
@@ -63,7 +69,10 @@ protected:
 	void AbilityInputPressed(FGameplayTag TriggeredTag);
 	void AbilityInputReleased(FGameplayTag TriggeredTag);
 
-	/*** `@BC`   描述: 缓存所控制角色，减少消耗   `BC@` ***/
+	void OnPressed_ShowMouse(const FInputActionValue& Value);
+	void OnReleased_ShowMouse(const FInputActionValue& Value);
+	void UpdateMouse();
+	/*** `@BC`   描述: 缓存所控制角色   `BC@` ***/
 	UPROPERTY(Transient)
 	UKitsuneAbilitySystemComponent* CachedKitsuneAbilitySystemComponent = nullptr;
 
@@ -72,4 +81,7 @@ protected:
 
 private:
 	FGenericTeamId PlayerTeamId;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess))
+	bool bForceMouse = false;
 };

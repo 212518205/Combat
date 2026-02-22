@@ -55,6 +55,8 @@ public:
 	void PushConfirmScreenToModalStackAsync(
 		const EConfirmScreenType InScreenType, const FText& InScreenTitle, const FText& InScreenMsg, 
 		TFunction<void(EConfirmScreenButtonResult)> ButtonClickedCallback) const ;
+	static void ExistedSetInputMode(APlayerController* InPC, ECommonInputMode InMode, EMouseCaptureMode InCaptureMode,
+	                                bool bHideCursor);
 
 	UFUNCTION(BlueprintCallable)
 	void RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout);
