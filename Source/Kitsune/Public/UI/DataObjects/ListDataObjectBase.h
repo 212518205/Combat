@@ -36,8 +36,6 @@ public:
 
 	void InitDataObject();
 	/** Function End*/
-	/** Variable Begin*/
-	/** Variable End*/
 
 protected:
 	/** Function Begin*/

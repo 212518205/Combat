@@ -54,6 +54,13 @@ enum class EItemFeature : uint8
 	Equipable UMETA(DisplayName = "可装备"),
 	Combinable UMETA(DisplayName = "可合成"),
 };
-
 ENUM_CLASS_FLAGS(EItemFeature);
+
+UENUM(BlueprintType)
+enum class ETileViewEntryType : uint8
+{
+	DefaultMenuIcon,
+	LongerMenuIcon,
+	WiderMenuIcon,
+};
 

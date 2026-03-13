@@ -73,7 +73,7 @@ public:
 
 protected:
 	/** Function Begin*/
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UWidgetPrimaryLayout* RegisteredPrimaryLayout=nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Registered ViewModel")

@@ -4,7 +4,9 @@
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
 
 #include "FrontendDebugHelper.h"
+#include "FrontendTypes/FrontendStructTypes.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/Trait/ItemTrait_Interact.h"
 #include "UI/Widget/Components/KitsuneCommonListView.h"

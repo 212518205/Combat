@@ -24,7 +24,6 @@ public:
 	void SetCurrentGameDifficulty(const FString& InGameDifficulty);
 
 	/***  用于测试   ****/
-	// 自动瞄准设置
 	UFUNCTION()
 	FString GetCurrentAutoAim() { return CurrentAutoAim; }
 

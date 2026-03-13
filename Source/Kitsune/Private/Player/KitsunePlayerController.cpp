@@ -128,7 +128,7 @@ void AKitsunePlayerController::UpdateMouse()
 		UUIManagerSubsystem::ExistedSetInputMode(
 			this,
 			ECommonInputMode::All,                        // 或 ECommonInputMode::GameAndMenu
-			EMouseCaptureMode::CaptureDuringMouseDown,
+			EMouseCaptureMode::NoCapture,
 			false   
 		);
 	}
