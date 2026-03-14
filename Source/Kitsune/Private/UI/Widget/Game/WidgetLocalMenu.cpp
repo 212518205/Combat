@@ -4,9 +4,11 @@
 #include "UI/Widget/Game/WidgetLocalMenu.h"
 
 #include "UIManagerSubsystem.h"
+#include "Components/WrapBox.h"
 #include "FrontendTypes/FrontendStructTypes.h"
-#include "UI/DataObjects/Inventory/TileViewEntryData.h"
-#include "UI/Widget/Components/KitsuneCommonTileView.h"
+#include "UI/DataObjects/Inventory/MenuEntryData.h"
+#include "UI/Widget/Components/Entry/MenuEntryMapping.h"
+#include "UI/Widget/Components/Entry/Menu/MenuEntryBase.h"
 
 void UWidgetLocalMenu::NativeOnInitialized()
 {
@@ -38,7 +40,7 @@ void UWidgetLocalMenu::LoadAllMenuTileData()
     {
         const FMenuTileRow* TileRow = AllMenuDataRows[i];
 
-        UTileViewEntryData* EntryData = NewObject<UTileViewEntryData>(this);
+        UMenuEntryData* EntryData = NewObject<UMenuEntryData>(this);
         EntryData->DisplayIcon = TileRow->Icon.LoadSynchronous();
         EntryData->DisplayName = TileRow->DisplayName;
         EntryData->HotKeyText = TileRow->HotKeyText;
@@ -55,12 +57,18 @@ void UWidgetLocalMenu::LoadAllMenuTileData()
 void UWidgetLocalMenu::RefreshMenu()
 {
     LoadAllMenuTileData();
+    WrapBox_Menu->ClearChildren();
 
-    TileView_MenuTile->ClearListItems();
-    for (UTileViewEntryData* EntryData : CachedMenuTileData)
-    {   
-        if (EntryData->RequestLevel <= GetLocalPlayerViewModel()->GetLocalPlayerLevel()) {
-            TileView_MenuTile->AddItem(EntryData);
+    for (UMenuEntryData* EntryData : CachedMenuTileData)
+    {
+        if (EntryData->RequestLevel <= GetLocalPlayerViewModel()->GetLocalPlayerLevel())
+        {
+            TSubclassOf<UMenuEntryBase> FoundEntryClass = TileEntryMapping->FindEntryClassByEntryType(EntryData->EntryType);
+
+            UMenuEntryBase* WidgetEntry = CreateWidget<UMenuEntryBase>(this, FoundEntryClass);
+            WidgetEntry->NativeOnEntryInitialize(EntryData);
+
+            WrapBox_Menu->AddChildToWrapBox(WidgetEntry);
         }
     }
 }

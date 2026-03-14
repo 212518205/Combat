@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Widget/Components/Entry/TileEntryMapping.h"
+#include "UI/Widget/Components/Entry/MenuEntryMapping.h"
 
 
-TSubclassOf<UTileViewEntryBase> UTileEntryMapping::FindEntryClassByEntryType(const ETileViewEntryType& InEntryType) const
+TSubclassOf<UMenuEntryBase> UMenuEntryMapping::FindEntryClassByEntryType(const ETileViewEntryType& InEntryType) const
 {
 	for (auto [EntryType, TileEntryClass] : TileEntryClassMapping)
 	{

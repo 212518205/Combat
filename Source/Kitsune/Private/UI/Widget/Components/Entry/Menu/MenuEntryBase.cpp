@@ -1,17 +1,15 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Widget/Components/Entry/Menu/TileViewEntryBase.h"
+#include "UI/Widget/Components/Entry/Menu/MenuEntryBase.h"
 
 #include "CommonTextBlock.h"
 #include "Components/Image.h"
-#include "UI/DataObjects/Inventory/TileViewEntryData.h"
+#include "UI/DataObjects/Inventory/MenuEntryData.h"
 
-void UTileViewEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
+void UMenuEntryBase::NativeOnEntryInitialize(UObject* ListItemObject) const
 {
-	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
-
-	if (const UTileViewEntryData* EntryData = Cast<UTileViewEntryData>(ListItemObject))
+	if (const UMenuEntryData* EntryData = Cast<UMenuEntryData>(ListItemObject))
 	{
 		Image_DisplayImage->SetBrushFromTexture(EntryData->DisplayIcon);
 		CommonTextBlock_DisplayName->SetText(EntryData->DisplayName);

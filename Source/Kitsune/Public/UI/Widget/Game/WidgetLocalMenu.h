@@ -6,8 +6,10 @@
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "WidgetLocalMenu.generated.h"
 
+class UMenuEntryMapping;
+class UWrapBox;
 class UPlayerViewModel;
-class UTileViewEntryData;
+class UMenuEntryData;
 class UKitsuneCommonTileView;
 /**
  * 
@@ -31,11 +33,14 @@ protected:
 	TObjectPtr<UDataTable> MenuDataTable;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<UKitsuneCommonTileView> TileView_MenuTile;
+	TObjectPtr<UWrapBox> WrapBox_Menu;
 
 	UPROPERTY(BlueprintReadOnly)
-	TArray<UTileViewEntryData*> CachedMenuTileData;
+	TArray<UMenuEntryData*> CachedMenuTileData;
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UPlayerViewModel> CachedLocalViewModel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UMenuEntryMapping* TileEntryMapping;
 };

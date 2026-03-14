@@ -4,15 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
-#include "UObject/NoExportTypes.h"
-#include "TileViewEntryData.generated.h"
+#include "MenuEntryData.generated.h"
 
 
 /**
  * 
  */
 UCLASS()
-class KITSUNE_API UTileViewEntryData : public UObject
+class KITSUNE_API UMenuEntryData : public UObject
 {
 	GENERATED_BODY()
 
