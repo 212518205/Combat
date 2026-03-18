@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CommonUserWidget.h"
+#include "KitsuneClickableWidget.h"
+#include "Components/Image.h"
 #include "MenuEntryBase.generated.h"
 
+class UMenuEntryData;
 class UCommonLazyImage;
 class UCommonTextBlock;
 class UImage;
@@ -13,13 +15,13 @@ class UImage;
  * 
  */
 UCLASS()
-class KITSUNE_API UMenuEntryBase : public UCommonUserWidget
+class KITSUNE_API UMenuEntryBase : public UKitsuneClickableWidget
 {
 	GENERATED_BODY()
 
 public:
 	/***   ...IUserObjectListEntry Interface Begin...   ***/
-	void NativeOnEntryInitialize(UObject* ListItemObject) const;
+	void NativeOnEntryInitialize(UObject* ListItemObject);
 	/***   ...IUserObjectListEntry Interface End...     ***/
 	 
 protected:
@@ -36,4 +38,32 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> CommonTextBlock_HotKeyText;
 
+	UPROPERTY(BlueprintReadOnly)
+	UMenuEntryData* CachedEntryData;
+
+	/***   ...UKitsuneClickableWidget Interface Begin...   ***/
+	virtual void MouseEnter() override;
+	virtual void MouseLeave() override;
+	virtual void MouseDown() override;
+	virtual void MouseUp() override;
+	/***   ...UKitsuneClickableWidget Interface End...     ***/
+
+	/*** `@BC`   描述: 蓝图配置   `BC@` ***/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
+	FLinearColor DefaultIconColor = FLinearColor(0.f, 0.f, 0.f, 1.f);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
+	FLinearColor HoverIconColor = FLinearColor(255.f, 248.f, 220.f, 1.f);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
+	FLinearColor ClickIconColor = FLinearColor(255.f, 215.f, 0.f, 1.f);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
+	float DefaultBackgroundOpacity = 0.6;
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void RevertWidgetStyle() const { Image_DisplayImage->SetColorAndOpacity(DefaultIconColor); }
+
+	UFUNCTION(BlueprintCallable)
+	static void SetImageOpacity(UImage* InModifiedImage, const float InOpacity) { InModifiedImage->SetOpacity(InOpacity); }
 };
