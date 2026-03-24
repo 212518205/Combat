@@ -18,9 +18,9 @@ UUserWidget& UKitsuneCommonListView::OnGenerateEntryWidgetInternal(UObject* Item
 		return Super::OnGenerateEntryWidgetInternal(Item, DesiredEntryClass, OwnerTable);
 	}
 
-	if (Item->IsA(UInventoryItemInstance::StaticClass()))
+	if (Item->IsA(UInventoryItemTrait::StaticClass()))
 	{
-		if (const auto FoundEntryClass = ListEntryMapping->FindEntryClassByItemInstance(CastChecked<UInventoryItemInstance>(Item)))
+		if (const auto FoundEntryClass = ListEntryMapping->FindEntryClassByItemTrait(CastChecked<UInventoryItemTrait>(Item)))
 		{
 			return GenerateTypedEntry<UWidgetListEntryBase>(FoundEntryClass, OwnerTable);
 		}

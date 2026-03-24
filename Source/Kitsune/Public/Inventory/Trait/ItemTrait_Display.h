@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (DisplayName = "UI显示"))
 class KITSUNE_API UItemTrait_Display : public UInventoryItemTrait
 {
 	GENERATED_BODY()

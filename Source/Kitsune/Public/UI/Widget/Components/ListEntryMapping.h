@@ -22,11 +22,11 @@ class KITSUNE_API UListEntryMapping : public UDataAsset
 public:
 	TSubclassOf<UWidgetListEntryBase> FindEntryClassByDataObject(const UListDataObjectBase* InListDataObject) const;
 
-	TSubclassOf<UWidgetListEntryBase> FindEntryClassByItemInstance(UInventoryItemInstance* InItemInstance) const;
+	TSubclassOf<UWidgetListEntryBase> FindEntryClassByItemTrait(const UInventoryItemTrait* InItemTrait) const;
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TSubclassOf<UListDataObjectBase>, TSubclassOf<UWidgetListEntryBase>> ListEntryClassMapping;
 
 	UPROPERTY(EditDefaultsOnly)
-	TMap<TSubclassOf<UInventoryItemInstance>, TSubclassOf<UWidgetListEntryBase>> InteractListEntryMapping;
+	TMap<TSubclassOf<UInventoryItemTrait>, TSubclassOf<UWidgetListEntryBase>> InteractListEntryMapping;
 };

@@ -9,18 +9,18 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (DisplayName = "交互"))
 class KITSUNE_API UItemTrait_Interact : public UInventoryItemTrait
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Prompt")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FText InteractPrompt;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Prompt")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FKey PromptKey = FKey(TEXT("F"));
 
-	UFUNCTION(BlueprintCallable, Category = "Prompt")
+	UFUNCTION(BlueprintCallable)
 	FText GetPromptMessage() const;
 };

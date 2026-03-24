@@ -12,9 +12,10 @@ void UListEntryInteract::OnOwningListDataHandle(UObject* ItemData)
 {
 	Super::OnOwningListDataHandle(ItemData);
 
-	CachedInteractTrait = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Interact>(CastChecked<UInventoryItemInstance>(ItemData)->GetItemDef(), UItemTrait_Interact::StaticClass());
-
-	CommonTextBlock_PromptKey->SetText(FText::FromString(CachedInteractTrait->PromptKey.GetDisplayName().ToString()));
-	CommonTextBlock_PromptMessage->SetText(CachedInteractTrait->InteractPrompt);
-
+	if (UItemTrait_Interact* TraitInteract = Cast<UItemTrait_Interact>(ItemData))
+	{
+		CachedInteractTrait = TraitInteract;
+		CommonTextBlock_PromptKey->SetText(FText::FromString(CachedInteractTrait->PromptKey.GetDisplayName().ToString()));
+		CommonTextBlock_PromptMessage->SetText(CachedInteractTrait->InteractPrompt);
+	}
 }

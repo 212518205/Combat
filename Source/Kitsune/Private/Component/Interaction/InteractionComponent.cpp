@@ -8,7 +8,7 @@
 
 void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
-	if (ItemInstance && ItemInstance->HasAnyFeature(EItemFeature::Interactable))
+	if (ItemInstance && ItemInstance->HasFeature(EItemFeature::Interactable))
 	{
 		ItemOverlapChange(ItemInstance, EItemInstanceAction::EAddInstance);
 	}
@@ -16,7 +16,7 @@ void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemIns
 
 void UInteractionComponent::RemoveInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
-	if (ItemInstance && ItemInstance->HasAnyFeature(EItemFeature::Interactable))
+	if (ItemInstance && ItemInstance->HasFeature(EItemFeature::Interactable))
 	{
 		ItemOverlapChange(ItemInstance, EItemInstanceAction::ERemoveInstance);
 	}
@@ -33,11 +33,11 @@ void UInteractionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 
 }
 
-void UInteractionComponent::ItemOverlapChange_Implementation(UInventoryItemInstance* ItemInstance, EItemInstanceAction InstanceAction)
+void UInteractionComponent::ItemOverlapChange_Implementation(UInventoryItemInstance* ItemInstance, const EItemInstanceAction InstanceAction)
 {
 
 	const ENetMode NetMode = GetNetMode();
-	if (UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel(); LocalViewModel 
+	if (const UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel(); LocalViewModel 
 		&& (GetOwnerRole() == ROLE_AutonomousProxy || NetMode == NM_ListenServer || NetMode == NM_Standalone))
 	{
 		if (InstanceAction == EItemInstanceAction::EAddInstance)

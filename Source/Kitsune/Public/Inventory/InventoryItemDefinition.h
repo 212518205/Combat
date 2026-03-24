@@ -11,8 +11,8 @@ class UInventoryItemTrait;
 /**
  * 
  */
-UCLASS(Blueprintable)
-class KITSUNE_API UInventoryItemDefinition : public UObject
+UCLASS(Blueprintable, EditInlineNew, DefaultToInstanced, meta = (PrimaryAssetType = "ItemDefinition"))
+class KITSUNE_API UInventoryItemDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
@@ -23,7 +23,7 @@ public:
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(Replicated , EditDefaultsOnly, BlueprintReadWrite, Category = "Display", meta = (AllowPrivateAccess))
+	UPROPERTY(Replicated , EditDefaultsOnly, BlueprintReadWrite, Instanced)
 	TArray<TObjectPtr<UInventoryItemTrait>> ItemTraits;
 };
 
@@ -34,11 +34,11 @@ class KITSUNE_API UInventoryFunctionLibrary : public UBlueprintFunctionLibrary
 
 public:
 	template<typename ResultType = UInventoryItemTrait>
-	static ResultType* FindItemDefinitionTrait(const TSubclassOf<UInventoryItemDefinition>& ItemDef, const TSubclassOf<UInventoryItemTrait>& TraitClass);
+	static ResultType* FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef, const TSubclassOf<UInventoryItemTrait>& TraitClass);
 };
 
 template <typename ResultType>
-ResultType* UInventoryFunctionLibrary::FindItemDefinitionTrait(const TSubclassOf<UInventoryItemDefinition>& ItemDef,
+ResultType* UInventoryFunctionLibrary::FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef,
 	const TSubclassOf<UInventoryItemTrait>& TraitClass)
 {
 	static_assert(TIsDerivedFrom<ResultType, UInventoryItemTrait>::Value, "ResultType 必须是 UInventoryItemTrait 子类");
@@ -48,6 +48,6 @@ ResultType* UInventoryFunctionLibrary::FindItemDefinitionTrait(const TSubclassOf
 		return nullptr;
 	}
 
-	UInventoryItemTrait* FoundTrait = GetDefault<UInventoryItemDefinition>(ItemDef)->FindTraitByClass(TraitClass);
+	UInventoryItemTrait* FoundTrait = ItemDef->FindTraitByClass(TraitClass);
 	return Cast<ResultType>(FoundTrait);
 }

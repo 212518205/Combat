@@ -7,9 +7,8 @@
 #include "Net/UnrealNetwork.h"
 
 
-UInventoryItemInstance::UInventoryItemInstance(): ItemFeatures(static_cast<uint8>(EItemFeature::None))
+UInventoryItemInstance::UInventoryItemInstance()
 {
-	InstanceID = FGuid::NewGuid();
 }
 
 void UInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -17,6 +16,5 @@ void UInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, ItemDef);
-	DOREPLIFETIME(ThisClass, InstanceID);
 	DOREPLIFETIME(ThisClass, ItemFeatures);
 }

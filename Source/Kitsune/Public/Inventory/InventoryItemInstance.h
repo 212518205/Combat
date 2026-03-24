@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FrontendDebugHelper.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "UObject/NoExportTypes.h"
 #include "InventoryItemInstance.generated.h"
@@ -21,34 +22,29 @@ class KITSUNE_API UInventoryItemInstance : public UObject
 public:
 	UInventoryItemInstance();
 
-	FORCEINLINE TSubclassOf<UInventoryItemDefinition> GetItemDef() const { return ItemDef; }
-	FORCEINLINE FGuid GetInstanceID() const { return InstanceID; }
+	FORCEINLINE UInventoryItemDefinition* GetItemDef() const { return ItemDef; }
 
 	/*** `@BC`   描述: EItemFeature操作函数   `BC@`(ItemFeatures & Feature) != EItemFeature::None;  ***/
-	//FORCEINLINE void AddFeature(const EItemFeature Feature) { ItemFeatures |= Feature; }
-	//FORCEINLINE void RemoveFeature(const EItemFeature Feature) { ItemFeatures &= ~Feature; }
-	//FORCEINLINE bool HasFeature(const EItemFeature Feature) const { return (ItemFeatures & Feature) == Feature; }
-	FORCEINLINE bool HasAnyFeature(const EItemFeature Feature) const {
-		return (static_cast<uint8>(ItemFeatures) & static_cast<uint8>(Feature)) != 0;
+	FORCEINLINE void AddFeature(const EItemFeature Feature) { ItemFeatures |= static_cast<uint8>(Feature); }
+	FORCEINLINE void RemoveFeature(const EItemFeature Feature) { ItemFeatures &= ~static_cast<uint8>(Feature); }
+	FORCEINLINE bool HasFeature(const EItemFeature Feature) const { return (ItemFeatures & static_cast<uint8>(Feature)) == static_cast<uint8>(Feature); }
+	FORCEINLINE bool HasAnyFeature(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/PoseSearch.EPoseSearchBoneFlags")) const uint8 Feature) const {
+		return (ItemFeatures & Feature) != 0;
 	}
-	/*FORCEINLINE void ClearAllFeatures() { ItemFeatures = EItemFeature::None; }
+	FORCEINLINE void ClearAllFeatures() { ItemFeatures = 0; }
 	FORCEINLINE void ToggleFeature(const EItemFeature Feature)
 	{
 		if (HasFeature(Feature))RemoveFeature(Feature);
 		else AddFeature(Feature);
-	}*/
+	}
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<UInventoryItemDefinition> ItemDef;
+	UPROPERTY(Replicated, EditDefaultsOnly, Instanced)
+	TObjectPtr<UInventoryItemDefinition> ItemDef;
 
-	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (Bitmask, BitmaskEnum = EItemFeature))
-	uint8 ItemFeatures;
-
-	UPROPERTY(BlueprintReadOnly)
-	FGuid InstanceID;
-
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/Kitsune.EItemFeature"))
+	uint8 ItemFeatures = 0;
 
 };

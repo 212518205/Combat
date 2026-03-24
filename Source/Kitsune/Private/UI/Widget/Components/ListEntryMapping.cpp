@@ -25,18 +25,18 @@ TSubclassOf<UWidgetListEntryBase> UListEntryMapping::FindEntryClassByDataObject(
 	return {};
 }
 
-TSubclassOf<UWidgetListEntryBase> UListEntryMapping::FindEntryClassByItemInstance(
-	UInventoryItemInstance* InItemInstance) const
+TSubclassOf<UWidgetListEntryBase> UListEntryMapping::FindEntryClassByItemTrait(
+	const UInventoryItemTrait* InItemTrait) const
 {
-	check(InItemInstance);
+	check(InItemTrait);
 
-	for (UClass* DataObjectKey = InItemInstance->GetClass(); DataObjectKey; DataObjectKey = DataObjectKey->GetSuperClass())
+	for (UClass* DataObjectKey = InItemTrait->GetClass(); DataObjectKey; DataObjectKey = DataObjectKey->GetSuperClass())
 	{
-		if (TSubclassOf<UInventoryItemInstance> ConvertedItemInstanceClass = TSubclassOf<UInventoryItemInstance>(DataObjectKey))
+		if (TSubclassOf<UInventoryItemTrait> ConvertedItemTraitClass = TSubclassOf<UInventoryItemTrait>(DataObjectKey))
 		{
-			if (InteractListEntryMapping.Contains(ConvertedItemInstanceClass))
+			if (InteractListEntryMapping.Contains(ConvertedItemTraitClass))
 			{
-				return InteractListEntryMapping.FindRef(ConvertedItemInstanceClass);
+				return InteractListEntryMapping.FindRef(ConvertedItemTraitClass);
 			}
 		}
 	}
