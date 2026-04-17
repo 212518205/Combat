@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
+#include "Characters/KitsuneCharacter.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/ViewModel/EnemyViewModel.h"
@@ -34,9 +35,11 @@ class KITSUNE_API UUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:
-	/** Function Begin*/
 	static UUIManagerSubsystem* GetUIManager(const UObject* WorldContextObject);
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+
+	UWidgetPrimaryLayout* GetRegisteredPrimaryLayout()const {return RegisteredPrimaryLayout;}
+	AKitsuneCharacter* GetLocalPlayerPawn() const;
 
 	/*** `@BC`   描述: ViewModel相关   `BC@` ***/
 	UFUNCTION(BlueprintCallable, Category = "ViewModel", meta = (ExpandBoolAsExecs = "bIsValid"))
@@ -47,7 +50,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "ViewModel")
 	UAttributeViewModel* GetViewModelByPawn(APawn* InPawn);
-
+	
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
 		TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const;

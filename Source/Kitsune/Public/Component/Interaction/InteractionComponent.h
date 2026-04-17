@@ -6,6 +6,7 @@
 #include "Component/KitsuneExtensionComponent.h"
 #include "InteractionComponent.generated.h"
 
+class UInventorySystem;
 class UPlayerViewModel;
 class UInventoryItemInstance;
 /**
@@ -17,13 +18,16 @@ class KITSUNE_API UInteractionComponent : public UKitsuneExtensionComponent
 	GENERATED_BODY()
 
 public:
-	UInteractionComponent();
+	virtual void BeginPlay() override;
 
 	UFUNCTION(Server, Reliable)
 	void AddInteractableItem(UInventoryItemInstance* ItemInstance);
 
 	UFUNCTION(Server, Reliable)
 	void RemoveInteractableItem(UInventoryItemInstance* ItemInstance);
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Interact")
+	UInventorySystem* InventorySystem;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;

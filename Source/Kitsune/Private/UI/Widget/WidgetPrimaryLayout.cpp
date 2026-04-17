@@ -5,18 +5,27 @@
 
 #include "CommonActivatableWidget.h"
 #include "FrontendDebugHelper.h"
+#include "FunctionLibrary/KitsuneFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
+#include "Input/CommonUIActionRouterBase.h"
+#include "UI/Widget/Game/WidgetMainHudScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
+
+void UWidgetPrimaryLayout::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+}
 
 void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag,
                                                UCommonActivatableWidgetContainerBase* InStack)
 {
-	if (!IsDesignTime())
+	if (IsDesignTime())return;
+	
+	if (!GameplayTagToStackMap.Contains(InGameplayTag))
 	{
-		if (!GameplayTagToStackMap.Contains(InGameplayTag))
-		{
-			GameplayTagToStackMap.Add(InGameplayTag, InStack);
-		}
+		GameplayTagToStackMap.Add(InGameplayTag, InStack);
 	}
+	
 }
 
 UCommonActivatableWidgetContainerBase* UWidgetPrimaryLayout::FindWidgetStackByTag(const FGameplayTag& InTag)const
@@ -30,11 +39,37 @@ void UWidgetPrimaryLayout::DeActivableWidgetStackByTag(const FGameplayTag& InTag
 	UCommonActivatableWidgetContainerBase* WidgetStack = GameplayTagToStackMap.FindRef(InTag);
 	check(WidgetStack);
 	WidgetStack->ClearWidgets();
-	/*WidgetStack->SetVisibility(ESlateVisibility::Collapsed);
-	WidgetStack->GetActiveWidget()->DeactivateWidget();*/
-	/*
-	for (UCommonActivatableWidget* ActivatableWidget:WidgetStack->GetWidgetList())
+	UpdateInteractState();
+}
+
+UCommonActivatableWidget* UWidgetPrimaryLayout::GetTopWidget() const
+{
+	FGameplayTag StackTags[3] = {
+		KitsuneGameplayTags::UI_WidgetStack_HudStack,
+		KitsuneGameplayTags::UI_WidgetStack_GameMenu,
+		KitsuneGameplayTags::UI_WidgetStack_ModalStack
+	};
+	UCommonActivatableWidget* TopWidget = nullptr;
+	
+	for (FGameplayTag& StackTag	: StackTags)
 	{
-		ActivatableWidget->DeactivateWidget();
-	}*/
+		if (UCommonActivatableWidget* DisplayWidget = GameplayTagToStackMap.FindRef(StackTag)->GetActiveWidget(); DisplayWidget && DisplayWidget->IsActivated())
+		{
+			TopWidget = DisplayWidget;
+		}
+	}
+	
+	return TopWidget;
+}
+
+void UWidgetPrimaryLayout::UpdateInteractState() const
+{
+	if (const UCommonActivatableWidget* TopWidget = GetTopWidget(); TopWidget && TopWidget->IsA(UWidgetMainHudScreen::StaticClass()))
+	{
+		UKitsuneFunctionLibrary::AddGameplayTagToActorIfNone(GetOwningPlayerPawn(), KitsuneGameplayTags::Player_Status_Pickupable);
+	}else
+	{
+		UKitsuneFunctionLibrary::TryRemoveGameplayTagFromActor(GetOwningPlayerPawn(), KitsuneGameplayTags::Player_Status_Pickupable);
+	}
+	
 }

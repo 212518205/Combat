@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "InventoryItemTrait.h"
-#include "UObject/NoExportTypes.h"
 #include "InventoryItemDefinition.generated.h"
 
 class UInventoryItemTrait;
@@ -19,9 +18,10 @@ class KITSUNE_API UInventoryItemDefinition : public UPrimaryDataAsset
 public:
 	UFUNCTION(BlueprintCallable, Category = "Trait")
 	UInventoryItemTrait* FindTraitByClass(TSubclassOf<UInventoryItemTrait> TraitClass) const ;
+	
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(Replicated , EditDefaultsOnly, BlueprintReadWrite, Instanced)
 	TArray<TObjectPtr<UInventoryItemTrait>> ItemTraits;
@@ -34,20 +34,19 @@ class KITSUNE_API UInventoryFunctionLibrary : public UBlueprintFunctionLibrary
 
 public:
 	template<typename ResultType = UInventoryItemTrait>
-	static ResultType* FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef, const TSubclassOf<UInventoryItemTrait>& TraitClass);
+	static ResultType* FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef);
 };
 
 template <typename ResultType>
-ResultType* UInventoryFunctionLibrary::FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef,
-	const TSubclassOf<UInventoryItemTrait>& TraitClass)
+ResultType* UInventoryFunctionLibrary::FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef)
 {
 	static_assert(TIsDerivedFrom<ResultType, UInventoryItemTrait>::Value, "ResultType 必须是 UInventoryItemTrait 子类");
 
-	if (ItemDef == nullptr || TraitClass == nullptr)
+	if (ItemDef == nullptr)
 	{
 		return nullptr;
 	}
 
-	UInventoryItemTrait* FoundTrait = ItemDef->FindTraitByClass(TraitClass);
+	UInventoryItemTrait* FoundTrait = ItemDef->FindTraitByClass(ResultType::StaticClass());
 	return Cast<ResultType>(FoundTrait);
 }

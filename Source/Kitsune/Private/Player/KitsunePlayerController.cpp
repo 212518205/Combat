@@ -10,23 +10,43 @@
 #include "UIManagerSubsystem.h"
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Characters/KitsuneCharacter.h"
+#include "Component/Interaction/InteractionComponent.h"
+#include "FunctionLibrary/KitsuneFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "Input/KitsuneInputComponent.h"
+#include "Inventory/InventorySystem.h"
+#include "UI/Widget/WidgetPrimaryLayout.h"
+#include "UI/Widget/Game/WidgetMainHudScreen.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 
 void AKitsunePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	check(KitsuneContext);
+	check(IMC_GAS_Skills);
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (Subsystem) {
-		Subsystem->AddMappingContext(KitsuneContext, 0);
-		Subsystem->AddMappingContext(UIInputMappingContext, 50);
+		Subsystem->AddMappingContext(IMC_GAS_Skills, 0);
+		Subsystem->AddMappingContext(IMC_Gameplay, 50);
 		if (const auto InputUserSettings = Subsystem->GetUserSettings())
 		{
-			InputUserSettings->RegisterInputMappingContext(KitsuneContext);
-			InputUserSettings->RegisterInputMappingContext(UIInputMappingContext);
+			InputUserSettings->RegisterInputMappingContext(IMC_GAS_Skills);
+			InputUserSettings->RegisterInputMappingContext(IMC_Gameplay);
+		}
+	}
+}
+
+void AKitsunePlayerController::OnInteraction(const FInputActionValue& InputActionValue)
+{
+	if (UKitsuneFunctionLibrary::NativeDoesActorHaveTag(GetPawn(), KitsuneGameplayTags::Player_Status_Pickupable))
+	{
+		if (IPawnInteractInterface* Interact = Cast<IPawnInteractInterface>(GetPawn()))
+		{
+			if (UInventorySystem* InventorySystem = Interact->GetInteractionComp()->InventorySystem)
+			{
+				InventorySystem->AddItem(GetSelectedInteractableItemInstance());
+			}
 		}
 	}
 }
@@ -45,6 +65,7 @@ void AKitsunePlayerController::SetupInputComponent()
 
 	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Started, this, &ThisClass::OnPressed_ShowMouse);
 	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::OnReleased_ShowMouse);
+	KitsuneInputComponent->BindAction(PickupableAction, ETriggerEvent::Completed, this, &ThisClass::OnInteraction);
 
 	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
 }
@@ -55,6 +76,20 @@ void AKitsunePlayerController::OnPossess(APawn* InPawn)
 
 }
 
+UCommonActivatableWidget* AKitsunePlayerController::GetCurrentTopWidget() const
+{
+	return UUIManagerSubsystem::GetUIManager(GetWorld())->GetRegisteredPrimaryLayout()->GetTopWidget();
+}
+
+UInventoryItemInstance* AKitsunePlayerController::GetSelectedInteractableItemInstance() const
+{
+	if (UWidgetMainHudScreen* MainHud = Cast<UWidgetMainHudScreen>(GetCurrentTopWidget()))
+	{
+		return MainHud->GetSelectedItemInstance();
+	}
+	return nullptr;
+}
+
 AKitsunePlayerController::AKitsunePlayerController()
 {
 	PlayerTeamId = FGenericTeamId(0);
@@ -63,6 +98,28 @@ AKitsunePlayerController::AKitsunePlayerController()
 FGenericTeamId AKitsunePlayerController::GetGenericTeamId() const
 {
 	return PlayerTeamId;
+}
+
+void AKitsunePlayerController::PrintInventory()
+{ // 获取本地控制的 Pawn
+	APawn* MyPawn = GetPawn();
+	if (!MyPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("无法获取本地 Pawn"));
+		return;
+	}
+
+	// 假设你的 InventorySystem 是 Pawn 身上的一个组件，名为 "InventoryComponent"
+	UInventorySystem* InventorySys = Cast<AKitsuneCharacter>(MyPawn)->GetInteractionComp()->InventorySystem;
+    
+	if (!InventorySys)
+	{
+		// 如果 InventorySystem 不是组件而是其他方式持有，请替换为你的获取逻辑
+		UE_LOG(LogTemp, Warning, TEXT("无法在 Pawn 上找到 InventorySystem"));
+		return;
+	}
+
+	InventorySys->DebugPrintInventory();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

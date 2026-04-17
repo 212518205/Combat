@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "KitsunePlayerController.generated.h"
 
+class UInventoryItemInstance;
+class UCommonActivatableWidget;
 class UKitsuneAbilitySystemComponent;
 struct FGameplayTag;
 class UKitsuneInputConfig;
@@ -30,20 +32,31 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	/***   ...IGenericTeamAgentInterface Interface End...     ***/
 
+	/***  控制台命令函数   `BC@` ***/
+	UFUNCTION(Exec)
+	void PrintInventory();
+
 protected:
 	/***   ...APlayerController Interface Begin...   ***/
 	virtual void BeginPlay() override;
+	void OnInteraction(const FInputActionValue& InputActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	/***   ...APlayerController Interface End...     ***/
 
+	/***  UI接口   `BC@` ***/
+	UFUNCTION(Blueprintable, Category = "UI")
+	UCommonActivatableWidget* GetCurrentTopWidget() const;
+	
+	UFUNCTION(Blueprintable, Category = "UI")
+	UInventoryItemInstance* GetSelectedInteractableItemInstance() const;
 
 	/*** `@BC`   描述: 输入上下文以及输入动作   `BC@` ***/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputMappingContext> KitsuneContext;
+	TObjectPtr<UInputMappingContext> IMC_GAS_Skills;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputMappingContext> UIInputMappingContext;
+	TObjectPtr<UInputMappingContext> IMC_Gameplay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
@@ -56,6 +69,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> ShowOrHiddenMouseAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputAction> PickupableAction;
 
 	/*** `@BC`   描述: 技能相关输入数据，需要在蓝图指定   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")

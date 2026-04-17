@@ -56,8 +56,8 @@ enum class EKitsuneSuccessType: uint8
 //};
 //ENUM_CLASS_FLAGS(EItemFeature);
 
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EItemFeature : uint8
+UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+enum class EItemFeature : uint32
 {
 	None = 0 UMETA(Hidden),                    
 	Locked = 1 << 0 UMETA(DisplayName = "已锁定"),
@@ -67,6 +67,7 @@ enum class EItemFeature : uint8
 	Interactable = 1 << 4 UMETA(DisplayName = "可交互"),
 	Equipable = 1 << 5 UMETA(DisplayName = "可装备"),
 	Combinable = 1 << 6 UMETA(DisplayName = "可合成"),
+	Stackable = 1 << 7 UMETA(DisplayName = "可堆叠"),
 };
 ENUM_CLASS_FLAGS(EItemFeature);
 
@@ -78,3 +79,11 @@ enum class ETileViewEntryType : uint8
 	WiderMenuIcon,
 };
 
+UENUM()
+enum class EInstanceModifyType
+{
+	None UMETA(Hidden),
+	AddStackCount,
+	RemoveItem,
+	AddItem,
+};

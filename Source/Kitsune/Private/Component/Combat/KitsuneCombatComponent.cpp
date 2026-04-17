@@ -38,7 +38,7 @@ void UKitsuneCombatComponent::RegisterCarriedWeapon_Implementation(AWeaponBase* 
 
 UKitsuneCombatComponent::UKitsuneCombatComponent()
 {
-	SetIsReplicated(true);
+
 }
 
 AWeaponBase* UKitsuneCombatComponent::FindWeaponByTag(const FGameplayTag& WeaponTag) const

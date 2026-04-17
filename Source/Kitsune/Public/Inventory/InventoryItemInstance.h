@@ -8,6 +8,7 @@
 #include "UObject/NoExportTypes.h"
 #include "InventoryItemInstance.generated.h"
 
+class UInventorySystem;
 class UInventoryItemDefinition;
 
 
@@ -20,15 +21,17 @@ class KITSUNE_API UInventoryItemInstance : public UObject
 	GENERATED_BODY()
 
 public:
+	friend  UInventorySystem;
+
 	UInventoryItemInstance();
 
 	FORCEINLINE UInventoryItemDefinition* GetItemDef() const { return ItemDef; }
 
 	/*** `@BC`   描述: EItemFeature操作函数   `BC@`(ItemFeatures & Feature) != EItemFeature::None;  ***/
-	FORCEINLINE void AddFeature(const EItemFeature Feature) { ItemFeatures |= static_cast<uint8>(Feature); }
-	FORCEINLINE void RemoveFeature(const EItemFeature Feature) { ItemFeatures &= ~static_cast<uint8>(Feature); }
-	FORCEINLINE bool HasFeature(const EItemFeature Feature) const { return (ItemFeatures & static_cast<uint8>(Feature)) == static_cast<uint8>(Feature); }
-	FORCEINLINE bool HasAnyFeature(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/PoseSearch.EPoseSearchBoneFlags")) const uint8 Feature) const {
+	FORCEINLINE void AddFeature(const EItemFeature Feature) { ItemFeatures |= static_cast<int32>(Feature); }
+	FORCEINLINE void RemoveFeature(const EItemFeature Feature) { ItemFeatures &= ~static_cast<int32>(Feature); }
+	FORCEINLINE bool HasFeature(const EItemFeature Feature) const { return (ItemFeatures & static_cast<int32>(Feature)) == static_cast<int32>(Feature); }
+	FORCEINLINE bool HasAnyFeature(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/PoseSearch.EPoseSearchBoneFlags")) const int32 Feature) const {
 		return (ItemFeatures & Feature) != 0;
 	}
 	FORCEINLINE void ClearAllFeatures() { ItemFeatures = 0; }
@@ -45,6 +48,9 @@ protected:
 	TObjectPtr<UInventoryItemDefinition> ItemDef;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/Kitsune.EItemFeature"))
-	uint8 ItemFeatures = 0;
+	int32 ItemFeatures = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 StackCount = 1;
 
 };

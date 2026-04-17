@@ -13,7 +13,7 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_WidgetStack_HudStack);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_WidgetStack_FrontendStack);
 
-	//UI widgets
+	//UI widgets screen
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_PressAnyKeyScreen);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_MainMenuScreen);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_OptionsScreen);
@@ -28,6 +28,7 @@ namespace KitsuneGameplayTags
 
 
 	/** Input Tag*/
+	/*** TODO: 输入标签应换为：LeftMouse、FKey等类似形式，与实际逻辑分开... [2026年4月13日 22:46:46 来自`@BC@`] ***/
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Light);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Heavy);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Unequip);
@@ -45,6 +46,7 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Weapon_Unequip_Sword);
 
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_Dodging);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_Pickupable);
 
 	/*** `@BC`   描述: Enemy Tag   `BC@` ***/
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Strafing);

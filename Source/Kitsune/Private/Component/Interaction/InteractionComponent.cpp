@@ -5,6 +5,7 @@
 
 #include "UIManagerSubsystem.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
+#include "Inventory/InventorySystem.h"
 
 void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
@@ -22,9 +23,11 @@ void UInteractionComponent::RemoveInteractableItem_Implementation(UInventoryItem
 	}
 }
 
-UInteractionComponent::UInteractionComponent()
+void UInteractionComponent::BeginPlay()
 {
-	SetIsReplicated(true);
+	Super::BeginPlay();
+	
+	InventorySystem = NewObject<UInventorySystem>(this);
 }
 
 void UInteractionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

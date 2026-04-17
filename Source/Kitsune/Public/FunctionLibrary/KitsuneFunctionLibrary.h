@@ -25,7 +25,7 @@ namespace KitsuneNet
 			return false;
 		}
 
-		const APawn* Pawn = nullptr;
+		const APawn* Pawn;
 		if (const UKitsuneExtensionComponent* Owner = Cast<UKitsuneExtensionComponent>(Object))
 		{
 			Pawn = Owner->GetOwningPawn();

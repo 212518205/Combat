@@ -3,12 +3,7 @@
 
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
 
-#include "FrontendDebugHelper.h"
-#include "FrontendTypes/FrontendStructTypes.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
-#include "GameplayTag/KitsuneGameplayTag.h"
-#include "Inventory/InventoryItemDefinition.h"
-#include "Inventory/Trait/ItemTrait_Interact.h"
 #include "UI/Widget/Components/KitsuneCommonListView.h"
 
 
@@ -19,24 +14,19 @@ void UWidgetMainHudScreen::OnInteractableItemChange_Implementation(UInventoryIte
 	if (!ItemInstance)return;
 
 	check(CommonListView_Prompt);
-	UItemTrait_Interact* TraitInteract = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Interact>(ItemInstance->GetItemDef(), UItemTrait_Interact::StaticClass());
-	if (!TraitInteract)
-	{
-		Debug::Print(TEXT("无交互信息"));
-	}
 	switch (InstanceAction)
 	{
 	case EItemInstanceAction::EAddInstance:
 		if (CachedPlayerViewModel->OverlappedItemInstances.Contains(ItemInstance))
 		{
-			CommonListView_Prompt->AddItem(TraitInteract);
+			CommonListView_Prompt->AddItem(ItemInstance);
 		}
 		break;
 
 	case EItemInstanceAction::ERemoveInstance:
 		if (!CachedPlayerViewModel->OverlappedItemInstances.Contains(ItemInstance))
 		{
-			CommonListView_Prompt->RemoveItem(TraitInteract);
+			CommonListView_Prompt->RemoveItem(ItemInstance);
 		}
 		break;
 
@@ -47,14 +37,71 @@ void UWidgetMainHudScreen::OnInteractableItemChange_Implementation(UInventoryIte
 	CommonListView_Prompt->RequestRefresh();
 }
 
+UInventoryItemInstance* UWidgetMainHudScreen::GetSelectedItemInstance() const
+{
+	UInventoryItemInstance* ItemInstance = CommonListView_Prompt->GetSelectedItem<UInventoryItemInstance>();
+	if (!ItemInstance)
+	{
+		ItemInstance = Cast<UInventoryItemInstance>(CommonListView_Prompt->GetItemAt(0));
+	}
+	
+	return ItemInstance;
+}
+
+void UWidgetMainHudScreen::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+	
+}
+
+void UWidgetMainHudScreen::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+	
+}
+
+FReply UWidgetMainHudScreen::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (!CommonListView_Prompt)return FReply::Unhandled();
+	if (const float WheelDelta = InMouseEvent.GetWheelDelta(); WheelDelta != 0.f)
+	{
+		const int32 Offset = WheelDelta > 0.f ? -1 : 1;
+		ChangeSelectionByOffset(Offset);
+		return FReply::Handled();
+	}
+	
+	return Super::NativeOnMouseWheel(InGeometry, InMouseEvent);
+}
+
+FReply UWidgetMainHudScreen::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
 void UWidgetMainHudScreen::InitializeMainHudScreen()
 {
-	
-	CachedPlayerViewModel = UUIManagerSubsystem::GetUIManager(GetOwningPlayer())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
+	CachedUIManager = UUIManagerSubsystem::GetUIManager(GetOwningPlayer());
+	CachedPlayerViewModel = CachedUIManager->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
 
 	CachedPlayerViewModel->OnInteractableItemChange.AddDynamic(this, &ThisClass::OnInteractableItemChange);
 
 	CachedPlayerViewModel->OnHealthPercentChanged.Broadcast();
 	CachedPlayerViewModel->OnStaminaPercentChanged.Broadcast();
+}
+
+void UWidgetMainHudScreen::ChangeSelectionByOffset(const int32 Offset) const
+{
+	if (!CommonListView_Prompt)return;
+	
+	int EntryNum = CommonListView_Prompt->GetNumItems();
+	if (EntryNum == 0)return;
+
+	const UObject* CurItem = CommonListView_Prompt->GetSelectedItem();
+	int CurIndex = CommonListView_Prompt->GetIndexForItem(CurItem);
+	CurIndex = FMath::Max(CurIndex, 0);
+
+	int NewIndex = (CurIndex + Offset) % EntryNum;
+	if (NewIndex < 0)NewIndex += EntryNum;
+	CommonListView_Prompt->SetSelectedIndex(NewIndex);
 }
   

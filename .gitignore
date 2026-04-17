@@ -1,20 +1,37 @@
-# 引擎自动生成目录
+# ==================== Unreal Engine Generated Files ====================
 Binaries/
 Intermediate/
 Saved/
 DerivedDataCache/
+Build/
+Builds/
 
-# 开发环境文件
-.vs/
-*.sln.docstates
-Kitsune.sln.DotSettings.user
-.vscode/
+# ==================== Rider / JetBrains ====================
 .idea/
+*.DotSettings.user
+RiderLink/                  # 如果您把 RiderLink 安装在项目 Plugins 下
 
-# 系统文件
+# ==================== Visual Studio 残留（保留以防万一） ====================
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln.DotSettings
+*.sln.docstates
+
+# ==================== Other IDEs ====================
+.vscode/
+
+# ==================== Temporary & Log Files ====================
+*.log
+*.tmp
+*.cache
+*.swp
+
+# ==================== OS Generated Files ====================
 .DS_Store
 Thumbs.db
 
-# 临时文件
-*.log
-*.swp
+# ==================== User Specific Files ====================
+*.uproject.user

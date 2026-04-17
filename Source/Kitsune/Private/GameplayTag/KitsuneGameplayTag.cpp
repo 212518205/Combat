@@ -46,6 +46,7 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Weapon_Unequip_Sword, "Player.Event.Weapon.Unequip.Sword");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Dodging, "Player.Status.Dodging");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Pickupable, "Player.Status.Pickupable");
 
 	/*** `@BC`   描述: 敌人状态标签   `BC@` ***/
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Strafing, "Enemy.Status.Strafing");

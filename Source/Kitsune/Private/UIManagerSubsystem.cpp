@@ -2,6 +2,8 @@
 
 
 #include "UIManagerSubsystem.h"
+
+#include "Characters/KitsuneCharacter.h"
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "Engine/AssetManager.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
@@ -36,10 +38,8 @@ bool UUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	return false;
 }
 
-UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
+AKitsuneCharacter* UUIManagerSubsystem::GetLocalPlayerPawn() const
 {
-	bIsValid = false;
-
 	const UGameInstance* GameInstance = GetGameInstance();
 	if (!GameInstance) return nullptr;
 
@@ -50,14 +50,24 @@ UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
 	if (!PC) return nullptr;
 
 	APawn* Pawn = PC->GetPawn();
-	if (!Pawn) return nullptr;
+	return Cast<AKitsuneCharacter>(Pawn);
+}
 
-	UPlayerViewModel* VM = TryGetViewModelByActor<UPlayerViewModel>(Pawn);
-	if (VM)
+UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
+{
+	bIsValid = false;
+
+	if (APawn* Pawn = GetLocalPlayerPawn())
 	{
-		bIsValid = true;
+		UPlayerViewModel* VM = TryGetViewModelByActor<UPlayerViewModel>(Pawn);
+		if (VM)
+		{
+			bIsValid = true;
+		}
+		return VM;
 	}
-	return VM;
+	
+	return nullptr;
 }
 
 
@@ -102,6 +112,7 @@ void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidge
 						AsyncPushCallback(EAsyncPushWidgetState::OnCreatedBeforePush, &CreatedWidgetInstance);
 					}
 				);
+				RegisteredPrimaryLayout->UpdateInteractState();
 				AsyncPushCallback(EAsyncPushWidgetState::AfterPush, CreatedWidget);
 			})
 	);
