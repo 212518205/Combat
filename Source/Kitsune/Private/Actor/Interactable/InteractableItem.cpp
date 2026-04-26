@@ -7,6 +7,7 @@
 #include "Component/Interaction/InteractionComponent.h"
 #include "Components/BoxComponent.h"
 #include "Interfaces/PawnInteractInterface.h"
+#include "Inventory/InventoryItemInstance.h"
 #include "Net/UnrealNetwork.h"
 
 AInteractableItem::AInteractableItem()
@@ -17,6 +18,13 @@ AInteractableItem::AInteractableItem()
 
 	BoxComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnBoxCompBeginOverlap);
 	BoxComp->OnComponentEndOverlap.AddUniqueDynamic(this, &ThisClass::OnBoxCompEndOverlap);
+}
+
+void AInteractableItem::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	ItemInstance->SetOwningActor(this);
 }
 
 void AInteractableItem::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

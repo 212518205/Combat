@@ -46,6 +46,14 @@ void UKitsuneCommonButtonBase::NativeOnHovered()
 	{
 		UIManagerSubsystem->ButtonDescriptionUpdateDelegate.Broadcast(this, ButtonDescriptionText);
 	}
+	if (CommonLazyImage_Background && bBackground)
+	{
+		CommonLazyImage_Background->SetBrushFromSoftTexture(T_HoveredBackground);
+	}
+	if (CommonTextBlock_ButtonText && bTextStyle)
+	{
+		CommonTextBlock_ButtonText->SetStyle(HoveredTextStyle);
+	}
 }
 
 void UKitsuneCommonButtonBase::NativeOnUnhovered()
@@ -55,5 +63,13 @@ void UKitsuneCommonButtonBase::NativeOnUnhovered()
 	if (const UUIManagerSubsystem* UIManagerSubsystem = UUIManagerSubsystem::GetUIManager(this))
 	{
 		UIManagerSubsystem->ButtonDescriptionUpdateDelegate.Broadcast(this, FText::GetEmpty());
+	}
+	if (CommonLazyImage_Background && bBackground)
+	{
+		CommonLazyImage_Background->SetBrushFromTexture(nullptr);
+	}
+	if (CommonTextBlock_ButtonText && bTextStyle)
+	{
+		CommonTextBlock_ButtonText->SetStyle(UnHoveredTextStyle);
 	}
 }

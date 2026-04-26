@@ -9,10 +9,10 @@ void UKitsuneClickableWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	OnMouseEnter.AddUObject(this, &ThisClass::MouseEnter);
-	OnMouseLeave.AddUObject(this, &ThisClass::MouseLeave);
-	OnMouseDown.AddUObject(this, &ThisClass::MouseDown);
-	OnMouseUp.AddUObject(this, &ThisClass::MouseUp);
+	OnMouseEnter.AddUObject(this, &ThisClass::OnHovered);
+	OnMouseLeave.AddUObject(this, &ThisClass::OnUnHovered);
+	OnMouseDown.AddUObject(this, &ThisClass::OnPressed);
+	OnMouseUp.AddUObject(this, &ThisClass::OnReleased);
 }
 
 void UKitsuneClickableWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -50,22 +50,22 @@ FReply UKitsuneClickableWidget::NativeOnMouseButtonUp(const FGeometry& InGeometr
 	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 }
 
-void UKitsuneClickableWidget::MouseEnter()
+void UKitsuneClickableWidget::OnHovered()
 {
 	MouseEnterEvent();
 }
 
-void UKitsuneClickableWidget::MouseLeave()
+void UKitsuneClickableWidget::OnUnHovered()
 {
 	MouseLeaveEvent();
 }
 
-void UKitsuneClickableWidget::MouseDown()
+void UKitsuneClickableWidget::OnPressed()
 {
 	MouseDownEvent();
 }
 
-void UKitsuneClickableWidget::MouseUp()
+void UKitsuneClickableWidget::OnReleased()
 {
 	MouseUpEvent();
 }

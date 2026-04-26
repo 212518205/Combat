@@ -14,6 +14,7 @@
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Input/KitsuneInputComponent.h"
+#include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventorySystem.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
@@ -43,9 +44,13 @@ void AKitsunePlayerController::OnInteraction(const FInputActionValue& InputActio
 	{
 		if (IPawnInteractInterface* Interact = Cast<IPawnInteractInterface>(GetPawn()))
 		{
-			if (UInventorySystem* InventorySystem = Interact->GetInteractionComp()->InventorySystem)
+			if (UInventorySystem* InventorySystem = Interact->GetInteractionComp()->GetInventorySystem())
 			{
-				InventorySystem->AddItem(GetSelectedInteractableItemInstance());
+				if (UInventoryItemInstance* ItemInstance = GetSelectedInteractableItemInstance())
+				{
+					InventorySystem->AddItem(GetSelectedInteractableItemInstance());
+					GetSelectedInteractableItemInstance()->GetOwningActor()->Destroy();
+				}
 			}
 		}
 	}
@@ -110,7 +115,7 @@ void AKitsunePlayerController::PrintInventory()
 	}
 
 	// 假设你的 InventorySystem 是 Pawn 身上的一个组件，名为 "InventoryComponent"
-	UInventorySystem* InventorySys = Cast<AKitsuneCharacter>(MyPawn)->GetInteractionComp()->InventorySystem;
+	UInventorySystem* InventorySys = Cast<AKitsuneCharacter>(MyPawn)->GetInteractionComp()->GetInventorySystem();
     
 	if (!InventorySys)
 	{

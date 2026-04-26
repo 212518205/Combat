@@ -16,7 +16,13 @@ class KITSUNE_API UItemTrait_Display : public UInventoryItemTrait
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName DisplayName;
+	FName CategoryID;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText CategoryDisplayName;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText DisplayName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText Description;

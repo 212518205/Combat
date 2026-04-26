@@ -2,7 +2,21 @@
 
 
 #include "UI/Widget/WidgetActivatableBase.h"
+
+#include "UIManagerSubsystem.h"
 #include "Player/KitsunePlayerController.h"
+
+
+
+UPlayerViewModel* UWidgetActivatableBase::GetLocalPlayerViewModel()
+{
+	if (!CachedLocalViewModel)
+	{
+		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetOwningPlayer())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
+	}
+
+	return CachedLocalViewModel;
+}
 
 AKitsunePlayerController* UWidgetActivatableBase::GetOwningKitsunePlayerController()
 {

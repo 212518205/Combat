@@ -38,10 +38,10 @@ protected:
 	bool bIsClicked = false;
 
 	/*** `@BC`   描述: C++子类重写 调用BlueprintImplementableEvent  `BC@` ***/
-	virtual void MouseEnter();
-	virtual void MouseLeave();
-	virtual void MouseDown();
-	virtual void MouseUp();
+	virtual void OnHovered();
+	virtual void OnUnHovered();
+	virtual void OnPressed();
+	virtual void OnReleased();
 
 	/*** `@BC`   描述: 蓝图扩展逻辑   `BC@` ***/
 	UFUNCTION(BlueprintImplementableEvent, Category = "MouseEvent")

@@ -41,21 +41,6 @@ enum class EKitsuneSuccessType: uint8
 	Successful
 };
 
-
-//UENUM(meta = (Bitflags, UseEnumValueAsMaskValueInEditor = "true"))
-//UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-//enum class EItemFeature : uint8
-//{
-//	Locked UMETA(DisplayName = "已锁定"),
-//	Discardable UMETA(DisplayName = "可丢弃"),
-//	Tradable UMETA(DisplayName = "可交易"),
-//	USable UMETA(DisplayName = "可使用"),
-//	Interactable UMETA(DisplayName = "可交互"),
-//	Equipable UMETA(DisplayName = "可装备"),
-//	Combinable UMETA(DisplayName = "可合成"),
-//};
-//ENUM_CLASS_FLAGS(EItemFeature);
-
 UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EItemFeature : uint32
 {
@@ -87,3 +72,12 @@ enum class EInstanceModifyType
 	RemoveItem,
 	AddItem,
 };
+
+UENUM(BlueprintType)
+enum class EItemCategory: uint8
+{
+	Equipment UMETA(DisplayName = "装备"),
+	CommonItems UMETA(DisplayName = "常用道具"),
+	QuestItems UMETA(DisplayName = "任务道具"),
+};
+

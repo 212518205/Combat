@@ -17,16 +17,6 @@ void UWidgetLocalMenu::NativeOnInitialized()
     RefreshMenu();
 }
 
-UPlayerViewModel* UWidgetLocalMenu::GetLocalPlayerViewModel()
-{
-    if (!CachedLocalViewModel)
-    {
-        CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetOwningPlayer())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
-    }
-
-    return CachedLocalViewModel;
-}
-
 void UWidgetLocalMenu::LoadAllMenuTileData()
 {
 	if (!CachedMenuTileData.IsEmpty())return;
@@ -47,6 +37,7 @@ void UWidgetLocalMenu::LoadAllMenuTileData()
         EntryData->ShowAsNewText = TileRow->bIsShowAsNew ? FText::FromString(TEXT("新")) : FText::GetEmpty();
         EntryData->RequestLevel = TileRow->RequiredLevel;
         EntryData->EntryType = TileRow->EntryType;
+        EntryData->ScreenToOpen = TileRow->ScreenToOpen;
         EntryData->NameID = RowNames[i];
 
         CachedMenuTileData.Add(EntryData);

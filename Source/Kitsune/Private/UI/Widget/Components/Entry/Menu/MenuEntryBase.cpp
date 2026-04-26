@@ -4,8 +4,12 @@
 #include "UI/Widget/Components/Entry/Menu/MenuEntryBase.h"
 
 #include "CommonTextBlock.h"
+#include "UIManagerSubsystem.h"
 #include "Components/Image.h"
+#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "UI/DataObjects/Inventory/MenuEntryData.h"
+#include "UI/Widget/WidgetActivatableBase.h"
 
 void UMenuEntryBase::NativeOnEntryInitialize(UObject* ListItemObject)
 {
@@ -21,30 +25,49 @@ void UMenuEntryBase::NativeOnEntryInitialize(UObject* ListItemObject)
 
 }
 
-void UMenuEntryBase::MouseEnter()
+void UMenuEntryBase::OnHovered()
 {
 	Image_DisplayImage->SetColorAndOpacity(HoverIconColor);
 
-	Super::MouseEnter();
+	Super::OnHovered();
 }
 
-void UMenuEntryBase::MouseLeave()
+void UMenuEntryBase::OnUnHovered()
 {
 	Image_DisplayImage->SetColorAndOpacity(DefaultIconColor);
 
-	Super::MouseLeave();
+	Super::OnUnHovered();
 }
 
-void UMenuEntryBase::MouseDown()
+void UMenuEntryBase::OnPressed()
 {
 	Image_DisplayImage->SetColorAndOpacity(ClickIconColor);
 
-	Super::MouseDown();
+	Super::OnPressed();
 }
 
-void UMenuEntryBase::MouseUp()
+void UMenuEntryBase::OnReleased()
 {
 	Image_DisplayImage->SetColorAndOpacity(DefaultIconColor);
+	const UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetWorld());
+	UIManager->PushSoftWidgetToStackAsync(
+		KitsuneGameplayTags::UI_WidgetStack_GameMenu,
+		UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(CachedEntryData->ScreenToOpen),
+		[this](EAsyncPushWidgetState InPushState, UWidgetActivatableBase* PushedWidget)
+		{
+			switch (InPushState)
+			{
+			case EAsyncPushWidgetState::OnCreatedBeforePush:
+				PushedWidget->SetOwningPlayer(GetOwningPlayer());
+				break;
 
-	Super::MouseUp();
+			case EAsyncPushWidgetState::AfterPush:
+				break;
+
+			default:
+				break;
+			}
+		});
+	
+	Super::OnReleased();
 }

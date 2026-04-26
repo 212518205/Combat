@@ -9,13 +9,13 @@
 
 #if WITH_EDITOR
 void UKitsuneTabListWidgetBase::RequestRegisterTab(const FName& InTabID, const FText& InTabDisplayName)
-{
-	RegisterTab(InTabID, TabButtonEntryWidgetClass, nullptr);
-	if (const UKitsuneCommonButtonBase* Button=Cast<UKitsuneCommonButtonBase>(GetTabButtonBaseByID(InTabID)))
-	{
-		Button->SetButtonText(InTabDisplayName);
-	}
-}
+ {
+ 	RegisterTab(InTabID, TabButtonEntryWidgetClass, nullptr);
+ 	if (const UKitsuneCommonButtonBase* Button=Cast<UKitsuneCommonButtonBase>(GetTabButtonBaseByID(InTabID)))
+ 	{
+ 		Button->SetButtonText(InTabDisplayName);
+ 	}
+ }
 
 void UKitsuneTabListWidgetBase::ValidateCompiledDefaults(class IWidgetCompilerLog& CompileLog) const
 {

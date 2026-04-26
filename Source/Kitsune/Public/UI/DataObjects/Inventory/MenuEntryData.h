@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "MenuEntryData.generated.h"
 
 
@@ -36,5 +37,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	ETileViewEntryType EntryType;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag ScreenToOpen;
 
 };

@@ -26,6 +26,8 @@ public:
 	UInventoryItemInstance();
 
 	FORCEINLINE UInventoryItemDefinition* GetItemDef() const { return ItemDef; }
+	FORCEINLINE AActor* GetOwningActor() const {return OwningActor;}
+	FORCEINLINE void SetOwningActor(AActor* Actor) {OwningActor = Actor;}
 
 	/*** `@BC`   描述: EItemFeature操作函数   `BC@`(ItemFeatures & Feature) != EItemFeature::None;  ***/
 	FORCEINLINE void AddFeature(const EItemFeature Feature) { ItemFeatures |= static_cast<int32>(Feature); }
@@ -39,7 +41,10 @@ public:
 	{
 		if (HasFeature(Feature))RemoveFeature(Feature);
 		else AddFeature(Feature);
-	}
+	}	
+	
+	UPROPERTY(BlueprintReadOnly)
+	int32 StackCount = 1;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
@@ -51,6 +56,5 @@ protected:
 	int32 ItemFeatures = 0;
 
 	UPROPERTY(BlueprintReadOnly)
-	int32 StackCount = 1;
-
+	TObjectPtr<AActor> OwningActor;
 };

@@ -37,9 +37,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UKitsuneCommonListView> CommonListView_Prompt;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Cached")
-	TObjectPtr<UPlayerViewModel> CachedPlayerViewModel;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Cached")
 	TObjectPtr<UUIManagerSubsystem> CachedUIManager;

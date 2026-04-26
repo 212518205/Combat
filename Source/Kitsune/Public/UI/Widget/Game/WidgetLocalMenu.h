@@ -22,9 +22,6 @@ class KITSUNE_API UWidgetLocalMenu : public UWidgetActivatableBase
 protected:
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION(BlueprintCallable)
-	UPlayerViewModel* GetLocalPlayerViewModel();
-
 	/*** `@BC`   描述: 返回true代表   `BC@` ***/
 	void LoadAllMenuTileData();
 	void RefreshMenu();
@@ -37,9 +34,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UMenuEntryData*> CachedMenuTileData;
-
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UPlayerViewModel> CachedLocalViewModel;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMenuEntryMapping* TileEntryMapping;

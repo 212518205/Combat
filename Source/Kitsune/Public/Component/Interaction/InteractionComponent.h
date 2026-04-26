@@ -18,6 +18,7 @@ class KITSUNE_API UInteractionComponent : public UKitsuneExtensionComponent
 	GENERATED_BODY()
 
 public:
+	UInteractionComponent();
 	virtual void BeginPlay() override;
 
 	UFUNCTION(Server, Reliable)
@@ -26,18 +27,22 @@ public:
 	UFUNCTION(Server, Reliable)
 	void RemoveInteractableItem(UInventoryItemInstance* ItemInstance);
 	
-	UPROPERTY(BlueprintReadWrite, Category = "Interact")
-	UInventorySystem* InventorySystem;
+	UInventorySystem* GetInventorySystem();
+	
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Client, Reliable)
 	void ItemOverlapChange(UInventoryItemInstance* ItemInstance, EItemInstanceAction InstanceAction);
 
 	UPlayerViewModel* GetLocalPlayerViewModel();
 
+	/*** TODO: 这里不应该缓存viewmodel，在交互组件处理，外部通过viewmodel访问交互组件... [2026年4月25日 14:29:38 来自`@BC@`] ***/
 	TWeakObjectPtr<UPlayerViewModel> CachedLocalViewModel;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Interact")
+	UInventorySystem* InventorySystem;
 };
 
 

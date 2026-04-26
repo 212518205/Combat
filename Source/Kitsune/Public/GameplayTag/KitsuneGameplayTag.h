@@ -20,6 +20,7 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_ConfirmScreen);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_MainHudScreen);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_LocalMenuScreen);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Widget_BackBagScreen);
 
 	/*** `@BC`   描述: UI ListView ListEntryData用途   `BC@` ***/
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_ListEntryPurpose_Interact);

@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "InventoryItemTrait.h"
+#include "Inventory/Trait/ItemTrait_Interact.h"
+#include "Inventory/Trait/ItemTrait_Stack.h"
 #include "InventoryItemDefinition.generated.h"
+
+#define GET_TRAIT(ItemInstance, TraitSuffix) \
+		UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_##TraitSuffix>((ItemInstance)->GetItemDef())
 
 class UInventoryItemTrait;
 /**

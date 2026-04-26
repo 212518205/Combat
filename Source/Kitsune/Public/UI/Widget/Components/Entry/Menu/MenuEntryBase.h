@@ -42,10 +42,10 @@ protected:
 	UMenuEntryData* CachedEntryData;
 
 	/***   ...UKitsuneClickableWidget Interface Begin...   ***/
-	virtual void MouseEnter() override;
-	virtual void MouseLeave() override;
-	virtual void MouseDown() override;
-	virtual void MouseUp() override;
+	virtual void OnHovered() override;
+	virtual void OnUnHovered() override;
+	virtual void OnPressed() override;
+	virtual void OnReleased() override;
 	/***   ...UKitsuneClickableWidget Interface End...     ***/
 
 	/*** `@BC`   描述: 蓝图配置   `BC@` ***/

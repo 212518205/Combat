@@ -39,9 +39,30 @@ protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	UCommonTextBlock* CommonTextBlock_ButtonText;
 
+	/***  按钮图标   `BC@` ***/
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UCommonLazyImage> CommonLazyImage_ButtonImage;
 
+	/***  按钮背景图片   `BC@` ***/
+	UPROPERTY(EditDefaultsOnly)
+	bool bBackground;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UCommonLazyImage> CommonLazyImage_Background;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bBackground"))
+	TSoftObjectPtr<UTexture2D> T_HoveredBackground;
+
+	/***  按钮文本信息   `BC@` ***/
+	UPROPERTY(EditDefaultsOnly)
+	bool bTextStyle;
+	
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bTextStyle"))
+	TSubclassOf<UCommonTextStyle> HoveredTextStyle;
+	
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bTextStyle"))
+	TSubclassOf<UCommonTextStyle> UnHoveredTextStyle;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Button", meta = (AllowPrivateAccess))
 	FText ButtonDisplayText;
 

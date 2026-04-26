@@ -5,6 +5,8 @@
 
 #include "FrontendDebugHelper.h"
 #include "IDetailTreeNode.h"
+#include "Component/Interaction/InteractionComponent.h"
+#include "Interfaces/PawnInteractInterface.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/Trait/ItemTrait_Display.h"
 #include "Inventory/Trait/ItemTrait_Interact.h"
@@ -13,6 +15,16 @@
 void UPlayerViewModel::NativeInitialize()
 {
 	Super::NativeInitialize();
+    
+    if (IPawnInteractInterface* Interface = Cast<IPawnInteractInterface>(OwningPawn))
+    {
+        CarriedInventorySystem = Interface->GetInteractionComp()->GetInventorySystem();
+    }
+    if (!CarriedInventorySystem)
+    {
+        Debug::Print(TEXT("CarriedInventorySystem 为空"));
+    }
+    
 }
 
 void UPlayerViewModel::AddInteractableItemInstance(UInventoryItemInstance* ItemInstance)
@@ -32,29 +44,6 @@ void UPlayerViewModel::RemoveInteractableItemInstance(UInventoryItemInstance* It
         OnInteractableItemChange.Broadcast(ItemInstance, EItemInstanceAction::ERemoveInstance);
     }
 }
-
-
-//void UPlayerViewModel::RemoveOrAddInteractableItemInstance(UInventoryItemInstance* ItemInstance)
-//{
-//	
-//	
-//	if (OverlappedItemInstances.Contains(ItemInstance))
-//	{
-//		DebugArray.Pop();
-//		OverlappedItemInstances.Remove(ItemInstance);
-//		OnInteractableItemChange.Broadcast(ItemInstance, EItemInstanceAction::ERemoveInstance);
-//		Debug::Print(TEXT("Remove Data From DebugArray"));
-//	}
-//	else
-//	{
-//		UListDataObjectString* DebugData = NewObject<UListDataObjectString>();
-//		DebugArray.Add(DebugData);
-//		Debug::Print(TEXT("Add Data From DebugArray"));
-//		OverlappedItemInstances.Add(ItemInstance);
-//		OnInteractableItemChange.Broadcast(ItemInstance, EItemInstanceAction::EAddInstance);
-//	}
-//	
-//}
 
 void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWeaponIcon)
 {

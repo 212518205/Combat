@@ -31,22 +31,27 @@ public:
 	void AddInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 	void RemoveInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 
-	//void RemoveOrAddInteractableItemInstance(UInventoryItemInstance* ItemInstance);
-
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerWeaponIcon(TSoftObjectPtr<UTexture2D> InWeaponIcon);
 
+	/***  变化委托   `BC@` ***/
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
 	FOnAttributeChangedDelegate OnWeaponChanged;
 
 	UPROPERTY(BlueprintAssignable, Category  = "ViewModel | Interact")
 	FOnInteractableItemChange OnInteractableItemChange;
 
+	/***  Getter   `BC@` ***/
 	TArray<UInventoryItemInstance*>& GetOverlappedItemInstances() { return OverlappedItemInstances; }
+	UInventorySystem* GetInventorySystem() {return CarriedInventorySystem;}
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
-
+	
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UInventorySystem> CarriedInventorySystem;
+	
 	UPROPERTY(BlueprintReadWrite, Category = "ViewModel | Interact")
 	TArray<UInventoryItemInstance*> OverlappedItemInstances;
 };

@@ -6,6 +6,7 @@
 #include "CommonActivatableWidget.h"
 #include "WidgetActivatableBase.generated.h"
 
+class UPlayerViewModel;
 class AKitsunePlayerController;
 /**
  * 
@@ -16,13 +17,15 @@ class KITSUNE_API UWidgetActivatableBase : public UCommonActivatableWidget
 	GENERATED_BODY()
 
 protected:
-	/** Function Begin*/
 	UFUNCTION(BlueprintPure)
 	AKitsunePlayerController* GetOwningKitsunePlayerController();
-	/** Function End*/
+	
+	UFUNCTION(BlueprintCallable)
+	UPlayerViewModel* GetLocalPlayerViewModel();
+	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UPlayerViewModel> CachedLocalViewModel;
 private:
-	/** Variable Begin*/
 	TWeakObjectPtr<AKitsunePlayerController> CachedOwningKitsunePC;
-	/** Variable End*/
 
 };

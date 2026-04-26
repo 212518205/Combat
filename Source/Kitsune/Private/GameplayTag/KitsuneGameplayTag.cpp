@@ -21,6 +21,7 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_ConfirmScreen, "UI.Widget.ConfirmScreen");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_MainHudScreen, "UI.Widget.MainHudScreen");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_LocalMenuScreen, "UI.Widget.LocalMenuScreen");
+	UE_DEFINE_GAMEPLAY_TAG(UI_Widget_BackBagScreen, "UI.Widget.BackBagScreen");
 
 	/*** `@BC`   描述: UI ListView ListEntryData用途   `BC@` ***/
 	UE_DEFINE_GAMEPLAY_TAG(UI_ListEntryPurpose_Interact, "UI.ListEntryPurpose.Interact");

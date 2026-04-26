@@ -6,6 +6,7 @@
 #include "UIManagerSubsystem.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "Inventory/InventorySystem.h"
+#include "Net/UnrealNetwork.h"
 
 void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
@@ -23,17 +24,36 @@ void UInteractionComponent::RemoveInteractableItem_Implementation(UInventoryItem
 	}
 }
 
+UInteractionComponent::UInteractionComponent()
+{
+}
+
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	InventorySystem = NewObject<UInventorySystem>(this);
+	if (!InventorySystem)
+	{
+		InventorySystem = NewObject<UInventorySystem>(this);
+		Debug::Print(TEXT("创建库存系统"));
+	}
+}
+
+UInventorySystem* UInteractionComponent::GetInventorySystem()
+{
+	if (!InventorySystem)
+	{
+		InventorySystem = NewObject<UInventorySystem>(this);
+		Debug::Print(TEXT("创建库存系统"));
+	}
+	return InventorySystem;
 }
 
 void UInteractionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UInteractionComponent, InventorySystem);
 }
 
 void UInteractionComponent::ItemOverlapChange_Implementation(UInventoryItemInstance* ItemInstance, const EItemInstanceAction InstanceAction)

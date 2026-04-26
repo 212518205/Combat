@@ -17,14 +17,14 @@ void UWidgetMainHudScreen::OnInteractableItemChange_Implementation(UInventoryIte
 	switch (InstanceAction)
 	{
 	case EItemInstanceAction::EAddInstance:
-		if (CachedPlayerViewModel->OverlappedItemInstances.Contains(ItemInstance))
+		if (CachedLocalViewModel->GetOverlappedItemInstances().Contains(ItemInstance))
 		{
 			CommonListView_Prompt->AddItem(ItemInstance);
 		}
 		break;
 
 	case EItemInstanceAction::ERemoveInstance:
-		if (!CachedPlayerViewModel->OverlappedItemInstances.Contains(ItemInstance))
+		if (!CachedLocalViewModel->GetOverlappedItemInstances().Contains(ItemInstance))
 		{
 			CommonListView_Prompt->RemoveItem(ItemInstance);
 		}
@@ -40,6 +40,7 @@ void UWidgetMainHudScreen::OnInteractableItemChange_Implementation(UInventoryIte
 UInventoryItemInstance* UWidgetMainHudScreen::GetSelectedItemInstance() const
 {
 	UInventoryItemInstance* ItemInstance = CommonListView_Prompt->GetSelectedItem<UInventoryItemInstance>();
+	if (CommonListView_Prompt->GetListItems().Num() == 0)return nullptr;
 	if (!ItemInstance)
 	{
 		ItemInstance = Cast<UInventoryItemInstance>(CommonListView_Prompt->GetItemAt(0));
@@ -81,19 +82,19 @@ FReply UWidgetMainHudScreen::NativeOnKeyDown(const FGeometry& InGeometry, const 
 void UWidgetMainHudScreen::InitializeMainHudScreen()
 {
 	CachedUIManager = UUIManagerSubsystem::GetUIManager(GetOwningPlayer());
-	CachedPlayerViewModel = CachedUIManager->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
+	CachedLocalViewModel = CachedUIManager->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
 
-	CachedPlayerViewModel->OnInteractableItemChange.AddDynamic(this, &ThisClass::OnInteractableItemChange);
+	CachedLocalViewModel->OnInteractableItemChange.AddDynamic(this, &ThisClass::OnInteractableItemChange);
 
-	CachedPlayerViewModel->OnHealthPercentChanged.Broadcast();
-	CachedPlayerViewModel->OnStaminaPercentChanged.Broadcast();
+	CachedLocalViewModel->OnHealthPercentChanged.Broadcast();
+	CachedLocalViewModel->OnStaminaPercentChanged.Broadcast();
 }
 
 void UWidgetMainHudScreen::ChangeSelectionByOffset(const int32 Offset) const
 {
 	if (!CommonListView_Prompt)return;
-	
-	int EntryNum = CommonListView_Prompt->GetNumItems();
+
+	const int EntryNum = CommonListView_Prompt->GetNumItems();
 	if (EntryNum == 0)return;
 
 	const UObject* CurItem = CommonListView_Prompt->GetSelectedItem();

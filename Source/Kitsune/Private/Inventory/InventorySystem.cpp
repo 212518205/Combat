@@ -86,6 +86,49 @@ bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int
 	return true;
 }
 
+TMap<FName, FInventoryCategoryGroup> UInventorySystem::GetAllCategoryItem()
+{
+	TMap<FName, FInventoryCategoryGroup> ReturnGroup;
+
+	for (UInventoryItemInstance* ItemInstance : InventoryItems)
+	{
+		if (const UItemTrait_Display* TraitDisplay = GET_TRAIT(ItemInstance, Display))
+		{
+			FName CategoryID = TraitDisplay->CategoryID;   // 这个在打包后是安全的
+
+			// 正确获取或添加 Group
+			FInventoryCategoryGroup& Group = ReturnGroup.FindOrAdd(CategoryID);
+
+			// 只在第一次添加时设置显示名称（避免后面覆盖）
+			if (Group.CategoryItems.Num() == 0)
+			{
+				Group.CategoryDisplayName = TraitDisplay->CategoryDisplayName; // ← 关键修改点
+			}
+
+			Group.CategoryItems.Add(ItemInstance);
+		}
+	}
+
+	return ReturnGroup;
+}
+
+TArray<UInventoryItemInstance*> UInventorySystem::GetAllItemsByCategory(const FName CategoryID)
+{
+	TArray<UInventoryItemInstance*> Items;
+	for (UInventoryItemInstance* ItemInstance : InventoryItems)
+	{
+		if (const UItemTrait_Display* Trait_Display = GET_TRAIT(ItemInstance, Display))
+		{
+			if (CategoryID == Trait_Display->CategoryID)
+			{
+				Items.Add(ItemInstance);
+			}
+		}
+	}
+	
+	return Items;
+}
+
 void UInventorySystem::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);

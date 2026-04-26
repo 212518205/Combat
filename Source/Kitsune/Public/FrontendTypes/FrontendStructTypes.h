@@ -45,6 +45,9 @@ struct FMenuTileRow : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Menu Tile")
 	ETileViewEntryType EntryType;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Menu Tile", meta = (Categories = "UI.Widget"))
+	FGameplayTag ScreenToOpen;
 
 };
 
