@@ -4,12 +4,12 @@
 #include "UI/Widget/WidgetPrimaryLayout.h"
 
 #include "CommonActivatableWidget.h"
-#include "FrontendDebugHelper.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
-#include "Input/CommonUIActionRouterBase.h"
+#include "UI/KitsuneActivatableWidgetStack.h"
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
+
 
 void UWidgetPrimaryLayout::NativeOnInitialized()
 {
@@ -17,7 +17,7 @@ void UWidgetPrimaryLayout::NativeOnInitialized()
 }
 
 void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag,
-                                               UCommonActivatableWidgetContainerBase* InStack)
+                                               UKitsuneActivatableWidgetStack* InStack)
 {
 	if (IsDesignTime())return;
 	
@@ -28,18 +28,10 @@ void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.W
 	
 }
 
-UCommonActivatableWidgetContainerBase* UWidgetPrimaryLayout::FindWidgetStackByTag(const FGameplayTag& InTag)const
+UKitsuneActivatableWidgetStack* UWidgetPrimaryLayout::FindWidgetStackByTag(const FGameplayTag& InTag)const
 {
 	checkf(GameplayTagToStackMap.Contains(InTag), TEXT("GameplayTagToStackMap no find stack by %s"), *InTag.ToString());
 	return GameplayTagToStackMap.FindRef(InTag);
-}
-
-void UWidgetPrimaryLayout::DeActivableWidgetStackByTag(const FGameplayTag& InTag)const
-{
-	UCommonActivatableWidgetContainerBase* WidgetStack = GameplayTagToStackMap.FindRef(InTag);
-	check(WidgetStack);
-	WidgetStack->ClearWidgets();
-	UpdateInteractState();
 }
 
 UCommonActivatableWidget* UWidgetPrimaryLayout::GetTopWidget() const
@@ -53,7 +45,7 @@ UCommonActivatableWidget* UWidgetPrimaryLayout::GetTopWidget() const
 	
 	for (FGameplayTag& StackTag	: StackTags)
 	{
-		if (UCommonActivatableWidget* DisplayWidget = GameplayTagToStackMap.FindRef(StackTag)->GetActiveWidget(); DisplayWidget && DisplayWidget->IsActivated())
+		if (UCommonActivatableWidget* DisplayWidget = GameplayTagToStackMap.FindRef(StackTag)->GetTopWidget(); DisplayWidget && DisplayWidget->IsActivated())
 		{
 			TopWidget = DisplayWidget;
 		}

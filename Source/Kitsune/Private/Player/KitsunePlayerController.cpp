@@ -13,6 +13,7 @@
 #include "Component/Interaction/InteractionComponent.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
+#include "Input/CommonUIActionRouterBase.h"
 #include "Input/KitsuneInputComponent.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventorySystem.h"
@@ -68,8 +69,7 @@ void AKitsunePlayerController::SetupInputComponent()
 	KitsuneInputComponent->BindAction(JumpAction, ETriggerEvent::Started, 
 		this,&AKitsunePlayerController::Jump);
 
-	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Started, this, &ThisClass::OnPressed_ShowMouse);
-	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::OnReleased_ShowMouse);
+	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::ToggleMouseMode);
 	KitsuneInputComponent->BindAction(PickupableAction, ETriggerEvent::Completed, this, &ThisClass::OnInteraction);
 
 	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
@@ -170,38 +170,27 @@ void AKitsunePlayerController::AbilityInputPressed(const FGameplayTag TriggeredT
 void AKitsunePlayerController::AbilityInputReleased(const FGameplayTag TriggeredTag)
 {
 }
-
-void AKitsunePlayerController::OnPressed_ShowMouse(const FInputActionValue& Value)
+void AKitsunePlayerController::ToggleMouseMode(const FInputActionValue& InputActionValue)
 {
-	bForceMouse = true;
-	UpdateMouse();
-}
-
-void AKitsunePlayerController::OnReleased_ShowMouse(const FInputActionValue& Value)
-{
-	bForceMouse = false;
-	UpdateMouse();
-}
-
-void AKitsunePlayerController::UpdateMouse()
-{
-	if (bForceMouse)
+	// 通过 CommonUIActionRouter 获取当前激活的鼠标捕获模式
+	if (UCommonUIActionRouterBase* Router = GetLocalPlayer()->GetSubsystem<UCommonUIActionRouterBase>())
 	{
-		UUIManagerSubsystem::ExistedSetInputMode(
-			this,
-			ECommonInputMode::All,                        // 或 ECommonInputMode::GameAndMenu
-			EMouseCaptureMode::NoCapture,
-			false   
-		);
-	}
-	else
-	{
-		UUIManagerSubsystem::ExistedSetInputMode(
-			this,
-			ECommonInputMode::Game,
-			EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown,
-			true   
-		);
+		// 获取当前真实的鼠标捕获模式
+		EMouseCaptureMode CurrentMode = Router->GetActiveMouseCaptureMode(EMouseCaptureMode::NoCapture);
+        
+		// 基于当前模式决定新的模式：当前为 NoCapture 则切换为永久捕获，否则切换回 NoCapture
+		EMouseCaptureMode NewCaptureMode = (CurrentMode == EMouseCaptureMode::NoCapture)
+			? EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown
+			: EMouseCaptureMode::NoCapture;
+        
+		// 根据新模式决定是否在捕获时隐藏光标
+		bool bNewHideCursorDuringCapture = (NewCaptureMode != EMouseCaptureMode::NoCapture);
+        
+		// 构建新的输入配置
+		FUIInputConfig NewConfig(ECommonInputMode::All, NewCaptureMode, bNewHideCursorDuringCapture);
+        
+		// 应用新配置
+		Router->SetActiveUIInputConfig(NewConfig, this);
 	}
 }
 

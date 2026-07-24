@@ -24,11 +24,11 @@ public:
 	/** Function Begin-->*/
 	UFUNCTION(BlueprintCallable,meta=(WorldContext="WorldContextObject"
 		,HidePin="WorldContextObject",BlueprintInternalUseOnly="true",DisplayName="Push Soft Widget To Widget Stack"))
-	static UAsyncActionPushSoftWidget* PushSoftWidget(const UObject* WorldContextObject,
-		APlayerController* OwningPlayerController, 
-		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
-		UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InWidgetStackTag,
-		bool bFocusOnNewlyPushedWidget = true
+	static UAsyncActionPushSoftWidget* PushSoftWidgetByTag(const UObject* WorldContextObject,
+	                                                  APlayerController* OwningPlayerController,
+	                                                  FGameplayTag InWidgetTag,
+	                                                  UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InWidgetStackTag,
+	                                                  bool bFocusOnNewlyPushedWidget = true
 	);
 
 	virtual void Activate() override;
@@ -46,7 +46,7 @@ private:
 	/** Variable Begin*/ 
 	TWeakObjectPtr<UWorld> CachedOwningWorld;
 	TWeakObjectPtr<APlayerController> CachedOwningPC;
-	TSoftClassPtr<UWidgetActivatableBase> CachedSoftWidgetClass;
+	FGameplayTag CachedWidgetTag;
 	FGameplayTag CachedWidgetStackTag;
 	bool bCachedFocusOnNewlyPushedWidget = false;
 	/** Variable End*/

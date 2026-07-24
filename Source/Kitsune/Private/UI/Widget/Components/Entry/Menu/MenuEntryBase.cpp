@@ -52,7 +52,7 @@ void UMenuEntryBase::OnReleased()
 	const UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetWorld());
 	UIManager->PushSoftWidgetToStackAsync(
 		KitsuneGameplayTags::UI_WidgetStack_GameMenu,
-		UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(CachedEntryData->ScreenToOpen),
+		CachedEntryData->ScreenToOpen,
 		[this](EAsyncPushWidgetState InPushState, UWidgetActivatableBase* PushedWidget)
 		{
 			switch (InPushState)

@@ -14,6 +14,7 @@
 #include "UI/Widget/WidgetConfirmScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 #include "Input/CommonUIActionRouterBase.h"
+#include "UI/KitsuneActivatableWidgetStack.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
 
 UUIManagerSubsystem* UUIManagerSubsystem::GetUIManager(const UObject* WorldContextObject)
@@ -78,12 +79,6 @@ void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPr
 	RegisteredPrimaryLayout = InPrimaryLayout;
 }
 
-void UUIManagerSubsystem::DeActivableStackByTag(FGameplayTag InTag) const
-{
-	RegisteredPrimaryLayout->DeActivableWidgetStackByTag(InTag);
-}
-
-
 UAttributeViewModel* UUIManagerSubsystem::GetViewModelByPawn(APawn* InPawn)
 {
 	if (!InPawn)return nullptr;
@@ -93,25 +88,23 @@ UAttributeViewModel* UUIManagerSubsystem::GetViewModelByPawn(APawn* InPawn)
 }
 
 void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
-                                                     TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
+                                                     const FGameplayTag InWidgetTag,
                                                      TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const
 {
-	check(!InSoftWidgetClass.IsNull());
-
-	UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(InSoftWidgetClass.ToSoftObjectPath(),
+	check(InWidgetTag.IsValid());
+	
+	TSoftClassPtr<UWidgetActivatableBase> WidgetClass = UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(InWidgetTag);
+	UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(WidgetClass.ToSoftObjectPath(),
 		FStreamableDelegate::CreateLambda(
-			[InSoftWidgetClass,this, InWidgetStackTag,AsyncPushCallback]()
+			[InWidgetTag, this, InWidgetStackTag, AsyncPushCallback, WidgetClass]()
 			{
-				UClass* LoadedWidgetClass = InSoftWidgetClass.Get();
+				
+				UClass* LoadedWidgetClass = WidgetClass.Get();
 				check(LoadedWidgetClass && RegisteredPrimaryLayout);
-				UCommonActivatableWidgetContainerBase* FoundWidgetStack = RegisteredPrimaryLayout->FindWidgetStackByTag(InWidgetStackTag);
-
-				UWidgetActivatableBase* CreatedWidget =  FoundWidgetStack->AddWidget<UWidgetActivatableBase>(LoadedWidgetClass,
-					[AsyncPushCallback](UWidgetActivatableBase& CreatedWidgetInstance)
-					{
-						AsyncPushCallback(EAsyncPushWidgetState::OnCreatedBeforePush, &CreatedWidgetInstance);
-					}
-				);
+				UKitsuneActivatableWidgetStack* FoundWidgetStack = RegisteredPrimaryLayout->FindWidgetStackByTag(InWidgetStackTag);
+				
+				AsyncPushCallback(EAsyncPushWidgetState::AfterPush, nullptr);
+				UWidgetActivatableBase* CreatedWidget =  FoundWidgetStack->PushWidget(InWidgetTag, LoadedWidgetClass);
 				RegisteredPrimaryLayout->UpdateInteractState();
 				AsyncPushCallback(EAsyncPushWidgetState::AfterPush, CreatedWidget);
 			})
@@ -147,8 +140,8 @@ void UUIManagerSubsystem::PushConfirmScreenToModalStackAsync(const EConfirmScree
 	check(CreatedInfoObject);
 
 	PushSoftWidgetToStackAsync(
-		FGameplayTag::RequestGameplayTag(FName("UI.WidgetStack.ModalStack")),
-		UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(FGameplayTag::RequestGameplayTag(FName("UI.Widget.ConfirmScreen"))),
+		KitsuneGameplayTags::UI_WidgetStack_ModalStack,
+		KitsuneGameplayTags::UI_Widget_ConfirmScreen,
 		[CreatedInfoObject, ButtonClickedCallback](EAsyncPushWidgetState InPushState, UWidgetActivatableBase* PushedWidget)
 		{
 			if (InPushState == EAsyncPushWidgetState::OnCreatedBeforePush)

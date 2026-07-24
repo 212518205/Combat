@@ -7,6 +7,7 @@
 #include "GameplayTags.h"
 #include "WidgetPrimaryLayout.generated.h"
 
+class UKitsuneActivatableWidgetStack;
 struct FGameplayTag;
 class UCommonActivatableWidget;
 class UCommonActivatableWidgetContainerBase;
@@ -18,25 +19,21 @@ UCLASS(Abstract, BlueprintType, meta = (DisableNaiveTick))
 class KITSUNE_API UWidgetPrimaryLayout : public UCommonUserWidget
 {
 	GENERATED_BODY()
-public:
+	
+protected:
 	virtual void NativeOnInitialized() override;
 	
-	/** Function Begin*/
+public:
 	UFUNCTION(BlueprintCallable)
-	void RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag, UCommonActivatableWidgetContainerBase* InStack);
+	void RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag, UKitsuneActivatableWidgetStack*
+	                         InStack);
 
 	UFUNCTION(BlueprintCallable)
-	UCommonActivatableWidgetContainerBase* FindWidgetStackByTag(const FGameplayTag& InTag)const;
-
-	UFUNCTION(BlueprintCallable)
-	void DeActivableWidgetStackByTag(const FGameplayTag& InTag) const;
+	UKitsuneActivatableWidgetStack* FindWidgetStackByTag(const FGameplayTag& InTag)const;
 	
 	UCommonActivatableWidget* GetTopWidget() const;
 	void UpdateInteractState() const;	
-	/** Function End*/
 private:
-	/** Variable Begin*/
 	UPROPERTY(Transient)
-	TMap<FGameplayTag, UCommonActivatableWidgetContainerBase*> GameplayTagToStackMap;
-	/** Variable End*/
+	TMap<FGameplayTag, UKitsuneActivatableWidgetStack*> GameplayTagToStackMap;
 };

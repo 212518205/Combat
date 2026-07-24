@@ -84,10 +84,8 @@ protected:
 
 	void AbilityInputPressed(FGameplayTag TriggeredTag);
 	void AbilityInputReleased(FGameplayTag TriggeredTag);
-
-	void OnPressed_ShowMouse(const FInputActionValue& Value);
-	void OnReleased_ShowMouse(const FInputActionValue& Value);
-	void UpdateMouse();
+	void ToggleMouseMode(const FInputActionValue& InputActionValue);
+	
 	/*** `@BC`   描述: 缓存所控制角色   `BC@` ***/
 	UPROPERTY(Transient)
 	UKitsuneAbilitySystemComponent* CachedKitsuneAbilitySystemComponent = nullptr;

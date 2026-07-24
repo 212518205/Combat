@@ -52,8 +52,8 @@ public:
 	UAttributeViewModel* GetViewModelByPawn(APawn* InPawn);
 	
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
-		TSoftClassPtr<UWidgetActivatableBase> InSoftWidgetClass,
-		TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const;
+	                                const FGameplayTag InWidgetTag,
+	                                TFunction<void(EAsyncPushWidgetState, UWidgetActivatableBase*)> AsyncPushCallback)const;
 
 	void PushConfirmScreenToModalStackAsync(
 		const EConfirmScreenType InScreenType, const FText& InScreenTitle, const FText& InScreenMsg, 
@@ -63,16 +63,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout);
-
-
-	UFUNCTION(BlueprintCallable)
-	void DeActivableStackByTag(FGameplayTag InTag)const;
-	/** Function End*/
-
-	/** Variable Begin*/
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnButtonDescriptionUpdate ButtonDescriptionUpdateDelegate;
-	/** Variable End*/
 
 protected:
 	/** Function Begin*/
