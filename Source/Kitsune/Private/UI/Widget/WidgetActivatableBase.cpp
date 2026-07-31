@@ -18,6 +18,13 @@ UPlayerViewModel* UWidgetActivatableBase::GetLocalPlayerViewModel()
 	return CachedLocalViewModel;
 }
 
+UWidgetPrimaryLayout* UWidgetActivatableBase::GetPrimaryLayout() const
+{
+	const UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetWorld());
+	
+	return UIManager->GetRegisteredPrimaryLayout();
+}
+
 AKitsunePlayerController* UWidgetActivatableBase::GetOwningKitsunePlayerController()
 {
 	if (!CachedOwningKitsunePC.IsValid())

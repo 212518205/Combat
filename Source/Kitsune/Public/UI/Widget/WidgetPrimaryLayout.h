@@ -29,7 +29,13 @@ public:
 	                         InStack);
 
 	UFUNCTION(BlueprintCallable)
-	UKitsuneActivatableWidgetStack* FindWidgetStackByTag(const FGameplayTag& InTag)const;
+	UKitsuneActivatableWidgetStack* FindWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag)const;
+	
+	UFUNCTION(BlueprintCallable)
+	void ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void PopWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag) const;
 	
 	UCommonActivatableWidget* GetTopWidget() const;
 	void UpdateInteractState() const;	

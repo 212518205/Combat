@@ -12,43 +12,18 @@ class UWidgetActivatableBase;
  * 
  */
 UCLASS()
-class KITSUNE_API UKitsuneActivatableWidgetStack : public UWidget
+class KITSUNE_API UKitsuneActivatableWidgetStack : public UCommonActivatableWidgetContainerBase
 {
 	GENERATED_BODY()
 	
-public:
-	UKitsuneActivatableWidgetStack(const FObjectInitializer& Initializer);
-	
-	UFUNCTION(BlueprintCallable)
-	UWidgetActivatableBase* PushWidget(UPARAM(meta = (Categories = "UI.Widget")) const FGameplayTag InWidgetTag, UClass* WidgetClass);	
-	
+public:	
 	UFUNCTION(BlueprintCallable)
 	void PopWidget();
 	
 	UFUNCTION(BlueprintCallable)
-	UWidgetActivatableBase* GetTopWidget();
-	
-	UFUNCTION(BlueprintCallable)
-	UWidgetActivatableBase* GetActivatableWidgetByTag(UPARAM(meta = (Categories = "UI.Widget")) const FGameplayTag InWidgetTag) const;
-	
-	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+	void ClearStack();
 	
 protected:
-	virtual TSharedRef<SWidget> RebuildWidget() override;
-	
-private:
-	TSharedPtr<SCommonAnimatedSwitcher> MySwitcher;
-	
-	UPROPERTY(Transient)
-	TArray<UWidgetActivatableBase*> StackWidgets;
-	
-	UPROPERTY(Transient)
-	TMap<FGameplayTag, UWidgetActivatableBase*> CachedWidgets;
-	
-	UPROPERTY(Transient)
-	UWidgetActivatableBase* CurrentTopWidget = nullptr;
-	
-	void HandleActiveIndexChanged(int32 NewIndex);
-	void HandleTransitioningChanged(bool bIsTransitioning);
+	virtual void OnWidgetAddedToList(UCommonActivatableWidget& AddedWidget) override;
 	
 };

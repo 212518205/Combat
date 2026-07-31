@@ -7,7 +7,8 @@
 #include "UI/Widget/WidgetActivatableBase.h"
 
 UAsyncActionPushSoftWidget* UAsyncActionPushSoftWidget::PushSoftWidgetByTag(const UObject* WorldContextObject,
-                                                                       APlayerController* OwningPlayerController, FGameplayTag InWidgetTag,
+                                                                       APlayerController* OwningPlayerController,
+                                                                       UPARAM(meta = (Categories = "UI.Widget")) FGameplayTag InWidgetTag,
                                                                        UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InWidgetStackTag, bool bFocusOnNewlyPushedWidget)
 {	
 	checkf(InWidgetTag.IsValid(), TEXT("PushSoftWidgetToStack was passed a null soft widget class "));
@@ -37,6 +38,7 @@ void UAsyncActionPushSoftWidget::Activate()
 	UIManagerSubsystem->PushSoftWidgetToStackAsync(CachedWidgetStackTag, CachedWidgetTag,
 	                                               [this](EAsyncPushWidgetState InPushState, UWidgetActivatableBase* PushedWidget)
 	                                               {
+	                                               		if (!PushedWidget)return;
 		                                               switch (InPushState)
 		                                               {
 		                                               case EAsyncPushWidgetState::OnCreatedBeforePush:

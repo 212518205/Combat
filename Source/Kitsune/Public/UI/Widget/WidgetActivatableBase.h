@@ -6,6 +6,7 @@
 #include "CommonActivatableWidget.h"
 #include "WidgetActivatableBase.generated.h"
 
+class UWidgetPrimaryLayout;
 class UPlayerViewModel;
 class AKitsunePlayerController;
 /**
@@ -22,9 +23,13 @@ protected:
 	
 	UFUNCTION(BlueprintCallable)
 	UPlayerViewModel* GetLocalPlayerViewModel();
+
+	UFUNCTION(BlueprintPure)
+	UWidgetPrimaryLayout* GetPrimaryLayout() const;
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UPlayerViewModel> CachedLocalViewModel;
+
 private:
 	TWeakObjectPtr<AKitsunePlayerController> CachedOwningKitsunePC;
 

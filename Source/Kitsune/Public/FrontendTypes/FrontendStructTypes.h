@@ -35,7 +35,7 @@ struct FMenuTileRow : public FTableRowBase
 	FText DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Menu Tile")
-	bool bIsShowAsNew;
+	bool bIsShowAsNew = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Menu Tile")
 	FText HotKeyText;
@@ -44,7 +44,7 @@ struct FMenuTileRow : public FTableRowBase
 	int32 RequiredLevel = 1;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Menu Tile")
-	ETileViewEntryType EntryType;
+	ETileViewEntryType EntryType = ETileViewEntryType::DefaultMenuIcon;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Menu Tile", meta = (Categories = "UI.Widget"))
 	FGameplayTag ScreenToOpen;

@@ -28,10 +28,26 @@ void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.W
 	
 }
 
-UKitsuneActivatableWidgetStack* UWidgetPrimaryLayout::FindWidgetStackByTag(const FGameplayTag& InTag)const
+UKitsuneActivatableWidgetStack* UWidgetPrimaryLayout::FindWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag)const
 {
 	checkf(GameplayTagToStackMap.Contains(InTag), TEXT("GameplayTagToStackMap no find stack by %s"), *InTag.ToString());
 	return GameplayTagToStackMap.FindRef(InTag);
+}
+
+void UWidgetPrimaryLayout::ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag) const
+{
+	UKitsuneActivatableWidgetStack* WidgetStack = FindWidgetStackByTag(InTag);
+	if (!WidgetStack)return;
+	
+	WidgetStack->ClearStack();
+}
+
+void UWidgetPrimaryLayout::PopWidgetStackByTag(const FGameplayTag InTag) const
+{
+	UKitsuneActivatableWidgetStack* WidgetStack = FindWidgetStackByTag(InTag);;
+	if (!WidgetStack)return;
+	
+	WidgetStack->PopWidget();
 }
 
 UCommonActivatableWidget* UWidgetPrimaryLayout::GetTopWidget() const
@@ -45,7 +61,7 @@ UCommonActivatableWidget* UWidgetPrimaryLayout::GetTopWidget() const
 	
 	for (FGameplayTag& StackTag	: StackTags)
 	{
-		if (UCommonActivatableWidget* DisplayWidget = GameplayTagToStackMap.FindRef(StackTag)->GetTopWidget(); DisplayWidget && DisplayWidget->IsActivated())
+		if (UCommonActivatableWidget* DisplayWidget = GameplayTagToStackMap.FindRef(StackTag)->GetActiveWidget(); DisplayWidget && DisplayWidget->IsActivated())
 		{
 			TopWidget = DisplayWidget;
 		}

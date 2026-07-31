@@ -17,9 +17,7 @@ class KITSUNE_API UFrontendDeveloperSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	/** Variable Begin*/
 	UPROPERTY(Config, EditAnywhere, Category = "Widget Reference", meta = (ForceInlineRow, Categories = "UI.Widget"))
 	TMap<FGameplayTag, TSoftClassPtr<UWidgetActivatableBase>> FrontendWidgetMap;
 
-	/** Variable End*/	
 };

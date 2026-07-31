@@ -26,21 +26,19 @@ public:
 		,HidePin="WorldContextObject",BlueprintInternalUseOnly="true",DisplayName="Push Soft Widget To Widget Stack"))
 	static UAsyncActionPushSoftWidget* PushSoftWidgetByTag(const UObject* WorldContextObject,
 	                                                  APlayerController* OwningPlayerController,
-	                                                  FGameplayTag InWidgetTag,
+	                                                  UPARAM(meta = (Categories = "UI.Widget")) FGameplayTag InWidgetTag,
 	                                                  UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InWidgetStackTag,
 	                                                  bool bFocusOnNewlyPushedWidget = true
 	);
 
 	virtual void Activate() override;
-	/**<-- Function End*/
-
-	/** Variable Begin -->*/
+	
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnPushSoftWidgetDelegate OnWidgetCreatedBeforePush;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPushSoftWidgetDelegate AfterPush;
-	/**<-- Variable End*/
 
 private:
 	/** Variable Begin*/ 

@@ -97,15 +97,15 @@ TMap<FName, FInventoryCategoryGroup> UInventorySystem::GetAllCategoryItem()
 			FName CategoryID = TraitDisplay->CategoryID;   // 这个在打包后是安全的
 
 			// 正确获取或添加 Group
-			FInventoryCategoryGroup& Group = ReturnGroup.FindOrAdd(CategoryID);
-
+			auto& [CategoryDisplayName, CategoryItems] = ReturnGroup.FindOrAdd(CategoryID);
+	
 			// 只在第一次添加时设置显示名称（避免后面覆盖）
-			if (Group.CategoryItems.Num() == 0)
+			if (CategoryItems.Num() == 0)
 			{
-				Group.CategoryDisplayName = TraitDisplay->CategoryDisplayName; // ← 关键修改点
+				CategoryDisplayName = TraitDisplay->CategoryDisplayName; // ← 关键修改点
 			}
 
-			Group.CategoryItems.Add(ItemInstance);
+			CategoryItems.Add(ItemInstance);
 		}
 	}
 

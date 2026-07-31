@@ -96,15 +96,17 @@ void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidge
 	TSoftClassPtr<UWidgetActivatableBase> WidgetClass = UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(InWidgetTag);
 	UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(WidgetClass.ToSoftObjectPath(),
 		FStreamableDelegate::CreateLambda(
-			[InWidgetTag, this, InWidgetStackTag, AsyncPushCallback, WidgetClass]()
+			[this, InWidgetStackTag, AsyncPushCallback, WidgetClass]()
 			{
-				
 				UClass* LoadedWidgetClass = WidgetClass.Get();
 				check(LoadedWidgetClass && RegisteredPrimaryLayout);
 				UKitsuneActivatableWidgetStack* FoundWidgetStack = RegisteredPrimaryLayout->FindWidgetStackByTag(InWidgetStackTag);
 				
-				AsyncPushCallback(EAsyncPushWidgetState::AfterPush, nullptr);
-				UWidgetActivatableBase* CreatedWidget =  FoundWidgetStack->PushWidget(InWidgetTag, LoadedWidgetClass);
+				UWidgetActivatableBase* CreatedWidget =  FoundWidgetStack->AddWidget<UWidgetActivatableBase>(LoadedWidgetClass, 
+					[AsyncPushCallback](UWidgetActivatableBase& CreatedWidgetInstance)
+				{
+					AsyncPushCallback(EAsyncPushWidgetState::OnCreatedBeforePush, &CreatedWidgetInstance);
+				});
 				RegisteredPrimaryLayout->UpdateInteractState();
 				AsyncPushCallback(EAsyncPushWidgetState::AfterPush, CreatedWidget);
 			})
