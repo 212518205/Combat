@@ -15,7 +15,7 @@ class UInventoryItemTrait;
 /**
  * 
  */
-UCLASS(Blueprintable, EditInlineNew, DefaultToInstanced, meta = (PrimaryAssetType = "ItemDefinition"))
+UCLASS(Blueprintable, EditInlineNew, meta = (PrimaryAssetType = "ItemDefinition"))
 class KITSUNE_API UInventoryItemDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
@@ -28,7 +28,7 @@ public:
 
 protected:
 
-	UPROPERTY(Replicated , EditDefaultsOnly, BlueprintReadWrite, Instanced)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Instanced)
 	TArray<TObjectPtr<UInventoryItemTrait>> ItemTraits;
 };
 

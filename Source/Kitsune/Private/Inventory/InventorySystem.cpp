@@ -3,8 +3,11 @@
 
 #include "Inventory/InventorySystem.h"
 
+#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
+#include "FrontendTypes/FrontendStructTypes.h"
 #include "Inventory/Trait/ItemTrait_Display.h"
 #include "Inventory/Trait/ItemTrait_Stack.h"
 #include "Net/UnrealNetwork.h"
@@ -33,12 +36,14 @@ bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int
 			{
 				ItemInstance = InItemInstance;
 				InventoryItems.Add(ItemInstance);
+				/***  暂时将堆叠数设为0，先添加进Item数组才开始遍历堆叠   `BC@` ***/
+				ItemInstance->StackCount = 0;
 				ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddItem);
 			}
 
 			while (ToStackCount > 0)
 			{
-				if (ToStackCount < TraitStack->MaxStackCount - ItemInstance->StackCount)
+				if (ToStackCount <= TraitStack->MaxStackCount - ItemInstance->StackCount)
 				{
 					ItemInstance->StackCount += ToStackCount;
 					ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddStackCount);
@@ -86,47 +91,111 @@ bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int
 	return true;
 }
 
-TMap<FName, FInventoryCategoryGroup> UInventorySystem::GetAllCategoryItem()
+TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystem::GetAllCategoryItem()
 {
 	TMap<FName, FInventoryCategoryGroup> ReturnGroup;
+	TMap<FName, FInventoryInfo> CategoryInfo = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 
 	for (UInventoryItemInstance* ItemInstance : InventoryItems)
 	{
 		if (const UItemTrait_Display* TraitDisplay = GET_TRAIT(ItemInstance, Display))
 		{
-			FName CategoryID = TraitDisplay->CategoryID;   // 这个在打包后是安全的
-
-			// 正确获取或添加 Group
-			auto& [CategoryDisplayName, CategoryItems] = ReturnGroup.FindOrAdd(CategoryID);
-	
-			// 只在第一次添加时设置显示名称（避免后面覆盖）
-			if (CategoryItems.Num() == 0)
+			FName CategoryID = TraitDisplay->CategoryID;
+			UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+			Data->ItemInstance = ItemInstance;
+			if (CategoryInfo.Contains(CategoryID))
 			{
-				CategoryDisplayName = TraitDisplay->CategoryDisplayName; // ← 关键修改点
+				Data->bIsLocked = false;
+				Data->UnlockCost = CategoryInfo.Find(CategoryID)->UnLockCost;
 			}
-
-			CategoryItems.Add(ItemInstance);
+			ReturnGroup.FindOrAdd(CategoryID).CategorySlots.Add(Data);
 		}
 	}
 
-	return ReturnGroup;
+	for (auto &[CategoryID, Info] : CategoryInfo)
+	{
+		auto& [CategoryDisplayName, CategorySlots] = ReturnGroup.FindOrAdd(CategoryID);
+		CategoryDisplayName = Info.CategoryName;
+
+		for (int32 i = 0; i < Info.EmptySlotCount; i++)
+		{
+			UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+			CategorySlots.Add(Data);
+		}
+		for (int32 i = 0; i < Info.LockSlotCount; i++)
+		{
+			UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+			Data->bIsLocked = true;
+			Data->UnlockCost = Info.UnLockCost;
+			CategorySlots.Add(Data);
+		}
+	}
+
+	TArray<TPair<FName, FInventoryCategoryGroup>> SortedResult;
+	SortedResult.Reserve(ReturnGroup.Num());
+	for (auto& [CategoryID, Group] : ReturnGroup)
+	{
+		SortedResult.Emplace(CategoryID, MoveTemp(Group));
+	}
+
+	SortedResult.Sort([&CategoryInfo](const TPair<FName, FInventoryCategoryGroup>& A, const TPair<FName, FInventoryCategoryGroup>& B)
+	{
+		const int32 OrderA = CategoryInfo.Contains(A.Key) ? CategoryInfo[A.Key].SortOrder : INT_MAX;
+		const int32 OrderB = CategoryInfo.Contains(B.Key) ? CategoryInfo[B.Key].SortOrder : INT_MAX;
+		return OrderA < OrderB;
+	});
+
+	return SortedResult;
 }
 
-TArray<UInventoryItemInstance*> UInventorySystem::GetAllItemsByCategory(const FName CategoryID)
+TArray<UInventorySlotData*> UInventorySystem::GetAllItemsByCategory(const FName CategoryID)
 {
-	TArray<UInventoryItemInstance*> Items;
+	TMap<FName, FInventoryInfo> Info = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
+	
+	TArray<UInventorySlotData*> Slots;
 	for (UInventoryItemInstance* ItemInstance : InventoryItems)
 	{
 		if (const UItemTrait_Display* Trait_Display = GET_TRAIT(ItemInstance, Display))
 		{
 			if (CategoryID == Trait_Display->CategoryID)
 			{
-				Items.Add(ItemInstance);
+				UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+				Data->ItemInstance = ItemInstance;
+				Data->bIsLocked = false;
+				Data->UnlockCost = 0;
+				Slots.Add(Data);
 			}
 		}
 	}
+	int32 EmptyCount = 25;
+	int32 LockCount = 10;
+	int32 UnlockCost = 500;
+	if (const FInventoryInfo* CategoryInfo = Info.Find(CategoryID))
+	{
+		EmptyCount = CategoryInfo->EmptySlotCount;
+		LockCount = CategoryInfo->LockSlotCount;
+		UnlockCost = CategoryInfo->UnLockCost;
+	}
 	
-	return Items;
+	for ( ; EmptyCount > 0; EmptyCount--)
+	{
+		UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+		Data->ItemInstance = nullptr;
+		Data->bIsLocked = false;
+		Data->UnlockCost = 0;
+		Slots.Add(Data);
+	}
+	
+	for ( ; LockCount > 0; LockCount--)
+	{
+		UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+		Data->ItemInstance = nullptr;
+		Data->bIsLocked = true;
+		Data->UnlockCost = UnlockCost;
+		Slots.Add(Data);
+	}
+	
+	return Slots;
 }
 
 void UInventorySystem::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -164,7 +233,7 @@ void UInventorySystem::DebugPrintInventory()
 
 		FString DisplayName = DisplayTrait ? DisplayTrait->DisplayName.ToString() : TEXT("未知物品");
 		FString Description = DisplayTrait ? DisplayTrait->Description.ToString() : TEXT("无描述");
-		int32 Stack = Item->StackCount;
+		const int32 Stack = Item->StackCount;
 
 		FString Line = FString::Printf(TEXT("[%d] %s x%d | %s"), i, *DisplayName, Stack, *Description);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, Line);

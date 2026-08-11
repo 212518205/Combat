@@ -27,7 +27,7 @@ void UWidgetBackBagScreen::NativeOnInitialized()
 	TabList_BagCategory->OnTabSelected.AddUniqueDynamic(this, &ThisClass::OnTabSelected);
 }
 
-TMap<FName, FInventoryCategoryGroup> UWidgetBackBagScreen::GetAllCategoryItems()
+TArray<TPair<FName, FInventoryCategoryGroup>> UWidgetBackBagScreen::GetAllCategoryItems()
 {
 	if (UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel())
 	{
@@ -45,7 +45,7 @@ TMap<FName, FInventoryCategoryGroup> UWidgetBackBagScreen::GetAllCategoryItems()
 
 void UWidgetBackBagScreen::OnTabSelected(const FName TabID)
 {
-	const TArray<UInventoryItemInstance*> Items = GetLocalPlayerViewModel()->GetInventorySystem()->GetAllItemsByCategory(TabID);
-	TileView_BackBag->SetListItems(Items);
+	const TArray<UInventorySlotData*> Slots = GetLocalPlayerViewModel()->GetInventorySystem()->GetAllItemsByCategory(TabID);
+	TileView_BackBag->SetListItems(Slots);
 	TileView_BackBag->RequestRefresh();
 }

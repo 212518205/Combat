@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "UIManagerSubsystem.h"
 #include "Characters/CharacterBase.h"
+#include "FrontendTypes/FrontendStructTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/ViewModel/ViewModelBase.h"
 #include "FrontendBlueprintFunctionLibrary.generated.h"
@@ -24,6 +25,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Frontend | Screen")
 	static TSoftClassPtr<UWidgetActivatableBase> GetScreenSoftWidgetClassByTag(UPARAM(meta=(Categories="UI.Widget"))
 		const FGameplayTag InWidgetTag);
+
+	UFUNCTION(BlueprintPure, Category = "Frontend | Display")
+	static FCategoryInfoGroup GetCategoryNameByModuleTag(UPARAM(meta=(Categories="UI.CategoryDisplay"))
+		const FGameplayTag ModuleTag);
 
 };
 

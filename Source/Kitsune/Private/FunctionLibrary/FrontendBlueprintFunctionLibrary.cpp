@@ -15,5 +15,15 @@ TSoftClassPtr<UWidgetActivatableBase> UFrontendBlueprintFunctionLibrary::GetScre
 	return FrontendDeveloperSettings->FrontendWidgetMap.FindRef(InWidgetTag);
 }
 
+FCategoryInfoGroup UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(const FGameplayTag ModuleTag)
+{
+	const UFrontendDeveloperSettings* Settings = GetDefault<UFrontendDeveloperSettings>();
+	
+	checkf(Settings->CategoryDisplayGroups.Contains(ModuleTag),
+		TEXT("无该 %s 模块对应的分类名字"), *ModuleTag.ToString());
+	
+	return Settings->CategoryDisplayGroups.FindRef(ModuleTag);
+}
+
 
 

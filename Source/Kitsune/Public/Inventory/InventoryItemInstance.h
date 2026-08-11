@@ -43,13 +43,13 @@ public:
 		else AddFeature(Feature);
 	}	
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 StackCount = 1;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(Replicated, EditDefaultsOnly, Instanced)
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInventoryItemDefinition> ItemDef;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/Kitsune.EItemFeature"))

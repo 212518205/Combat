@@ -20,7 +20,7 @@ UUserWidget& UKitsuneCommonListView::OnGenerateEntryWidgetInternal(UObject* Item
 		return Super::OnGenerateEntryWidgetInternal(Item, DesiredEntryClass, OwnerTable);
 	}
 
-	if (UInventoryItemInstance* ItemInstance = Cast<UInventoryItemInstance>(Item))
+	if (const UInventoryItemInstance* ItemInstance = Cast<UInventoryItemInstance>(Item))
 	{
 		const UItemTrait_Interact* TraitInteract = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Interact>(ItemInstance->GetItemDef());
 		if (!TraitInteract)

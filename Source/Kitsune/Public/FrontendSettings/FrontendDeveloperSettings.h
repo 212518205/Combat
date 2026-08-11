@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DeveloperSettings.h"
+#include "FrontendTypes/FrontendStructTypes.h"
 #include "FrontendDeveloperSettings.generated.h"
 
 class UWidgetActivatableBase;
@@ -19,5 +20,8 @@ class KITSUNE_API UFrontendDeveloperSettings : public UDeveloperSettings
 public:
 	UPROPERTY(Config, EditAnywhere, Category = "Widget Reference", meta = (ForceInlineRow, Categories = "UI.Widget"))
 	TMap<FGameplayTag, TSoftClassPtr<UWidgetActivatableBase>> FrontendWidgetMap;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "UIInfo", meta = (Categories = "UI.CategoryDisplay"))
+	TMap<FGameplayTag, FCategoryInfoGroup> CategoryDisplayGroups;
 
 };

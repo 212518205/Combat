@@ -21,7 +21,7 @@ protected:
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnInitialized() override;
 	
-	TMap<FName, FInventoryCategoryGroup> GetAllCategoryItems();
+	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllCategoryItems();
 	
 	UPROPERTY(meta = (BindWidget))
 	UKitsuneTabListWidgetBase* TabList_BagCategory;

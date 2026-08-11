@@ -27,6 +27,10 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(UI_ListEntryPurpose_Interact, "UI.ListEntryPurpose.Interact");
 	UE_DEFINE_GAMEPLAY_TAG(UI_ListEntryPurpose_Back, "UI.ListEntryPurpose.Back");
 	UE_DEFINE_GAMEPLAY_TAG(UI_ListEntryPurpose_Chat, "UI.ListEntryPurpose.Chat");
+	
+	/***  UI需要显示的一些信息，存储在DeveloperSetting中，一些由于低等级没有但实际需要显示完整的内容   `BC@` ***/
+	UE_DEFINE_GAMEPLAY_TAG(UI_CategoryDisplay_Inventory_Item, "UI_CategoryDisplay.Inventory.Item");
+	UE_DEFINE_GAMEPLAY_TAG(UI_CategoryDisplay_Menu, "UI_CategoryDisplay.Menu");
 
 	/** Input Tag*/
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Light, "InputTag.Weapon.Light");

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
+#include "GameplayTagContainer.h"
 #include "FrontendStructTypes.generated.h"
 
 
@@ -50,5 +51,38 @@ struct FMenuTileRow : public FTableRowBase
 	FGameplayTag ScreenToOpen;
 
 };
+
+USTRUCT()
+struct FInventoryInfo
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly)
+	FText CategoryName;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int32 EmptySlotCount = 10;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int32 LockSlotCount = 5;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int32 UnLockCost = 500;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 SortOrder = 0;
+
+};
+
+USTRUCT(BlueprintType)
+struct FCategoryInfoGroup
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FName, FInventoryInfo> CategoryInfo;
+	
+};
+
 
 

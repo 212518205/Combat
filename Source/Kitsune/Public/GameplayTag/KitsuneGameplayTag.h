@@ -27,6 +27,10 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_ListEntryPurpose_Back);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_ListEntryPurpose_Chat);
 
+	/***  UI需要显示的一些信息，存储在DeveloperSetting中，一些由于低等级没有但实际需要显示完整的内容   `BC@` ***/
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_CategoryDisplay_Inventory_Item);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_CategoryDisplay_Menu);
+
 
 	/** Input Tag*/
 	/*** TODO: 输入标签应换为：LeftMouse、FKey等类似形式，与实际逻辑分开... [2026年4月13日 22:46:46 来自`@BC@`] ***/

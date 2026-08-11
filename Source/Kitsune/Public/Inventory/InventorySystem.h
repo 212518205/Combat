@@ -9,6 +9,30 @@
 
 class UInventoryItemInstance;
 
+// InventorySlotData.h
+UCLASS(BlueprintType)
+class KITSUNE_API UInventorySlotData : public UObject
+{
+	GENERATED_BODY()
+public:
+	UInventorySlotData(){}
+	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UInventoryItemInstance> ItemInstance = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsLocked = false;
+
+	/*UPROPERTY(BlueprintReadOnly)
+	int32 SlotIndex = -1;*/
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 UnlockCost = 0;
+};
+
+
+
+
 USTRUCT()
 struct FInventoryCategoryGroup
 {
@@ -19,8 +43,9 @@ public:
 	FText CategoryDisplayName;
 	
 	UPROPERTY()
-	TArray<UInventoryItemInstance*> CategoryItems;
+	TArray<UInventorySlotData*> CategorySlots;
 };
+
 
 /**
  * 
@@ -39,8 +64,8 @@ public:
 	/***  默认堆叠一个，在合并情况下将InStackCount参数置为 0   `BC@` ***/
 	bool AddItem(UInventoryItemInstance* InItemInstance, const int32 InStackCount = 1);
 
-	TMap<FName, FInventoryCategoryGroup> GetAllCategoryItem();
-	TArray<UInventoryItemInstance*> GetAllItemsByCategory(const FName CategoryID);
+	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllCategoryItem();
+	TArray<UInventorySlotData*> GetAllItemsByCategory(const FName CategoryID);
 
 	/***  运行时控制台命令函数   `BC@` ***/
 	UFUNCTION(Exec)
