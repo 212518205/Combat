@@ -60,14 +60,15 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
 
-	if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
+	//if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
+	if (IsLocallyControlled())
 	{
 		if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
 			UPlayerViewModel* ViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
 		}
 	}
 
-	if (InitialInfoData && GetAbilitySystemComponent())
+	if (HasAuthority() && InitialInfoData && GetAbilitySystemComponent())
 	{
 		InitialInfoData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), CharacterLevel);
 	}

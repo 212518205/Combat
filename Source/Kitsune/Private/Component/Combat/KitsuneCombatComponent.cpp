@@ -38,7 +38,7 @@ void UKitsuneCombatComponent::RegisterCarriedWeapon_Implementation(AWeaponBase* 
 
 UKitsuneCombatComponent::UKitsuneCombatComponent()
 {
-
+	SetIsReplicatedByDefault(true);
 }
 
 AWeaponBase* UKitsuneCombatComponent::FindWeaponByTag(const FGameplayTag& WeaponTag) const
@@ -65,8 +65,6 @@ void UKitsuneCombatComponent::SetCurrentWeapon_Implementation(const FGameplayTag
 {
 	ACharacterBase* OwningCharacter = Cast<ACharacterBase>(GetOwningPawn());
 
-
-
 	if (const AWeaponBase* LastWeapon = GetCurrentCarriedWeapon())
 	{
 		LastWeapon->UnequipWeaponFromCharacter(OwningCharacter);
@@ -75,9 +73,10 @@ void UKitsuneCombatComponent::SetCurrentWeapon_Implementation(const FGameplayTag
 	{
 		CurrentFoundWeapon->EquipWeaponToCharacter(OwningCharacter);
 	}
-
-	KitsuneNet::SetReplicatedProperty(this, CurrentWeaponTag, WeaponTag, &ThisClass::SwitchWeaponIcon);
 	
+	CurrentWeaponTag = WeaponTag;
+	
+	KitsuneNet::SetReplicatedProperty(this, CurrentWeaponTag, WeaponTag, &ThisClass::OnRep_CurrentWeaponTag);
 }
 
 
@@ -107,27 +106,20 @@ void UKitsuneCombatComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeP
 
 void UKitsuneCombatComponent::OnRep_CurrentWeaponTag()
 {
-
-	if (GetOwnerRole() == ROLE_AutonomousProxy)
-	{
-		SwitchWeaponIcon();
-	}
-}
-
-void UKitsuneCombatComponent::SwitchWeaponIcon()
-{
 	const AWeaponBase* CurrentWeapon = GetCurrentCarriedWeapon();
 	if (!GetOwningPawn()->IsA(AKitsuneCharacter::StaticClass()))return;
+	if (!GetOwningPawn()->IsLocallyControlled())return;
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
 	if (CurrentWeapon)
 	{
 		WeaponIcon = CurrentWeapon->GetWeaponInfo()->WeaponIcon;
 	}
 	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPawn()))
-	{
-		LocalViewModel->SetPlayerWeaponIcon(WeaponIcon);
+	{ 
+		LocalViewModel->SetPlayerWeaponIcon(WeaponIcon); 
 	}
 }
+
 
 void UKitsuneCombatComponent::OnHitTargetActor(AActor* HitActor)
 {

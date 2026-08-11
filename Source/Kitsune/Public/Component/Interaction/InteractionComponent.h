@@ -41,7 +41,7 @@ protected:
 	/*** TODO: 这里不应该缓存viewmodel，在交互组件处理，外部通过viewmodel访问交互组件... [2026年4月25日 14:29:38 来自`@BC@`] ***/
 	TWeakObjectPtr<UPlayerViewModel> CachedLocalViewModel;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "Interact")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Interact")
 	UInventorySystem* InventorySystem;
 };
 

@@ -32,11 +32,8 @@ void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (!InventorySystem)
-	{
-		InventorySystem = NewObject<UInventorySystem>(this);
-		Debug::Print(TEXT("创建库存系统"));
-	}
+	SetIsReplicatedByDefault(true);
+	
 }
 
 UInventorySystem* UInteractionComponent::GetInventorySystem()
@@ -44,7 +41,6 @@ UInventorySystem* UInteractionComponent::GetInventorySystem()
 	if (!InventorySystem)
 	{
 		InventorySystem = NewObject<UInventorySystem>(this);
-		Debug::Print(TEXT("创建库存系统"));
 	}
 	return InventorySystem;
 }

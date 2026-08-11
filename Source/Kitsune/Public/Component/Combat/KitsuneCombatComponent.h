@@ -50,9 +50,6 @@ protected:
 	UFUNCTION()
 	void OnRep_CurrentWeaponTag();
 
-	void SwitchWeaponIcon();
-
-
 	TArray<TObjectPtr<AActor>> OverlappedActors;
 
 
