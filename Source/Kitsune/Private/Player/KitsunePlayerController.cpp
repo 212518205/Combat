@@ -16,7 +16,7 @@
 #include "Input/CommonUIActionRouterBase.h"
 #include "Input/KitsuneInputComponent.h"
 #include "Inventory/InventoryItemDefinition.h"
-#include "Inventory/InventorySystem.h"
+#include "Inventory/InventorySystemComponent.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
@@ -43,13 +43,13 @@ void AKitsunePlayerController::OnInteraction(const FInputActionValue& InputActio
 {
 	if (UKitsuneFunctionLibrary::NativeDoesActorHaveTag(GetPawn(), KitsuneGameplayTags::Player_Status_Pickupable))
 	{
-		if (IPawnInteractInterface* Interact = Cast<IPawnInteractInterface>(GetPawn()))
+		if (const AKitsuneCharacter* KitsuneCharacter = Cast<AKitsuneCharacter>(GetPawn()))
 		{
-			if (UInventorySystem* InventorySystem = Interact->GetInteractionComp()->GetInventorySystem())
+			if (UInventorySystemComponent* ISComp = KitsuneCharacter->GetInventorySystemComponent())
 			{
 				if (UInventoryItemInstance* ItemInstance = GetSelectedInteractableItemInstance())
 				{
-					InventorySystem->AddItem(GetSelectedInteractableItemInstance());
+					ISComp->AddItem(GetSelectedInteractableItemInstance());
 					GetSelectedInteractableItemInstance()->GetOwningActor()->Destroy();
 				}
 			}
@@ -70,7 +70,7 @@ void AKitsunePlayerController::SetupInputComponent()
 		this,&AKitsunePlayerController::Jump);
 
 	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::ToggleMouseMode);
-	KitsuneInputComponent->BindAction(PickupableAction, ETriggerEvent::Completed, this, &ThisClass::OnInteraction);
+	//KitsuneInputComponent->BindAction(PickupableAction, ETriggerEvent::Completed, this, &ThisClass::OnInteraction);
 
 	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
 }
@@ -115,16 +115,16 @@ void AKitsunePlayerController::PrintInventory()
 	}
 
 	// 假设你的 InventorySystem 是 Pawn 身上的一个组件，名为 "InventoryComponent"
-	UInventorySystem* InventorySys = Cast<AKitsuneCharacter>(MyPawn)->GetInteractionComp()->GetInventorySystem();
+	UInventorySystemComponent* ISComp = Cast<AKitsuneCharacter>(MyPawn)->GetInventorySystemComponent();
     
-	if (!InventorySys)
+	if (!ISComp)
 	{
 		// 如果 InventorySystem 不是组件而是其他方式持有，请替换为你的获取逻辑
 		UE_LOG(LogTemp, Warning, TEXT("无法在 Pawn 上找到 InventorySystem"));
 		return;
 	}
 
-	InventorySys->DebugPrintInventory();
+	ISComp->DebugPrintInventory();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

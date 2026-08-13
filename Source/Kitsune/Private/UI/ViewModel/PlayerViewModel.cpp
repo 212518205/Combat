@@ -5,6 +5,7 @@
 
 #include "FrontendDebugHelper.h"
 #include "IDetailTreeNode.h"
+#include "Characters/KitsuneCharacter.h"
 #include "Component/Interaction/InteractionComponent.h"
 #include "Interfaces/PawnInteractInterface.h"
 #include "Inventory/InventoryItemDefinition.h"
@@ -16,9 +17,9 @@ void UPlayerViewModel::NativeInitialize()
 {
 	Super::NativeInitialize();
     
-    if (IPawnInteractInterface* Interface = Cast<IPawnInteractInterface>(OwningPawn))
+    if (const AKitsuneCharacter* Character = Cast<AKitsuneCharacter>(OwningPawn))
     {
-        CarriedInventorySystem = Interface->GetInteractionComp()->GetInventorySystem();
+        CarriedInventorySystem = Character->GetInventorySystemComponent();
     }
     if (!CarriedInventorySystem)
     {

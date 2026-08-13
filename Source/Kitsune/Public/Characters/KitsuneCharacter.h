@@ -8,6 +8,7 @@
 #include "KitsuneCharacter.generated.h"
 
 
+class UInventorySystemComponent;
 class UPlayerCombatComponent;
 /**
  * 
@@ -31,6 +32,8 @@ public:
 	/***   ...IPawnInteractInterface Interface Begin...   ***/
 	virtual UInteractionComponent* GetInteractionComp() override;
 	/***   ...IPawnInteractInterface Interface End...     ***/
+	
+	UInventorySystemComponent* GetInventorySystemComponent() const { return InventorySystemComp; }
 
 protected:
 	/*** `@BC`   描述: 初始化Gameplay框架相关信息   `BC@` ***/
@@ -42,4 +45,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UInteractionComponent> InteractComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UInventorySystemComponent> InventorySystemComp; 
 };

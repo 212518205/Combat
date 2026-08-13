@@ -40,7 +40,10 @@ void AEnemyCharacter::InitAbilityInfo()
 	Super::InitAbilityInfo();
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	StartData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), 1);
+	if (HasAuthority())
+	{
+		StartData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), 1);
+	}
 }
 
 void AEnemyCharacter::BeginPlay()

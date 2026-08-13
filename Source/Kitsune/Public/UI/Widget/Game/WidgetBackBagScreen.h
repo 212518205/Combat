@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Inventory/InventorySystem.h"
+#include "Inventory/InventorySystemComponent.h"
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "WidgetBackBagScreen.generated.h"
 

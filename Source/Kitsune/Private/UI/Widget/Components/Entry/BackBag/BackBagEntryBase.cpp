@@ -7,7 +7,7 @@
 #include "CommonTextBlock.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
-#include "Inventory/InventorySystem.h"
+#include "Inventory/InventorySystemComponent.h"
 #include "Inventory/Trait/ItemTrait_Display.h"
 
 void UBackBagEntryBase::RefreshEntry() const

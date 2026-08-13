@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Inventory/InventorySystem.h"
+#include "Inventory/InventorySystemComponent.h"
 
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
@@ -12,12 +12,12 @@
 #include "Inventory/Trait/ItemTrait_Stack.h"
 #include "Net/UnrealNetwork.h"
 
-bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int32 InStackCount)
+void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* InItemInstance, const int32 InStackCount)
 {
 	if (!InItemInstance)
 	{
 		DebugPrintInventory();
-		return false;
+		return;
 	}
 
 	/***  传入nullptr将ItemInstance置为InItemInstance并Add到数组
@@ -38,15 +38,14 @@ bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int
 				InventoryItems.Add(ItemInstance);
 				/***  暂时将堆叠数设为0，先添加进Item数组才开始遍历堆叠   `BC@` ***/
 				ItemInstance->StackCount = 0;
-				ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddItem);
+				//ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddItem);
 			}
 
-			while (ToStackCount > 0)
-			{
+			while (ToStackCount > 0){
 				if (ToStackCount <= TraitStack->MaxStackCount - ItemInstance->StackCount)
 				{
 					ItemInstance->StackCount += ToStackCount;
-					ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddStackCount);
+					//ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddStackCount);
 					ToStackCount = 0;
 				}else
 				{
@@ -57,13 +56,13 @@ bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int
 					ItemInstance->ItemFeatures = InItemInstance->ItemFeatures;
 					ItemInstance->StackCount = 0;
 					InventoryItems.Add(ItemInstance);
-					ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddItem);
+					//ItemChanged.Broadcast(ItemInstance, EInstanceModifyType::AddItem);
 				}
 			}
 			return true;
 		};
 
-	for (UInventoryItemInstance*& ItemInstance : InventoryItems)
+	for (UInventoryItemInstance* ItemInstance : InventoryItems)
 	{
 		if (!ItemInstance)
 		{
@@ -73,25 +72,28 @@ bool UInventorySystem::AddItem(UInventoryItemInstance* InItemInstance, const int
 
 		if (ItemInstance->GetItemDef() == InItemInstance->GetItemDef() && ItemInstance->HasFeature(EItemFeature::Stackable))
 		{
-			return ItemStack(ItemInstance);
+			ItemStack(ItemInstance);
+			return;
 		}
 	}
 
 	if (InItemInstance->HasFeature(EItemFeature::Stackable))
 	{
-		return ItemStack(nullptr);
+		ItemStack(nullptr);
+		return;
 	}
 
 	InventoryItems.Add(InItemInstance);
-	ItemChanged.Broadcast(InItemInstance, EInstanceModifyType::AddItem);
+	//ItemChanged.Broadcast(InItemInstance, EInstanceModifyType::AddItem);
 	if (InStackCount != 1)
 	{
 		Debug::Print(TEXT("该物品不可堆叠，应传入StackCount为1"));
 	}
-	return true;
+	return;
 }
 
-TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystem::GetAllCategoryItem()
+
+TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystemComponent::GetAllCategoryItem()
 {
 	TMap<FName, FInventoryCategoryGroup> ReturnGroup;
 	TMap<FName, FInventoryInfo> CategoryInfo = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
@@ -148,7 +150,7 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystem::GetAllCategoryIt
 	return SortedResult;
 }
 
-TArray<UInventorySlotData*> UInventorySystem::GetAllItemsByCategory(const FName CategoryID)
+TArray<UInventorySlotData*> UInventorySystemComponent::GetAllItemsByCategory(const FName CategoryID)
 {
 	TMap<FName, FInventoryInfo> Info = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 	
@@ -198,14 +200,18 @@ TArray<UInventorySlotData*> UInventorySystem::GetAllItemsByCategory(const FName 
 	return Slots;
 }
 
-void UInventorySystem::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+void UInventorySystemComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
-	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
-	DOREPLIFETIME(UInventorySystem, InventoryItems);
+	DOREPLIFETIME(UInventorySystemComponent, InventoryItems);
 }
 
-void UInventorySystem::DebugPrintInventory()
+void UInventorySystemComponent::OnRep_InventoryItems()
+{
+}
+
+void UInventorySystemComponent::DebugPrintInventory()
 {if (!GEngine) return;
 
 	if (InventoryItems.Num() == 0)

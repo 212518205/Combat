@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Component/KitsuneExtensionComponent.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
-#include "InventorySystem.generated.h"
+#include "InventorySystemComponent.generated.h"
 
 class UInventoryItemInstance;
 
@@ -30,9 +31,6 @@ public:
 	int32 UnlockCost = 0;
 };
 
-
-
-
 USTRUCT()
 struct FInventoryCategoryGroup
 {
@@ -51,7 +49,7 @@ public:
  * 
  */
 UCLASS()
-class KITSUNE_API UInventorySystem : public UObject
+class KITSUNE_API UInventorySystemComponent : public UKitsuneExtensionComponent
 {
 	GENERATED_BODY()
 
@@ -62,7 +60,8 @@ public:
 	FOnInventoryItemChanged ItemChanged;
 
 	/***  默认堆叠一个，在合并情况下将InStackCount参数置为 0   `BC@` ***/
-	bool AddItem(UInventoryItemInstance* InItemInstance, const int32 InStackCount = 1);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void AddItem(UInventoryItemInstance* InItemInstance, const int32 InStackCount = 1);
 
 	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllCategoryItem();
 	TArray<UInventorySlotData*> GetAllItemsByCategory(const FName CategoryID);
@@ -74,7 +73,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_InventoryItems, BlueprintReadOnly)
 	TArray<UInventoryItemInstance*> InventoryItems;
 
+	void OnRep_InventoryItems();
 };

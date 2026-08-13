@@ -43,14 +43,14 @@ public:
 
 	/***  Getter   `BC@` ***/
 	TArray<UInventoryItemInstance*>& GetOverlappedItemInstances() { return OverlappedItemInstances; }
-	UInventorySystem* GetInventorySystem() {return CarriedInventorySystem;}
+	UInventorySystemComponent* GetInventorySystem() {return CarriedInventorySystem;}
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UInventorySystem> CarriedInventorySystem;
+	TObjectPtr<UInventorySystemComponent> CarriedInventorySystem;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "ViewModel | Interact")
 	TArray<UInventoryItemInstance*> OverlappedItemInstances;

@@ -8,7 +8,7 @@
 #include "UObject/NoExportTypes.h"
 #include "InventoryItemInstance.generated.h"
 
-class UInventorySystem;
+class UInventorySystemComponent;
 class UInventoryItemDefinition;
 
 
@@ -21,7 +21,7 @@ class KITSUNE_API UInventoryItemInstance : public UObject
 	GENERATED_BODY()
 
 public:
-	friend  UInventorySystem;
+	friend  UInventorySystemComponent;
 
 	UInventoryItemInstance();
 

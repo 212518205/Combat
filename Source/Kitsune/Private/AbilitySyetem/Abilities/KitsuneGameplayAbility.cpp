@@ -26,9 +26,12 @@ void UKitsuneGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* Act
 
 	if (ActivationPolicy==EKitsuneAbilityActivationPolicy::OnGiven)
 	{
-		if (ActorInfo&&!Spec.IsActive())
+		if (ActorInfo && !Spec.IsActive())
 		{
-			ActorInfo->AbilitySystemComponent->TryActivateAbility(Spec.Handle);
+			if (ActorInfo->AbilitySystemComponent->GetOwnerActor()->HasAuthority())
+			{
+				ActorInfo->AbilitySystemComponent->TryActivateAbility(Spec.Handle);
+			}
 		}
 	}
 }
@@ -41,9 +44,12 @@ void UKitsuneGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle
 
 	if (ActivationPolicy==EKitsuneAbilityActivationPolicy::OnGiven)
 	{
-		if (ActorInfo)
+		if (ActorInfo && ActorInfo->AbilitySystemComponent.IsValid())
 		{
-			ActorInfo->AbilitySystemComponent->ClearAbility(Handle);
+			if (ActorInfo->AbilitySystemComponent->GetOwnerActor()->HasAuthority())
+			{
+				ActorInfo->AbilitySystemComponent->ClearAbility(Handle);
+			}
 		}
 	}
 }

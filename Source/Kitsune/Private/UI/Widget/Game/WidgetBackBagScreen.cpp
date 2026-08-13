@@ -3,7 +3,7 @@
 
 #include "UI/Widget/Game/WidgetBackBagScreen.h"
 
-#include "Inventory/InventorySystem.h"
+#include "Inventory/InventorySystemComponent.h"
 #include "UI/ViewModel/PlayerViewModel.h"
 #include "UI/Widget/Components/KitsuneCommonTileView.h"
 #include "UI/Widget/Components/KitsuneTabListWidgetBase.h"
@@ -31,7 +31,7 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UWidgetBackBagScreen::GetAllCatego
 {
 	if (UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel())
 	{
-		if (UInventorySystem* InventorySystem = LocalViewModel->GetInventorySystem())
+		if (UInventorySystemComponent* InventorySystem = LocalViewModel->GetInventorySystem())
 		{
 			return InventorySystem->GetAllCategoryItem();
 		}
