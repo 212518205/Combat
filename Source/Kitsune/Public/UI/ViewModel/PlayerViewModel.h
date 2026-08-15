@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Inventory/InventoryItemInstance.h"
+#include "Inventory/InventorySystemComponent.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 #include "PlayerViewModel.generated.h"
 
@@ -43,7 +44,9 @@ public:
 
 	/***  Getter   `BC@` ***/
 	TArray<UInventoryItemInstance*>& GetOverlappedItemInstances() { return OverlappedItemInstances; }
-	UInventorySystemComponent* GetInventorySystem() {return CarriedInventorySystem;}
+
+	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllInventoryCategories() const;
+	TArray<UInventorySlotData*> GetInventoryItemsByCategory(const FName CategoryID) const;
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;

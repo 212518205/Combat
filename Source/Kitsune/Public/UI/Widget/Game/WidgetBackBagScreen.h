@@ -32,4 +32,7 @@ protected:
 	UFUNCTION()
 	void OnTabSelected(const FName TabID);
 	
+private:
+	TArray<UInventorySlotData*> BuildCategorySlots(const FName& CategoryID, TArray<UInventorySlotData*>& Slots);
+	
 };

@@ -3,12 +3,12 @@
 
 #include "Inventory/InventoryItemInstance.h"
 
-#include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 
 UInventoryItemInstance::UInventoryItemInstance()
 {
+	ItemID = FGuid::NewGuid();
 }
 
 void UInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -17,4 +17,22 @@ void UInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 
 	DOREPLIFETIME(ThisClass, ItemDef);
 	DOREPLIFETIME(ThisClass, ItemFeatures);
+	DOREPLIFETIME(ThisClass, ItemID);
+	DOREPLIFETIME(ThisClass, StackCount);
+}
+
+bool UInventoryItemInstance::IsSupportedForNetworking() const
+{
+	return true;
+}
+
+UInventoryItemInstance* UInventoryItemInstance::CreateInstanceCopy(UObject* NewOuter) const
+{
+	UInventoryItemInstance* Copy = NewObject<UInventoryItemInstance>(NewOuter);
+	Copy->ItemDef = ItemDef;
+	Copy->ItemFeatures = ItemFeatures;
+	Copy->ItemID = ItemID;
+	Copy->StackCount = StackCount;
+	
+	return Copy;
 }

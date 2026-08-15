@@ -12,29 +12,30 @@
 
 void UBackBagEntryBase::RefreshEntry() const
 {
-	if (CachedItemInstance->HasFeature(EItemFeature::Stackable))TextBlock_StackCount->SetText(FText::AsNumber(CachedItemInstance->StackCount));
+	if (!CachedSlotData->ItemInstance)return;
+	if (CachedItemInstance->HasFeature(EItemFeature::Stackable))TextBlock_StackCount->SetText(FText::AsNumber(CachedSlotData->StackCount));
 }
 
 void UBackBagEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
 	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
+
+	CachedSlotData = Cast<UInventorySlotData>(ListItemObject);
+	if (!CachedSlotData)return;
 	
-	UInventorySlotData* SlotData = Cast<UInventorySlotData>(ListItemObject);
-	if (!SlotData)return;
-	
-	if (SlotData->ItemInstance)
+	if (CachedSlotData->ItemInstance)
 	{
-		CachedItemInstance = SlotData->ItemInstance;
+		CachedItemInstance = CachedSlotData->ItemInstance;
 	
 		CachedTraitDisplay = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Display>(CachedItemInstance->GetItemDef());
 		CachedTraitInteract = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Interact>(CachedItemInstance->GetItemDef());
 		CachedTraitStack = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Stack>(CachedItemInstance->GetItemDef());
-		if (CachedItemInstance->HasFeature(EItemFeature::Stackable))TextBlock_StackCount->SetText(FText::AsNumber(CachedItemInstance->StackCount));
+		if (CachedItemInstance->HasFeature(EItemFeature::Stackable))TextBlock_StackCount->SetText(FText::AsNumber(CachedSlotData->StackCount));
 		else TextBlock_StackCount->SetText(FText::GetEmpty());
 	
 		Image_Display->SetBrushFromSoftTexture(CachedTraitDisplay->DisplayIcon);
 		TextBlock_ShowNew->SetText(FText::FromString(TEXT("新")));
-	}else if (SlotData->bIsLocked)
+	}else if (CachedSlotData->bIsLocked)
 	{
 		TextBlock_ShowNew->SetText(FText::FromString(TEXT("锁定")));
 		TextBlock_StackCount->SetText(FText::GetEmpty());
@@ -46,45 +47,6 @@ void UBackBagEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 		Image_Display->SetBrushFromSoftTexture(nullptr);
 	}
 	Image_Background->SetBrushFromSoftTexture(T_BackGroundImage);
-	Image_Background->SetColorAndOpacity(DefaultIconColor);
 }
 
-void UBackBagEntryBase::OnHovered()
-{
-	Super::OnHovered();
-	
-	if (Image_Background)
-	{
-		Image_Background->SetColorAndOpacity(HoveredIconColor);
-	}
-}
 
-void UBackBagEntryBase::OnUnHovered()
-{
-	Super::OnUnHovered();
-	
-	if (Image_Background)
-	{
-		Image_Background->SetColorAndOpacity(DefaultIconColor);
-	}
-}
-
-void UBackBagEntryBase::OnPressed()
-{
-	Super::OnPressed();
-	
-	if (Image_Background)
-	{
-		Image_Background->SetColorAndOpacity(ClickedIconColor);
-	}
-}
-
-void UBackBagEntryBase::OnReleased()
-{
-	Super::OnReleased();
-	
-	if (Image_Background)
-	{
-		Image_Background->SetColorAndOpacity(DefaultIconColor);
-	}
-}

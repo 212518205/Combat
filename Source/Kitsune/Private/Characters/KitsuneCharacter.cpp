@@ -9,11 +9,14 @@
 #include "Component/Combat/PlayerCombatComponent.h"
 #include"GameFramework/CharacterMovementComponent.h"
 #include "Component/Interaction/InteractionComponent.h"
+#include "Inventory/InventorySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 
 AKitsuneCharacter::AKitsuneCharacter()
 {
+	bReplicateUsingRegisteredSubObjectList = true;
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
 
@@ -23,6 +26,8 @@ AKitsuneCharacter::AKitsuneCharacter()
 
 	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractComponent"));
+	// ===== [修改] 补上 InventorySystemComp 的创建，否则该组件为 nullptr，GetInventorySystemComponent() 会返回空指针 =====
+	InventorySystemComp = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("InventorySystemComponent"));
 }
 
 void AKitsuneCharacter::PossessedBy(AController* NewController)

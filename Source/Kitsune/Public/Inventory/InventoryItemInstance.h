@@ -3,9 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FrontendDebugHelper.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
-#include "UObject/NoExportTypes.h"
+#include "Misc/Guid.h"
 #include "InventoryItemInstance.generated.h"
 
 class UInventorySystemComponent;
@@ -24,6 +23,10 @@ public:
 	friend  UInventorySystemComponent;
 
 	UInventoryItemInstance();
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual bool IsSupportedForNetworking() const override;
+	
+	UInventoryItemInstance* CreateInstanceCopy(UObject* NewOuter)const;
 
 	FORCEINLINE UInventoryItemDefinition* GetItemDef() const { return ItemDef; }
 	FORCEINLINE AActor* GetOwningActor() const {return OwningActor;}
@@ -33,7 +36,7 @@ public:
 	FORCEINLINE void AddFeature(const EItemFeature Feature) { ItemFeatures |= static_cast<int32>(Feature); }
 	FORCEINLINE void RemoveFeature(const EItemFeature Feature) { ItemFeatures &= ~static_cast<int32>(Feature); }
 	FORCEINLINE bool HasFeature(const EItemFeature Feature) const { return (ItemFeatures & static_cast<int32>(Feature)) == static_cast<int32>(Feature); }
-	FORCEINLINE bool HasAnyFeature(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/PoseSearch.EPoseSearchBoneFlags")) const int32 Feature) const {
+	FORCEINLINE bool HasAnyFeature(const int32 Feature) const {
 		return (ItemFeatures & Feature) != 0;
 	}
 	FORCEINLINE void ClearAllFeatures() { ItemFeatures = 0; }
@@ -43,18 +46,21 @@ public:
 		else AddFeature(Feature);
 	}	
 	
+	int32 GetStackCount() const { return StackCount; }
+	
+protected:
+	UPROPERTY(Replicated)
+	FGuid ItemID;
+	
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 StackCount = 1;
-
-protected:
-	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-
-	UPROPERTY(EditDefaultsOnly)
+	
+	UPROPERTY(Replicated, EditDefaultsOnly)
 	TObjectPtr<UInventoryItemDefinition> ItemDef;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/Kitsune.EItemFeature"))
 	int32 ItemFeatures = 0;
-
+	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AActor> OwningActor;
 };

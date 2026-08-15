@@ -18,11 +18,11 @@ class KITSUNE_API AInteractableItem : public AItemBase
 
 public:
 	AInteractableItem();
-	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UBoxComponent> BoxComp;
 

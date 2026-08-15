@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "KitsuneClickableWidget.h"
+// ===== [修改] 由 UKitsuneClickableWidget 改为 UCommonButtonBase，统一到 CommonUI 的可点击体系 =====
+#include "CommonButtonBase.h"
 #include "Components/Image.h"
 #include "MenuEntryBase.generated.h"
 
@@ -15,7 +16,7 @@ class UImage;
  * 
  */
 UCLASS()
-class KITSUNE_API UMenuEntryBase : public UKitsuneClickableWidget
+class KITSUNE_API UMenuEntryBase : public UCommonButtonBase
 {
 	GENERATED_BODY()
 
@@ -41,12 +42,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	UMenuEntryData* CachedEntryData;
 
-	/***   ...UKitsuneClickableWidget Interface Begin...   ***/
-	virtual void OnHovered() override;
-	virtual void OnUnHovered() override;
-	virtual void OnPressed() override;
-	virtual void OnReleased() override;
-	/***   ...UKitsuneClickableWidget Interface End...     ***/
+	/***   ...UCommonButtonBase Interface Begin...   ***/
+	virtual void NativeOnHovered() override;
+	virtual void NativeOnUnhovered() override;
+	virtual void NativeOnClicked() override;
+	/***   ...UCommonButtonBase Interface End...     ***/
 
 	/*** `@BC`   描述: 蓝图配置   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")

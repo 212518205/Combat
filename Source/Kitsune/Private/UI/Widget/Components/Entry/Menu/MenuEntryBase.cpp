@@ -25,30 +25,23 @@ void UMenuEntryBase::NativeOnEntryInitialize(UObject* ListItemObject)
 
 }
 
-void UMenuEntryBase::OnHovered()
+void UMenuEntryBase::NativeOnHovered()
 {
+	Super::NativeOnHovered();
 	Image_DisplayImage->SetColorAndOpacity(HoverIconColor);
-
-	Super::OnHovered();
 }
 
-void UMenuEntryBase::OnUnHovered()
+void UMenuEntryBase::NativeOnUnhovered()
 {
+	Super::NativeOnUnhovered();
 	Image_DisplayImage->SetColorAndOpacity(DefaultIconColor);
-
-	Super::OnUnHovered();
 }
 
-void UMenuEntryBase::OnPressed()
+void UMenuEntryBase::NativeOnClicked()
 {
-	Image_DisplayImage->SetColorAndOpacity(ClickIconColor);
-
-	Super::OnPressed();
-}
-
-void UMenuEntryBase::OnReleased()
-{
+	Super::NativeOnClicked();
 	Image_DisplayImage->SetColorAndOpacity(DefaultIconColor);
+	// ===== [修改] 原 OnReleased 的跳转逻辑移入 NativeOnClicked（CommonButtonBase 的点击完成回调） =====
 	const UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetWorld());
 	UIManager->PushSoftWidgetToStackAsync(
 		KitsuneGameplayTags::UI_WidgetStack_GameMenu,
@@ -68,6 +61,4 @@ void UMenuEntryBase::OnReleased()
 				break;
 			}
 		});
-	
-	Super::OnReleased();
 }

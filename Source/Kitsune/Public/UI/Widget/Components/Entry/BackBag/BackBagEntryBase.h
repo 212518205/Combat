@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/IUserObjectListEntry.h"
-#include "UI/Widget/Components/Entry/Menu/KitsuneClickableWidget.h"
+#include "CommonButtonBase.h"
 #include "BackBagEntryBase.generated.h"
 
+class UInventorySlotData;
+class UCommonTextBlock;
+class UCommonLazyImage;
 class UItemTrait_Stack;
 class UItemTrait_Interact;
 class UItemTrait_Display;
@@ -15,7 +18,7 @@ class UInventoryItemInstance;
  * 
  */
 UCLASS()
-class KITSUNE_API UBackBagEntryBase : public UKitsuneClickableWidget, public IUserObjectListEntry
+class KITSUNE_API UBackBagEntryBase : public UCommonButtonBase, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 	
@@ -27,15 +30,6 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
 	TSoftObjectPtr<UTexture2D> T_BackGroundImage;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config", meta = (EditCondition = "bClickedStyle"))
-	FLinearColor HoveredIconColor = FLinearColor(255.f, 215.f, 0.f, 1.f);
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config", meta = (EditCondition = "bClickedStyle"))
-	FLinearColor DefaultIconColor = FLinearColor(0.f, 0.f, 0.f, 1.f);
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config", meta = (EditCondition = "bClickedStyle"))
-	FLinearColor ClickedIconColor = FLinearColor(0.f, 0.f, 0.f, 1.f);
 
 	/***  BindWidget   `BC@` ***/
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
@@ -53,15 +47,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> TextBlock_StackCount;
 
-	/***  交互变化   `BC@` ***/
-	virtual void OnHovered() override;
-	virtual void OnUnHovered() override;
-	virtual void OnPressed() override;
-	virtual void OnReleased() override;
-
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<UInventoryItemInstance> CachedItemInstance;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UInventorySlotData> CachedSlotData;
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UItemTrait_Display> CachedTraitDisplay;

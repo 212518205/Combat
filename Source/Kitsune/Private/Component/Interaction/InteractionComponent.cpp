@@ -46,7 +46,7 @@ void UInteractionComponent::ItemOverlapChange_Implementation(UInventoryItemInsta
 {
 
 	const ENetMode NetMode = GetNetMode();
-	if (const UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel(); LocalViewModel 
+	if (const UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel(); LocalViewModel
 		&& (GetOwnerRole() == ROLE_AutonomousProxy || NetMode == NM_ListenServer || NetMode == NM_Standalone))
 	{
 		if (InstanceAction == EItemInstanceAction::EAddInstance)

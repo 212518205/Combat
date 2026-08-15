@@ -6,44 +6,50 @@
 #include "Component/KitsuneExtensionComponent.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
+#include "Net/Serialization/FastArraySerializer.h"
+#include "UI/DataObjects/Inventory/InventorySlotData.h"
 #include "InventorySystemComponent.generated.h"
 
 class UInventoryItemInstance;
 
-// InventorySlotData.h
-UCLASS(BlueprintType)
-class KITSUNE_API UInventorySlotData : public UObject
+USTRUCT(BlueprintType)
+struct FInventoryItemEntry: public FFastArraySerializerItem
 {
 	GENERATED_BODY()
-public:
-	UInventorySlotData(){}
 	
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UInventoryItemInstance> ItemInstance = nullptr;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bIsLocked = false;
-
-	/*UPROPERTY(BlueprintReadOnly)
-	int32 SlotIndex = -1;*/
-
-	UPROPERTY(BlueprintReadOnly)
-	int32 UnlockCost = 0;
+	UPROPERTY()
+	TObjectPtr<UInventoryItemInstance> ItemInstance;
+	
 };
 
-USTRUCT()
-struct FInventoryCategoryGroup
+USTRUCT(BlueprintType)
+struct FInventoryItemArray: public FFastArraySerializer
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY()
-	FText CategoryDisplayName;
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& Params)
+	{
+		return FFastArraySerializer::FastArrayDeltaSerialize(Items, Params, *this);
+	}
+	
+	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
+	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
+	void PreReplicatedRemove(const TArrayView<int32> RemoveIndices, int32 FinalSize);
 	
 	UPROPERTY()
-	TArray<UInventorySlotData*> CategorySlots;
+	TArray<FInventoryItemEntry> Items;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UInventorySystemComponent> Owner{nullptr};
+	
 };
 
+template<>
+struct TStructOpsTypeTraits<FInventoryItemArray> : public TStructOpsTypeTraitsBase2<FInventoryItemArray>
+{
+	enum  { WithNetDeltaSerializer = true };
+};
 
 /**
  * 
@@ -54,14 +60,16 @@ class KITSUNE_API UInventorySystemComponent : public UKitsuneExtensionComponent
 	GENERATED_BODY()
 
 public:
+	virtual void BeginPlay() override;
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemChanged, UInventoryItemInstance*, ChangedInstance,
 	                                             EInstanceModifyType, ModifyType);
 	UPROPERTY(BlueprintAssignable)
 	FOnInventoryItemChanged ItemChanged;
 
-	/***  默认堆叠一个，在合并情况下将InStackCount参数置为 0   `BC@` ***/
+	/***  默认堆叠一个   `BC@` ***/
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void AddItem(UInventoryItemInstance* InItemInstance, const int32 InStackCount = 1);
+	void AddItem(UInventoryItemInstance* InItemInstance);
 
 	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllCategoryItem();
 	TArray<UInventorySlotData*> GetAllItemsByCategory(const FName CategoryID);
@@ -73,8 +81,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	UPROPERTY(ReplicatedUsing = OnRep_InventoryItems, BlueprintReadOnly)
-	TArray<UInventoryItemInstance*> InventoryItems;
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	FInventoryItemArray InventoryItems;
 
-	void OnRep_InventoryItems();
 };

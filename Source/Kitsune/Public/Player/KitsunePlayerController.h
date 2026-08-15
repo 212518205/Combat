@@ -45,10 +45,10 @@ protected:
 	/***   ...APlayerController Interface End...     ***/
 
 	/***  UI接口   `BC@` ***/
-	UFUNCTION(Blueprintable, Category = "UI")
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	UCommonActivatableWidget* GetCurrentTopWidget() const;
 	
-	UFUNCTION(Blueprintable, Category = "UI")
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	UInventoryItemInstance* GetSelectedInteractableItemInstance() const;
 
 	/*** `@BC`   描述: 输入上下文以及输入动作   `BC@` ***/

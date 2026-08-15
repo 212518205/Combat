@@ -21,7 +21,8 @@ public class Kitsune : ModuleRules
             "UMG",
 			"AnimGraphRuntime",
 			"AIModule",
-			"MotionWarping"
+			"MotionWarping",
+			"NetCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

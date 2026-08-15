@@ -59,7 +59,7 @@ void AWeaponBase::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		if (UKitsuneFunctionLibrary::IsHostileToPawn(GetInstigator(), HitPawn))
 		{
-			WeaponBeginOverlap.ExecuteIfBound(HitPawn);
+			WeaponEndOverlap.ExecuteIfBound(HitPawn);
 		}
 	}
 }

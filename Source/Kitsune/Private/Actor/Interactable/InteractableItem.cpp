@@ -15,7 +15,10 @@ AInteractableItem::AInteractableItem()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComp->SetupAttachment(GetRootComponent());
-
+	
+	bReplicateUsingRegisteredSubObjectList = true;
+	bReplicates = true;
+	
 	BoxComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnBoxCompBeginOverlap);
 	BoxComp->OnComponentEndOverlap.AddUniqueDynamic(this, &ThisClass::OnBoxCompEndOverlap);
 }
@@ -25,6 +28,11 @@ void AInteractableItem::BeginPlay()
 	Super::BeginPlay();
 	
 	ItemInstance->SetOwningActor(this);
+	
+	if (HasAuthority() && ItemInstance)
+	{
+		AddReplicatedSubObject(ItemInstance);
+	}
 }
 
 void AInteractableItem::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

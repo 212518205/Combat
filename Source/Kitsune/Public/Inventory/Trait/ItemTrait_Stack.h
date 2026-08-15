@@ -15,8 +15,6 @@ class KITSUNE_API UItemTrait_Stack : public UInventoryItemTrait
 {
 	GENERATED_BODY()
 
-	friend UInventorySystem;
-
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 MaxStackCount;
