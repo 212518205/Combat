@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/IUserObjectListEntry.h"
 #include "CommonButtonBase.h"
+#include "UI/DataObjects/Inventory/InventorySlotData.h"
 #include "BackBagEntryBase.generated.h"
 
 class UInventorySlotData;
@@ -18,7 +19,7 @@ class UInventoryItemInstance;
  * 
  */
 UCLASS()
-class KITSUNE_API UBackBagEntryBase : public UCommonButtonBase, public IUserObjectListEntry
+class KITSUNE_API UBackBagEntryBase : public UCommonUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 	
@@ -28,38 +29,49 @@ public:
 protected:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
-	TSoftObjectPtr<UTexture2D> T_BackGroundImage;
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_BackBagEntryInitialize();
 
 	/***  BindWidget   `BC@` ***/
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UCommonLazyImage> Image_Background;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<UCommonLazyImage> Image_Display;
+	TObjectPtr<UCommonLazyImage> Image_LockFlag;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> TextBlock_ShowNew;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> TextBlock_LockFlag;
+	TObjectPtr<UButton> Button_Icon;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> TextBlock_StackCount;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UTexture2D> LockBackgroundIcon;
+	
+	UFUNCTION(BlueprintCallable)
+	void ClearEntryStyle() const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsItemEntry() const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsEmptyEntry() const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsLockEntry() const;
 
 private:
-	UPROPERTY(Transient)
-	TObjectPtr<UInventoryItemInstance> CachedItemInstance;
+	UFUNCTION(BlueprintCallable)
+	UInventoryItemInstance* GetItemInstance() const;
 	
-	UPROPERTY(Transient)
+	void RefreshStackCount() const;
+	
+	void SetButtonIcon(UTexture2D* IconTexture) const;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInventorySlotData> CachedSlotData;
 	
-	UPROPERTY(Transient)
-	TObjectPtr<UItemTrait_Display> CachedTraitDisplay;
-	
-	UPROPERTY(Transient)
-	TObjectPtr<UItemTrait_Interact> CachedTraitInteract;
-	
-	UPROPERTY(Transient)
-	TObjectPtr<UItemTrait_Stack> CachedTraitStack;
 };
