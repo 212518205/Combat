@@ -146,12 +146,18 @@ public:
 	FGameplayAttributeData DamageTaken;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, DamageTaken)
 	/*** ``   战斗属性   `` ***/
-protected:
+
+	/***  货币   `BC@` ***/
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Gold, Category = "Attribuute | Economy")
+	FGameplayAttributeData Gold;
+	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Gold)
+	
 	/*** `@BC`   描述: 修改前修约属性数值   `BC@` ***/
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	virtual void PostGameplayEffectExecute(const  FGameplayEffectModCallbackData& Data) override;
 
+protected:
 	static void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 
 
@@ -215,6 +221,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_DamageTaken(const FGameplayAttributeData& OldDamageTaken) const;
+	
+	UFUNCTION()
+	void OnRep_Gold(const FGameplayAttributeData& OleGold) const;
 };
 
 

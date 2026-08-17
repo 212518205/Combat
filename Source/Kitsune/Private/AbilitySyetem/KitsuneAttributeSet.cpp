@@ -44,6 +44,8 @@ void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, SoulFlare, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, DodgeChance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, DamageTaken, COND_None, REPNOTIFY_Always);
+	
+	DOREPLIFETIME_CONDITION_NOTIFY(UKitsuneAttributeSet, Gold, COND_None, REPNOTIFY_Always);
 }
 
 void UKitsuneAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -239,6 +241,11 @@ void UKitsuneAttributeSet::OnRep_DodgeChance(const FGameplayAttributeData& OldDo
 void UKitsuneAttributeSet::OnRep_DamageTaken(const FGameplayAttributeData& OldDamageTaken) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, DamageTaken, OldDamageTaken);
+}
+
+void UKitsuneAttributeSet::OnRep_Gold(const FGameplayAttributeData& OleGold) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, Gold, OleGold);
 }
 
 

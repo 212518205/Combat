@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Inventory/InventorySystemComponent.h"
@@ -18,7 +18,7 @@
 void FInventoryItemArray::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
 {
 	if (!Owner)return;
-	
+
 	for (const int32 Index : AddedIndices)
 	{
 		if (UInventoryItemInstance* ItemInstance = Items[Index].ItemInstance)
@@ -31,7 +31,7 @@ void FInventoryItemArray::PostReplicatedAdd(const TArrayView<int32> AddedIndices
 void FInventoryItemArray::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
 	if (!Owner)return;
-	
+
 	for (const int32 Index : ChangedIndices)
 	{
 		if (UInventoryItemInstance* ItemInstance = Items[Index].ItemInstance)
@@ -44,7 +44,7 @@ void FInventoryItemArray::PostReplicatedChange(const TArrayView<int32> ChangedIn
 void FInventoryItemArray::PreReplicatedRemove(const TArrayView<int32> RemoveIndices, int32 FinalSize)
 {
 	if (!Owner)return;
-	
+
 	for (const int32 Index : RemoveIndices)
 	{
 		if (UInventoryItemInstance* ItemInstance = Items[Index].ItemInstance)
@@ -57,7 +57,7 @@ void FInventoryItemArray::PreReplicatedRemove(const TArrayView<int32> RemoveIndi
 void UInventorySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	InventoryItems.Owner = this;
 }
 
@@ -116,7 +116,7 @@ void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* I
 void UInventorySystemComponent::SaveTo(UKitsuneSaveGame* SaveGame)
 {
 	if (!SaveGame)return;
-	
+
 	auto& [SaveItems, SaveInventoryCapacity] = SaveGame->Inventory;
 	SaveItems.Reset();
 	for (FInventoryItemEntry& Entry : InventoryItems.Items)
@@ -136,19 +136,19 @@ void UInventorySystemComponent::SaveTo(UKitsuneSaveGame* SaveGame)
 void UInventorySystemComponent::LoadFrom(const UKitsuneSaveGame* SaveGame)
 {
 	if (!SaveGame)return;
-	
+
 	auto& [SaveItems, SaveInventoryCapacity] = SaveGame->Inventory;
 	InventoryCapacity = SaveInventoryCapacity;
 	const UAssetManager& AM = UAssetManager::Get();
 	for (const auto& [ItemDefID, StackCount, ItemFeature] : SaveItems)
 	{
 		UInventoryItemInstance* ItemInstance = NewObject<UInventoryItemInstance>(this);
-		
+
 		const FSoftObjectPath Path = AM.GetPrimaryAssetPath(ItemDefID);
 		ItemInstance->ItemDef = Cast<UInventoryItemDefinition>(Path.TryLoad());
 		ItemInstance->StackCount = StackCount;
 		ItemInstance->ItemFeatures = ItemFeature;
-		
+
 		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
 		{
 			AddReplicatedSubObject(ItemInstance);
@@ -164,10 +164,10 @@ void UInventorySystemComponent::UnlockCategorySlots_Implementation(const FName C
 	const FInventoryInfo* Info = GetCategoryInfo(CategoryID);
 	if (!Info)return;
 	if (!TrySpendGold(Info->UnLockCost))return;
-	
+
 	const int32 CurrentCapacity = GetCapacityByCategoryID(CategoryID);
 	const int32 NewCapacity = CurrentCapacity + Info->OnceUnlockCount;
-	
+
 	FCategoryCapacityEntry* Found = InventoryCapacity.FindByPredicate(
 		[CategoryID](const FCategoryCapacityEntry& Entry)
 		{
@@ -183,14 +183,17 @@ void UInventorySystemComponent::UnlockCategorySlots_Implementation(const FName C
 		EntryCategoryID = CategoryID;
 		EntryCategoryCapacity = NewCapacity;
 	}
-	
+
+	// 【修正】服务器本地(单人/听服主机)不会触发 OnRep，需手动广播刷新 UI
+	CapacityChanged.Broadcast();
 }
 
 int32 UInventorySystemComponent::GetCapacityByCategoryID(const FName CategoryID)
 {
+	// 【修正】判空，分类不存在时返回 0，而不是解引用 nullptr
 	const FInventoryInfo* Info = GetCategoryInfo(CategoryID);
-	int32 ReturnCategoryCapacity = Info ? Info->InitialCapacity : 10;
-	
+	int32 ReturnCategoryCapacity = Info ? Info->InitialCapacity : 0;
+
 	for (auto& [EntryCategoryID, EntryCategoryCapacity] : InventoryCapacity)
 	{
 		if (EntryCategoryID == CategoryID)
@@ -198,7 +201,7 @@ int32 UInventorySystemComponent::GetCapacityByCategoryID(const FName CategoryID)
 			ReturnCategoryCapacity = EntryCategoryCapacity;
 		}
 	}
-	
+
 	return ReturnCategoryCapacity;
 }
 
@@ -252,7 +255,7 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystemComponent::GetAllC
 TArray<UInventorySlotData*> UInventorySystemComponent::GetAllItemsByCategory(const FName CategoryID)
 {
 	TMap<FName, FInventoryInfo> Info = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
-	
+
 	TArray<UInventorySlotData*> Slots;
 	for (FInventoryItemEntry& Entry : InventoryItems.Items)
 	{
@@ -269,14 +272,14 @@ TArray<UInventorySlotData*> UInventorySystemComponent::GetAllItemsByCategory(con
 			}
 		}
 	}
-	
+
 	return Slots;
 }
 
 void UInventorySystemComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	
+
 	DOREPLIFETIME(UInventorySystemComponent, InventoryItems);
 	DOREPLIFETIME(UInventorySystemComponent, InventoryCapacity);
 }
@@ -288,10 +291,11 @@ void UInventorySystemComponent::OnRep_InventoryCapacity()
 
 const FInventoryInfo* UInventorySystemComponent::GetCategoryInfo(const FName CategoryID)
 {
-	/*** TODO: 需重构... [2026年8月17日 23:42:35 来自`@BC@`] ***/
+	// 【修正】用 static 缓存，返回的指针指向 static 内存，不会随函数返回而失效(悬垂指针)
+	// 前提：DeveloperSettings 运行期不变。
 	static const TMap<FName, FInventoryInfo> CategoryInfo =
-		 UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(
-			 KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
+		UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(
+			KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 
 	return CategoryInfo.Find(CategoryID);
 }
@@ -301,4 +305,3 @@ bool UInventorySystemComponent::TrySpendGold(int32 Cost)
 	/*** TODO: 先默认返回true以供测试解锁背包格子使用，后续应改为从属性集获取属性来解锁... [2026年8月17日 21:52:42 来自`@BC@`] ***/
 	return true;
 }
-

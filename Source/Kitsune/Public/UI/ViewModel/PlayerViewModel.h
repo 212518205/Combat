@@ -43,10 +43,10 @@ public:
 	FOnInteractableItemChange OnInteractableItemChange;
 
 	/***  Getter   `BC@` ***/
-	TArray<UInventoryItemInstance*>& GetOverlappedItemInstances() { return OverlappedItemInstances; }
-
-	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllInventoryCategories() const;
-	TArray<UInventorySlotData*> GetInventoryItemsByCategory(const FName CategoryID) const;
+	TArray<UInventoryItemInstance*>& GetOverlappedItemInstances() { return OverlappedItemInstances; }   // 与所属玩家重叠的物品
+	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllInventoryCategories() const;				    // 获取所有库存物品-按分类
+	TArray<UInventorySlotData*> GetInventoryItemsByCategory(const FName CategoryID) const;			    // 获取对应分类的物品
+	int32 GetCategoryCapacity(const FName CategoryID) const;											// 获取对应分类的格子容量
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;

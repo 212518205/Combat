@@ -27,7 +27,7 @@ void UWidgetBackBagScreen::NativeOnActivated()
 void UWidgetBackBagScreen::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	
+
 	TabList_BagCategory->OnTabSelected.AddUniqueDynamic(this, &ThisClass::OnTabSelected);
 }
 
@@ -56,7 +56,7 @@ TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName
 	{
 		UInventoryItemInstance* Item = SlotData->ItemInstance;
 		if (!Item || !Item->GetItemDef())continue;
-		
+
 		if (!Item->HasFeature(EItemFeature::Stackable))
 		{
 			Result.Add(SlotData);
@@ -79,11 +79,12 @@ TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName
 			CurrentStackCount -= MaxStackCount;
 		}
 	}
-	
+
 	const auto [CategoryInfo] = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item);
 	const int32 CategoryCapacity = GetLocalPlayerViewModel()->GetCategoryCapacity(CategoryID);
 	const FInventoryInfo* Info = CategoryInfo.Find(CategoryID);
-	const int32 EmptyCount = Info ? CategoryCapacity-Result.Num() : 0;
+	// 【修正】clamp 到 0，避免物品占用超容量时出现负的空格数
+	const int32 EmptyCount = Info ? FMath::Max(0, CategoryCapacity - Result.Num()) : 0;
 	const int32 LockCount = Info ? Info->LockSlotCount : 0;
 	const int32 UnlockCost = Info ? Info->UnLockCost : 0;
 
@@ -105,4 +106,3 @@ TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName
 
 	return Result;
 }
-

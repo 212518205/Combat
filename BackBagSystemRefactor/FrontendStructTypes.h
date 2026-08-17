@@ -1,7 +1,8 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "GameplayTagContainer.h"
+#include "UObject/PrimaryAssetId.h"   // 【修正】FPrimaryAssetId 定义需要
 #include "FrontendStructTypes.generated.h"
 
 
@@ -46,7 +47,7 @@ struct FMenuTileRow : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Menu Tile")
 	ETileViewEntryType EntryType = ETileViewEntryType::DefaultMenuIcon;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Menu Tile", meta = (Categories = "UI.Widget"))
 	FGameplayTag ScreenToOpen;
 
@@ -56,7 +57,7 @@ USTRUCT()
 struct FInventoryInfo
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	FText CategoryName;
 
@@ -85,63 +86,37 @@ USTRUCT(BlueprintType)
 struct FCategoryInfoGroup
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FName, FInventoryInfo> CategoryInfo;
-	
+
 };
 
 USTRUCT()
 struct FSerializedItem
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY()
 	FPrimaryAssetId ItemDefID;
-	
+
 	UPROPERTY()
 	int32 StackCount = 1;
-	
+
 	UPROPERTY()
 	int32 ItemFeature = static_cast<int32>(EItemFeature::None);
-	
+
 };
 
 USTRUCT(BlueprintType)
 struct FCategoryCapacityEntry
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY()
 	FName CategoryID;
-	
+
 	UPROPERTY()
 	int32 CategoryCapacity;
-	
+
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

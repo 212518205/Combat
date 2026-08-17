@@ -123,8 +123,6 @@ void AKitsunePlayerController::PrintInventory()
 		UE_LOG(LogTemp, Warning, TEXT("无法在 Pawn 上找到 InventorySystem"));
 		return;
 	}
-
-	ISComp->DebugPrintInventory();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

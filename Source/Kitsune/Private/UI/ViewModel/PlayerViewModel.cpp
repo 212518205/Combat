@@ -52,7 +52,6 @@ void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWe
 	OnWeaponChanged.Broadcast();
 }
 
-// ===== [修改] 新增：封装背包查询，替代原先 UI 直接拿组件调方法的方式（MVVM 边界） =====
 TArray<TPair<FName, FInventoryCategoryGroup>> UPlayerViewModel::GetAllInventoryCategories() const
 {
 	return CarriedInventorySystem ? CarriedInventorySystem->GetAllCategoryItem() : TArray<TPair<FName, FInventoryCategoryGroup>>();
@@ -61,4 +60,9 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UPlayerViewModel::GetAllInventoryC
 TArray<UInventorySlotData*> UPlayerViewModel::GetInventoryItemsByCategory(const FName CategoryID) const
 {
 	return CarriedInventorySystem ? CarriedInventorySystem->GetAllItemsByCategory(CategoryID) : TArray<UInventorySlotData*>();
+}
+
+int32 UPlayerViewModel::GetCategoryCapacity(const FName CategoryID) const
+{
+    return CarriedInventorySystem ? CarriedInventorySystem->GetCapacityByCategoryID(CategoryID) : 0;
 }
