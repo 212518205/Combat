@@ -14,10 +14,10 @@ struct FPlayerProfileSave
 	
 public:
 	UPROPERTY()
-	int32 PlayerLevel;
+	int32 PlayerLevel = 1;
 	
 	UPROPERTY()
-	FString PlayerName;
+	FString PlayerName = TEXT("北初");
 	
 };
 

@@ -75,6 +75,7 @@ TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName
 			NewSlot->StackCount = FMath::Min(MaxStackCount, CurrentStackCount);
 			NewSlot->bIsLocked = false;
 			NewSlot->UnlockCost = SlotData->UnlockCost;
+			NewSlot->CategoryID = SlotData->CategoryID;
 			Result.Add(NewSlot);
 			CurrentStackCount -= MaxStackCount;
 		}
@@ -92,6 +93,7 @@ TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName
 		UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
 		Data->ItemInstance = nullptr;
 		Data->bIsLocked = false;
+		Data->CategoryID = CategoryID;
 		Result.Add(Data);
 	}
 	for (int32 i = 0; i < LockCount; ++i)
@@ -100,6 +102,7 @@ TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName
 		Data->ItemInstance = nullptr;
 		Data->bIsLocked = true;
 		Data->UnlockCost = UnlockCost;
+		Data->CategoryID = CategoryID;
 		Result.Add(Data);
 	}
 

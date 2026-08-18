@@ -28,11 +28,20 @@ void UKitsuneSaveSubsystem::RegisterForSaving(const TScriptInterface<ISavableInt
 	if (Savable && !SaveTargets.Contains(Savable))
 	{
 		SaveTargets.Add(Savable);
+		Savable->LoadFrom(CurrentSaveGame);
 	}
 }
 
 void UKitsuneSaveSubsystem::UnRegisterForSaving(const TScriptInterface<ISavableInterface>& Savable)
 {
+	if (Savable && SaveTargets.Contains(Savable))
+	{
+		Savable->SaveTo(CurrentSaveGame);
+		if (CurrentSaveGame)
+		{
+			CurrentSaveGame->SaveToSlot();
+		}
+	}
 	SaveTargets.Remove(Savable);
 }
 
@@ -49,6 +58,7 @@ void UKitsuneSaveSubsystem::SaveGame()
 			Target->SaveTo(CurrentSaveGame);
 		}
 	}
+	CurrentSaveGame->SaveToSlot();
 }
 
 void UKitsuneSaveSubsystem::LoadGame()

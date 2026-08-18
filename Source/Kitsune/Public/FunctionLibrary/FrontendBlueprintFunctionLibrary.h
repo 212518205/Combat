@@ -4,11 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "UIManagerSubsystem.h"
-#include "Characters/CharacterBase.h"
 #include "FrontendTypes/FrontendStructTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UI/ViewModel/ViewModelBase.h"
 #include "FrontendBlueprintFunctionLibrary.generated.h"
 
 class UKitsuneAttributeSet;

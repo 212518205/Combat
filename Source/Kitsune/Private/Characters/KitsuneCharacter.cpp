@@ -26,7 +26,6 @@ AKitsuneCharacter::AKitsuneCharacter()
 
 	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractComponent"));
-	// ===== [修改] 补上 InventorySystemComp 的创建，否则该组件为 nullptr，GetInventorySystemComponent() 会返回空指针 =====
 	InventorySystemComp = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("InventorySystemComponent"));
 }
 

@@ -148,7 +148,7 @@ public:
 	/*** ``   战斗属性   `` ***/
 
 	/***  货币   `BC@` ***/
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Gold, Category = "Attribuute | Economy")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Gold, Category = "Attribute | Economy")
 	FGameplayAttributeData Gold;
 	ATTRIBUTE_ACCESSORS(UKitsuneAttributeSet, Gold)
 	
@@ -223,7 +223,7 @@ protected:
 	void OnRep_DamageTaken(const FGameplayAttributeData& OldDamageTaken) const;
 	
 	UFUNCTION()
-	void OnRep_Gold(const FGameplayAttributeData& OleGold) const;
+	void OnRep_Gold(const FGameplayAttributeData& OldGold) const;
 };
 
 

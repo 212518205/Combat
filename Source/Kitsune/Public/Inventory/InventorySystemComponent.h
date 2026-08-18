@@ -64,6 +64,7 @@ class KITSUNE_API UInventorySystemComponent : public UKitsuneExtensionComponent,
 
 public:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemChanged, UInventoryItemInstance*, ChangedInstance,
 	                                             EInstanceModifyType, ModifyType);

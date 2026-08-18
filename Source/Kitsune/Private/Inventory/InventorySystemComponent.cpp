@@ -3,12 +3,14 @@
 
 #include "Inventory/InventorySystemComponent.h"
 
+#include "FrontendDebugHelper.h"
 #include "Engine/AssetManager.h"
 #include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "FrontendTypes/FrontendStructTypes.h"
+#include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "Game/SaveGame/KitsuneSaveGame.h"
 #include "Inventory/Trait/ItemTrait_Display.h"
 #include "Inventory/Trait/ItemTrait_Stack.h"
@@ -59,8 +61,29 @@ void UInventorySystemComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	InventoryItems.Owner = this;
+	if (GetOwner()->HasAuthority())
+	{
+		if (UKitsuneSaveSubsystem* SaveSubsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(GetOwner()))
+		{
+			SaveSubsystem->RegisterForSaving(this);
+			Debug::Print(TEXT("存档系统已注册背包库存"));
+		}
+	}
 }
 
+void UInventorySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	if (GetOwner()->HasAuthority())
+	{
+		if (UKitsuneSaveSubsystem* SaveSubsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(GetOwner()))
+		{
+			SaveSubsystem->UnRegisterForSaving(this);
+			Debug::Print(TEXT("存档系统已取消注册背包库存"));
+		}
+	}
+}
 
 void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* InItemInstance)
 {
@@ -110,6 +133,11 @@ void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* I
 	NewEntry.ItemInstance = NewItem;
 	InventoryItems.MarkItemDirty(NewEntry);
 
+	if (GetNetMode() == NM_Standalone ||
+	    (GetNetMode() == NM_ListenServer && GetOwner()))
+	{
+		OnRep_InventoryCapacity();
+	}
 }
 
 
@@ -117,18 +145,19 @@ void UInventorySystemComponent::SaveTo(UKitsuneSaveGame* SaveGame)
 {
 	if (!SaveGame)return;
 	
+	Debug::Print(TEXT("保存背包"));
+	
 	auto& [SaveItems, SaveInventoryCapacity] = SaveGame->Inventory;
 	SaveItems.Reset();
 	for (FInventoryItemEntry& Entry : InventoryItems.Items)
 	{
-		if (const UInventoryItemInstance* Instance = Entry.ItemInstance; Instance && Instance->GetItemDef())
+		const UInventoryItemInstance* Instance = Entry.ItemInstance; 
+		if (!Instance || !Instance->GetItemDef())
 		{
-			FSerializedItem Item;
-			Item.ItemDefID = Instance->GetItemDef()->GetPrimaryAssetId();
-			Item.StackCount = Instance->GetStackCount();
-			Item.ItemFeature = Instance->ItemFeatures;
-			SaveItems.Add(Item);
+			Debug::Print(TEXT("SaveTo 序列化失败"));
+			continue;
 		}
+		SaveItems.Add(Instance->ToSerialized());
 	}
 	SaveInventoryCapacity = InventoryCapacity;
 }
@@ -137,17 +166,19 @@ void UInventorySystemComponent::LoadFrom(const UKitsuneSaveGame* SaveGame)
 {
 	if (!SaveGame)return;
 	
+	Debug::Print(TEXT("加载背包"));
+	
 	auto& [SaveItems, SaveInventoryCapacity] = SaveGame->Inventory;
 	InventoryCapacity = SaveInventoryCapacity;
 	const UAssetManager& AM = UAssetManager::Get();
-	for (const auto& [ItemDefID, StackCount, ItemFeature] : SaveItems)
+	for (const auto& Serialized : SaveItems)
 	{
-		UInventoryItemInstance* ItemInstance = NewObject<UInventoryItemInstance>(this);
-		
-		const FSoftObjectPath Path = AM.GetPrimaryAssetPath(ItemDefID);
-		ItemInstance->ItemDef = Cast<UInventoryItemDefinition>(Path.TryLoad());
-		ItemInstance->StackCount = StackCount;
-		ItemInstance->ItemFeatures = ItemFeature;
+		UInventoryItemInstance* ItemInstance = UInventoryItemInstance::CreateFromSerialized(this, Serialized);
+		if (!ItemInstance)
+		{
+			Debug::Print(TEXT("UInventorySystemComponent::LoadFrom加载失败"));
+			continue;
+		}
 		
 		if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
 		{
@@ -182,6 +213,12 @@ void UInventorySystemComponent::UnlockCategorySlots_Implementation(const FName C
 		auto& [EntryCategoryID, EntryCategoryCapacity] = InventoryCapacity.AddDefaulted_GetRef();
 		EntryCategoryID = CategoryID;
 		EntryCategoryCapacity = NewCapacity;
+	}
+	
+	if (GetNetMode() == NM_Standalone ||
+		(GetNetMode() == NM_ListenServer && GetOwner()))
+	{
+		OnRep_InventoryCapacity();
 	}
 	
 }
@@ -222,6 +259,7 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystemComponent::GetAllC
 				Data->bIsLocked = false;
 				Data->UnlockCost = CategoryInfo.Find(CategoryID)->UnLockCost;
 			}
+			Data->CategoryID = CategoryID;
 			ReturnGroup.FindOrAdd(CategoryID).CategorySlots.Add(Data);
 		}
 	}
@@ -265,6 +303,7 @@ TArray<UInventorySlotData*> UInventorySystemComponent::GetAllItemsByCategory(con
 				Data->ItemInstance = ItemInstance;
 				Data->bIsLocked = false;
 				Data->UnlockCost = 0;
+				Data->CategoryID = CategoryID;
 				Slots.Add(Data);
 			}
 		}

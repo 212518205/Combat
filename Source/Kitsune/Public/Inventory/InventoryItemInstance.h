@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
+#include "FrontendTypes/FrontendStructTypes.h"
 #include "Misc/Guid.h"
 #include "InventoryItemInstance.generated.h"
 
@@ -47,6 +48,9 @@ public:
 	}	
 	
 	int32 GetStackCount() const { return StackCount; }
+	FORCEINLINE int32 GetItemFeature() const { return ItemFeatures; }
+	FSerializedItem ToSerialized() const;
+	static UInventoryItemInstance* CreateFromSerialized(UObject* NewOuter, const FSerializedItem& Serialized);
 	
 protected:
 	UPROPERTY(Replicated)
@@ -63,4 +67,8 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AActor> OwningActor;
+	
+private:
+	static UInventoryItemDefinition* ResolveItemDef(const FSerializedItem& Serialized);
+	
 };

@@ -243,9 +243,9 @@ void UKitsuneAttributeSet::OnRep_DamageTaken(const FGameplayAttributeData& OldDa
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, DamageTaken, OldDamageTaken);
 }
 
-void UKitsuneAttributeSet::OnRep_Gold(const FGameplayAttributeData& OleGold) const
+void UKitsuneAttributeSet::OnRep_Gold(const FGameplayAttributeData& OldGold) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, Gold, OleGold);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UKitsuneAttributeSet, Gold, OldGold);
 }
 
 

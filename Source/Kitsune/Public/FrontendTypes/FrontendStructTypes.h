@@ -100,6 +100,9 @@ struct FSerializedItem
 	FPrimaryAssetId ItemDefID;
 	
 	UPROPERTY()
+	FSoftObjectPath ItemDefPath;
+	
+	UPROPERTY()
 	int32 StackCount = 1;
 	
 	UPROPERTY()
