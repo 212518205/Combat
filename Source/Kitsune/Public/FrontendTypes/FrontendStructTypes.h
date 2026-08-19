@@ -119,7 +119,7 @@ struct FCategoryCapacityEntry
 	FName CategoryID;
 	
 	UPROPERTY()
-	int32 CategoryCapacity;
+	int32 CategoryCapacity = 0;
 	
 };
 

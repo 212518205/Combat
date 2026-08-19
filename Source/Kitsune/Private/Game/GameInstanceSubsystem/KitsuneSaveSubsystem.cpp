@@ -3,6 +3,7 @@
 
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 
+#include "Game/GameInstance/KitsuneGameInstance.h"
 #include "Game/SaveGame/KitsuneSaveGame.h"
 #include "Interfaces/SavableInterface.h"
 
@@ -10,7 +11,14 @@ void UKitsuneSaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
-	CurrentSaveGame = UKitsuneSaveGame::LoadOrCreate();
+	CurrentSaveGame = UGlobalSaveGame::LoadOrCreate();
+}
+
+void UKitsuneSaveSubsystem::Deinitialize()
+{
+	FlushDirtySaves();
+	
+	Super::Deinitialize();
 }
 
 UKitsuneSaveSubsystem* UKitsuneSaveSubsystem::GetSaveSubsystem(const UObject* WorldContextObject)
@@ -23,52 +31,170 @@ UKitsuneSaveSubsystem* UKitsuneSaveSubsystem::GetSaveSubsystem(const UObject* Wo
 	return nullptr;
 }
 
-void UKitsuneSaveSubsystem::RegisterForSaving(const TScriptInterface<ISavableInterface>& Savable)
+void UKitsuneSaveSubsystem::RegisterForSaving(const int64 PlayerUID, const TScriptInterface<ISavableInterface>& Savable)
 {
-	if (Savable && !SaveTargets.Contains(Savable))
+	if (PlayerUID <= 0 || !Savable) return;
+	
+	auto& [Targets, SaveGame] = PlayerSaveGameContexts.FindOrAdd(PlayerUID);
+	if (!SaveGame)
 	{
-		SaveTargets.Add(Savable);
-		Savable->LoadFrom(CurrentSaveGame);
+		SaveGame = UKitsuneSaveGame::LoadOrCreate(UKitsuneSaveGame::MakePlayerSlotName(PlayerUID));
+	}
+	if (!Targets.Contains(Savable))
+	{
+		Targets.Add(Savable);
 	}
 }
 
 void UKitsuneSaveSubsystem::UnRegisterForSaving(const TScriptInterface<ISavableInterface>& Savable)
 {
-	if (Savable && SaveTargets.Contains(Savable))
+	if (!Savable)return;
+	const int64 PlayerUID = Savable->GetSavePlayerUID();
+	if (PlayerUID <= 0)return;
+	if (FSaveGameContext* Found = PlayerSaveGameContexts.Find(PlayerUID))
 	{
-		Savable->SaveTo(CurrentSaveGame);
-		if (CurrentSaveGame)
+		if (Found->Targets.Remove(Savable) > 0 && Found->SaveGame)
 		{
-			CurrentSaveGame->SaveToSlot();
+			Savable->SaveTo(Found->SaveGame);
+			Found->SaveGame->SaveToSlot(UKitsuneSaveGame::MakePlayerSlotName(PlayerUID));
 		}
 	}
-	SaveTargets.Remove(Savable);
 }
 
-void UKitsuneSaveSubsystem::SaveGame()
+void UKitsuneSaveSubsystem::SaveGameForPlayer(const int64 PlayerUID)
 {
-	if (!CurrentSaveGame)
+	if (FSaveGameContext* Found = PlayerSaveGameContexts.Find(PlayerUID))
 	{
-		CurrentSaveGame = UKitsuneSaveGame::LoadOrCreate();
-	}
-	for (const TScriptInterface<ISavableInterface>& Target : SaveTargets)
-	{
-		if (Target)
+		for (const TScriptInterface<ISavableInterface>& Target : Found->Targets)
 		{
-			Target->SaveTo(CurrentSaveGame);
+			if (Target)
+			{
+				Target->SaveTo(Found->SaveGame);
+			}
 		}
+		Found->SaveGame->SaveToSlot(UKitsuneSaveGame::MakePlayerSlotName(PlayerUID));
 	}
-	CurrentSaveGame->SaveToSlot();
 }
 
-void UKitsuneSaveSubsystem::LoadGame()
+void UKitsuneSaveSubsystem::LoadGameForPlayer(const int64 PlayerUID)
 {
-	CurrentSaveGame = UKitsuneSaveGame::LoadOrCreate();
-	for (const TScriptInterface<ISavableInterface>& Target : SaveTargets)
+	if (FSaveGameContext* Found = PlayerSaveGameContexts.Find(PlayerUID))
 	{
-		if (Target)
+		for (const TScriptInterface<ISavableInterface>& Target : Found->Targets)
 		{
-			Target->LoadFrom(CurrentSaveGame);
+			if (Target)
+			{
+				Target->LoadFrom(Found->SaveGame);
+			}
 		}
 	}
 }
+
+void UKitsuneSaveSubsystem::MarkDirty(const int64 PlayerUID)
+{
+	if (PlayerUID <= 0)return;
+	DirtyUIDs.Add(PlayerUID);
+	
+	if (const UWorld* World = GetGameInstance()->GetWorld())
+	{
+		if (!World->GetTimerManager().IsTimerActive(SaveTimerHandle))
+		{
+			World->GetTimerManager().SetTimer(SaveTimerHandle, this, &ThisClass::FlushDirtySaves, SaveIntervalSeconds, false);
+		}
+	}
+}
+
+FString UKitsuneSaveSubsystem::GetOrCreateLocalCredential()
+{
+	if (const UKitsuneGameInstance* KitsuneGI = Cast<UKitsuneGameInstance>(GetGameInstance()))
+	{
+		if (!KitsuneGI->GetPIEOverrideCredential().IsEmpty())
+		{
+			return KitsuneGI->GetPIEOverrideCredential();
+		}
+	}
+	
+#if WITH_EDITOR
+	if (GIsEditor)
+	{
+		if (const UWorld* World = GetGameInstance()->GetWorld())
+		{
+			if (World->GetNetMode() == NM_Client)
+			{
+				return FGuid::NewGuid().ToString();
+			}
+		}
+	}
+#endif
+	
+	const FString Path = FPaths::ProjectSavedDir() / TEXT("LocalCredential.txt");
+	if (FString Existing; FFileHelper::LoadFileToString(Existing, *Path) && !Existing.IsEmpty())
+	{
+		return Existing;	
+	}
+	
+	FString NewCredential = FGuid::NewGuid().ToString();
+	FFileHelper::SaveStringToFile(NewCredential, *Path);
+	return NewCredential;
+	
+}
+
+int64 UKitsuneSaveSubsystem::ResolvePlayerCredential(const FString& InCredential)
+{
+	UGlobalSaveGame* GS = UGlobalSaveGame::LoadOrCreate();
+	if (!GS || InCredential.IsEmpty())return -1;
+	
+	auto& [NextPlayerUID, KnownPlayerUIDs, PlayerCredentialToUID] = GS->Data;
+	if (const int64* Found = PlayerCredentialToUID.Find(InCredential))
+	{
+		return *Found;
+	}
+
+	const int64 NewPlayerUID = ++NextPlayerUID;
+	KnownPlayerUIDs.Add(NewPlayerUID);
+	PlayerCredentialToUID.Add(InCredential, NewPlayerUID);
+	
+	GS->SaveToSlot();
+	
+	return NewPlayerUID;
+}
+
+UKitsuneSaveGame* UKitsuneSaveSubsystem::GetOrCreatePlayerSaveGame(const int64 PlayerUID)
+{
+	if (FSaveGameContext* Found = PlayerSaveGameContexts.Find(PlayerUID))
+	{
+		if (Found->SaveGame)
+		{
+			return Found->SaveGame;
+		}
+	}
+	auto& [Targets, SaveGame] = PlayerSaveGameContexts.FindOrAdd(PlayerUID);
+	if (!SaveGame)
+	{
+		SaveGame = UKitsuneSaveGame::LoadOrCreate(UKitsuneSaveGame::MakePlayerSlotName(PlayerUID));
+	}
+	return SaveGame;
+}
+
+void UKitsuneSaveSubsystem::FlushDirtySaves()
+{
+	for (const int64 PlayerUID : DirtyUIDs)
+	{
+		SaveGameForPlayer(PlayerUID);
+	}
+	
+	DirtyUIDs.Reset();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -21,10 +21,11 @@ void UPlayerViewModel::NativeInitialize()
     {
         CarriedInventorySystem = Character->GetInventorySystemComponent();
     }
-    if (!CarriedInventorySystem)
+    if (CarriedInventorySystem)
     {
-        Debug::Print(TEXT("CarriedInventorySystem 为空"));
+        CarriedInventorySystem->CapacityChanged.AddDynamic(this, &ThisClass::OnCategoryCapacityChanged);
     }
+    
     
 }
 
@@ -65,4 +66,9 @@ TArray<UInventorySlotData*> UPlayerViewModel::GetInventoryItemsByCategory(const 
 int32 UPlayerViewModel::GetCategoryCapacity(const FName CategoryID) const
 {
     return CarriedInventorySystem ? CarriedInventorySystem->GetCapacityByCategoryID(CategoryID) : 0;
+}
+
+void UPlayerViewModel::OnCategoryCapacityChanged(FName CategoryID, int32 CategoryCapacity)
+{
+    CategoryCapacityChanged.Broadcast(CategoryID, CategoryCapacity);
 }

@@ -6,16 +6,14 @@
 #include "CommonInputModeTypes.h"
 #include"EnhancedInputSubsystems.h"
 #include"EnhancedInputComponent.h"
-#include "FrontendDebugHelper.h"
 #include "UIManagerSubsystem.h"
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Characters/KitsuneCharacter.h"
-#include "Component/Interaction/InteractionComponent.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
-#include "GameplayTag/KitsuneGameplayTag.h"
+#include "Game/KitsunePlayerState.h"
+#include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "Input/CommonUIActionRouterBase.h"
 #include "Input/KitsuneInputComponent.h"
-#include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventorySystemComponent.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
@@ -37,24 +35,20 @@ void AKitsunePlayerController::BeginPlay()
 			InputUserSettings->RegisterInputMappingContext(IMC_Gameplay);
 		}
 	}
-}
-
-void AKitsunePlayerController::OnInteraction(const FInputActionValue& InputActionValue)
-{
-	if (UKitsuneFunctionLibrary::NativeDoesActorHaveTag(GetPawn(), KitsuneGameplayTags::Player_Status_Pickupable))
+	
+	if (UKitsuneSaveSubsystem* SaveSubsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(this); SaveSubsystem && IsLocalController())
 	{
-		if (const AKitsuneCharacter* KitsuneCharacter = Cast<AKitsuneCharacter>(GetPawn()))
+		const FString LocalCredential = SaveSubsystem->GetOrCreateLocalCredential();
+		if (HasAuthority())
 		{
-			if (UInventorySystemComponent* ISComp = KitsuneCharacter->GetInventorySystemComponent())
-			{
-				if (UInventoryItemInstance* ItemInstance = GetSelectedInteractableItemInstance())
-				{
-					ISComp->AddItem(GetSelectedInteractableItemInstance());
-					GetSelectedInteractableItemInstance()->GetOwningActor()->Destroy();
-				}
-			}
+			OnCredentialReported(LocalCredential);
+		}
+		else
+		{
+			Server_ReportLocalCredential(LocalCredential);
 		}
 	}
+	
 }
 
 void AKitsunePlayerController::SetupInputComponent()
@@ -70,7 +64,6 @@ void AKitsunePlayerController::SetupInputComponent()
 		this,&AKitsunePlayerController::Jump);
 
 	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::ToggleMouseMode);
-	//KitsuneInputComponent->BindAction(PickupableAction, ETriggerEvent::Completed, this, &ThisClass::OnInteraction);
 
 	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
 }
@@ -81,6 +74,25 @@ void AKitsunePlayerController::OnPossess(APawn* InPawn)
 
 }
 
+void AKitsunePlayerController::Server_ReportLocalCredential_Implementation(const FString& InCredential)
+{
+	OnCredentialReported(InCredential);
+}
+
+void AKitsunePlayerController::OnCredentialReported(const FString& InCredential) const
+{
+	AKitsunePlayerState* KitsunePlayerState = GetPlayerState<AKitsunePlayerState>();
+	if (!KitsunePlayerState)return;
+	if (const int64 PlayerUID = UKitsuneSaveSubsystem::ResolvePlayerCredential(InCredential); PlayerUID >= 0)
+	{
+		 KitsunePlayerState->SetPlayerUID(PlayerUID);
+		if (const AKitsuneCharacter* KitsuneCharacter = Cast<AKitsuneCharacter>(GetPawn()))
+		{
+			KitsuneCharacter->BindAndLoadSave();
+		}
+	}
+}
+
 UCommonActivatableWidget* AKitsunePlayerController::GetCurrentTopWidget() const
 {
 	return UUIManagerSubsystem::GetUIManager(GetWorld())->GetRegisteredPrimaryLayout()->GetTopWidget();
@@ -88,7 +100,7 @@ UCommonActivatableWidget* AKitsunePlayerController::GetCurrentTopWidget() const
 
 UInventoryItemInstance* AKitsunePlayerController::GetSelectedInteractableItemInstance() const
 {
-	if (UWidgetMainHudScreen* MainHud = Cast<UWidgetMainHudScreen>(GetCurrentTopWidget()))
+	if (const UWidgetMainHudScreen* MainHud = Cast<UWidgetMainHudScreen>(GetCurrentTopWidget()))
 	{
 		return MainHud->GetSelectedItemInstance();
 	}
@@ -103,26 +115,6 @@ AKitsunePlayerController::AKitsunePlayerController()
 FGenericTeamId AKitsunePlayerController::GetGenericTeamId() const
 {
 	return PlayerTeamId;
-}
-
-void AKitsunePlayerController::PrintInventory()
-{ // 获取本地控制的 Pawn
-	APawn* MyPawn = GetPawn();
-	if (!MyPawn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("无法获取本地 Pawn"));
-		return;
-	}
-
-	// 假设你的 InventorySystem 是 Pawn 身上的一个组件，名为 "InventoryComponent"
-	UInventorySystemComponent* ISComp = Cast<AKitsuneCharacter>(MyPawn)->GetInventorySystemComponent();
-    
-	if (!ISComp)
-	{
-		// 如果 InventorySystem 不是组件而是其他方式持有，请替换为你的获取逻辑
-		UE_LOG(LogTemp, Warning, TEXT("无法在 Pawn 上找到 InventorySystem"));
-		return;
-	}
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

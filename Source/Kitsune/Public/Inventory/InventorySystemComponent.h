@@ -68,7 +68,7 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemChanged, UInventoryItemInstance*, ChangedInstance,
 	                                             EInstanceModifyType, ModifyType);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCategoryCapacityChanged);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCategoryCapacityChanged, FName, CategoryID, int32, CategoryCapacity);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnInventoryItemChanged ItemChanged;
@@ -79,6 +79,7 @@ public:
 	/***   ...ISavableInterface Interface Begin...   ***/
 	virtual void SaveTo(UKitsuneSaveGame* SaveGame) override;
 	virtual void LoadFrom(const UKitsuneSaveGame* SaveGame) override;
+	virtual int64 GetSavePlayerUID() override;
 	/***   ...ISavableInterface Interface End...     ***/
 
 	/***  默认堆叠一个   `BC@` ***/
@@ -103,7 +104,7 @@ protected:
 	TArray<FCategoryCapacityEntry> InventoryCapacity;
 	
 	UFUNCTION()
-	void OnRep_InventoryCapacity();
+	void OnRep_InventoryCapacity(const TArray<FCategoryCapacityEntry>& OldValue);
 
 private:
 	static const FInventoryInfo* GetCategoryInfo(const FName CategoryID);

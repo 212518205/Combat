@@ -10,6 +10,7 @@
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "FrontendTypes/FrontendStructTypes.h"
+#include "Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "Game/SaveGame/KitsuneSaveGame.h"
 #include "Inventory/Trait/ItemTrait_Display.h"
@@ -61,14 +62,6 @@ void UInventorySystemComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	InventoryItems.Owner = this;
-	if (GetOwner()->HasAuthority())
-	{
-		if (UKitsuneSaveSubsystem* SaveSubsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(GetOwner()))
-		{
-			SaveSubsystem->RegisterForSaving(this);
-			Debug::Print(TEXT("存档系统已注册背包库存"));
-		}
-	}
 }
 
 void UInventorySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -80,7 +73,6 @@ void UInventorySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason
 		if (UKitsuneSaveSubsystem* SaveSubsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(GetOwner()))
 		{
 			SaveSubsystem->UnRegisterForSaving(this);
-			Debug::Print(TEXT("存档系统已取消注册背包库存"));
 		}
 	}
 }
@@ -112,6 +104,11 @@ void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* I
 				{
 					InItemInstance->GetOwningActor()->Destroy();
 				}
+				if (GetNetMode() == NM_Standalone ||
+					(GetNetMode() == NM_ListenServer && GetOwner()))
+				{
+					ItemChanged.Broadcast(Item, EInstanceModifyType::AddStackCount);
+				}
 				return;
 			}
 		}
@@ -136,7 +133,12 @@ void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* I
 	if (GetNetMode() == NM_Standalone ||
 	    (GetNetMode() == NM_ListenServer && GetOwner()))
 	{
-		OnRep_InventoryCapacity();
+		ItemChanged.Broadcast(NewItem, EInstanceModifyType::AddItem);
+	}
+	
+	if (UKitsuneSaveSubsystem* Subsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(GetOwner()))
+	{
+		Subsystem->MarkDirty(GetSavePlayerUID());
 	}
 }
 
@@ -144,8 +146,6 @@ void UInventorySystemComponent::AddItem_Implementation(UInventoryItemInstance* I
 void UInventorySystemComponent::SaveTo(UKitsuneSaveGame* SaveGame)
 {
 	if (!SaveGame)return;
-	
-	Debug::Print(TEXT("保存背包"));
 	
 	auto& [SaveItems, SaveInventoryCapacity] = SaveGame->Inventory;
 	SaveItems.Reset();
@@ -165,8 +165,7 @@ void UInventorySystemComponent::SaveTo(UKitsuneSaveGame* SaveGame)
 void UInventorySystemComponent::LoadFrom(const UKitsuneSaveGame* SaveGame)
 {
 	if (!SaveGame)return;
-	
-	Debug::Print(TEXT("加载背包"));
+	InventoryItems.Items.Reset();
 	
 	auto& [SaveItems, SaveInventoryCapacity] = SaveGame->Inventory;
 	InventoryCapacity = SaveInventoryCapacity;
@@ -188,6 +187,18 @@ void UInventorySystemComponent::LoadFrom(const UKitsuneSaveGame* SaveGame)
 		Entry.ItemInstance = ItemInstance;
 		InventoryItems.MarkItemDirty(Entry);
 	}
+}
+
+int64 UInventorySystemComponent::GetSavePlayerUID()
+{
+	if (const APawn* Pawn = Cast<APawn>(GetOwner()))
+	{
+		if (const AKitsunePlayerState* PlayerState = Pawn->GetPlayerState<AKitsunePlayerState>())
+		{
+			return PlayerState->GetPlayerUID();
+		}
+	}
+	return 0;
 }
 
 void UInventorySystemComponent::UnlockCategorySlots_Implementation(const FName CategoryID)
@@ -218,9 +229,13 @@ void UInventorySystemComponent::UnlockCategorySlots_Implementation(const FName C
 	if (GetNetMode() == NM_Standalone ||
 		(GetNetMode() == NM_ListenServer && GetOwner()))
 	{
-		OnRep_InventoryCapacity();
+		CapacityChanged.Broadcast(CategoryID, NewCapacity);
 	}
 	
+	if (UKitsuneSaveSubsystem* Subsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(GetOwner()))
+	{
+		Subsystem->MarkDirty(GetSavePlayerUID());
+	}
 }
 
 int32 UInventorySystemComponent::GetCapacityByCategoryID(const FName CategoryID)
@@ -320,9 +335,24 @@ void UInventorySystemComponent::GetLifetimeReplicatedProps(TArray<class FLifetim
 	DOREPLIFETIME(UInventorySystemComponent, InventoryCapacity);
 }
 
-void UInventorySystemComponent::OnRep_InventoryCapacity()
+void UInventorySystemComponent::OnRep_InventoryCapacity(const TArray<FCategoryCapacityEntry>& OldValue)
 {
-	CapacityChanged.Broadcast();
+	for (auto& [NewCategoryID, NewCategoryCapacity] : InventoryCapacity)
+	{
+		bool bIsChange = false;
+		for (const auto& [OldCategoryID, OldCategoryCapacity] : OldValue)
+		{
+			if (NewCategoryID == OldCategoryID)
+			{
+				bIsChange = NewCategoryCapacity != OldCategoryCapacity;
+				break;
+			}
+		}
+		if (bIsChange)
+		{
+			CapacityChanged.Broadcast(NewCategoryID, NewCategoryCapacity);
+		}
+	}
 }
 
 const FInventoryInfo* UInventorySystemComponent::GetCategoryInfo(const FName CategoryID)

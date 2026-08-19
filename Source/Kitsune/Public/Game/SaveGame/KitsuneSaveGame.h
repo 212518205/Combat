@@ -35,6 +35,22 @@ public:
 	
 };
 
+USTRUCT()
+struct FGlobalSaveData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	int64 NextPlayerUID = 1000;
+	
+	UPROPERTY()
+	TArray<int64> KnownPlayerUIDs;
+	
+	UPROPERTY()
+	TMap<FString, int64> PlayerCredentialToUID;
+	
+};
+
 UCLASS()
 class KITSUNE_API UKitsuneSaveGame : public USaveGame
 {
@@ -42,7 +58,7 @@ class KITSUNE_API UKitsuneSaveGame : public USaveGame
 	
 public:
 	UPROPERTY()
-	int32 SaveVersion = 1;
+	int32 SaveVersion = 2;
 	
 	UPROPERTY()
 	FPlayerProfileSave PlayerProfile;
@@ -50,7 +66,23 @@ public:
 	UPROPERTY()
 	FInventorySave Inventory;
 	
-	static UKitsuneSaveGame* LoadOrCreate();
+	static UKitsuneSaveGame* LoadOrCreate(const FString& SlotName);	
+	static const FString& GetGlobalSlotName();
+	static FString MakePlayerSlotName(const int64 PlayerUID);
+	void SaveToSlot(const FString& SlotName);
+	
+};
+
+UCLASS()
+class UGlobalSaveGame : public USaveGame
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	FGlobalSaveData Data;
+	
+	static UGlobalSaveGame* LoadOrCreate();
 	
 	void SaveToSlot();
 	

@@ -33,6 +33,8 @@ public:
 	virtual UInteractionComponent* GetInteractionComp() override;
 	/***   ...IPawnInteractInterface Interface End...     ***/
 	
+	void BindAndLoadSave() const;
+	
 	UInventorySystemComponent* GetInventorySystemComponent() const { return InventorySystemComp; }
 
 protected:

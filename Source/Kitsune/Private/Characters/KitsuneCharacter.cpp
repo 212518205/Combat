@@ -11,6 +11,7 @@
 #include "Component/Interaction/InteractionComponent.h"
 #include "Inventory/InventorySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
+#include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "UI/ViewModel/AttributeViewModel.h"
 
 AKitsuneCharacter::AKitsuneCharacter()
@@ -41,6 +42,8 @@ void AKitsuneCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	InitAbilityInfo();
+	
+	BindAndLoadSave();
 }
 
 UKitsuneCombatComponent* AKitsuneCharacter::GetKitsuneCombatComponent() const
@@ -51,6 +54,22 @@ UKitsuneCombatComponent* AKitsuneCharacter::GetKitsuneCombatComponent() const
 UInteractionComponent* AKitsuneCharacter::GetInteractionComp()
 {
 	return InteractComponent;
+}
+
+void AKitsuneCharacter::BindAndLoadSave() const
+{
+	const AKitsunePlayerState* KitsunePlayerState = Cast<AKitsunePlayerState>(GetPlayerState());
+	if (!KitsunePlayerState || KitsunePlayerState->GetPlayerUID() <= 0)return;
+	if (!HasAuthority())return;
+	
+	if (UKitsuneSaveSubsystem* Subsystem = UKitsuneSaveSubsystem::GetSaveSubsystem(this))
+	{
+		for (UActorComponent* SavableComp : GetComponentsByInterface(USavableInterface::StaticClass()))
+		{
+			Subsystem->RegisterForSaving(KitsunePlayerState->GetPlayerUID(), SavableComp);
+		}
+		Subsystem->LoadGameForPlayer(KitsunePlayerState->GetPlayerUID());
+	}
 }
 
 void AKitsuneCharacter::InitAbilityInfo()

@@ -35,7 +35,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FName CategoryID;
 	
-	FText GetUnlockMessage()
+	UFUNCTION(BlueprintCallable)
+	FText GetUnlockMessage() const
 	{
 		TMap<FName, FInventoryInfo> CategoryInfo = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(
 			 KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;

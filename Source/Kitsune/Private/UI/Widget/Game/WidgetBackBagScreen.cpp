@@ -22,6 +22,10 @@ void UWidgetBackBagScreen::NativeOnActivated()
 		if (TabList_BagCategory->GetTabButtonBaseByID(CategoryID))continue;
 		TabList_BagCategory->RequestRegisterTab(CategoryID, Group.CategoryDisplayName);
 	}
+	if (UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
+	{
+		PlayerVM->CategoryCapacityChanged.AddUniqueDynamic(this, &ThisClass::OnCapacityChanged);
+	}
 }
 
 void UWidgetBackBagScreen::NativeOnInitialized()
@@ -48,8 +52,13 @@ void UWidgetBackBagScreen::OnTabSelected(const FName TabID)
 	TileView_BackBag->RequestRefresh();
 }
 
+void UWidgetBackBagScreen::OnCapacityChanged(FName CategoryID, int32 CategoryCapacity)
+{
+	OnTabSelected(CategoryID);
+}
+
 TArray<UInventorySlotData*> UWidgetBackBagScreen::BuildCategorySlots(const FName& CategoryID,
-	TArray<UInventorySlotData*>& Slots)
+                                                                     TArray<UInventorySlotData*>& Slots)
 {
 	TArray<UInventorySlotData*> Result;
 	for (UInventorySlotData* SlotData : Slots)

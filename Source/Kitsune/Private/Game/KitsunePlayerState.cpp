@@ -4,6 +4,7 @@
 #include "Game/KitsunePlayerState.h"
 #include"AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"AbilitySyetem/KitsuneAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 AKitsunePlayerState::AKitsunePlayerState()
 {
@@ -24,4 +25,15 @@ UAbilitySystemComponent* AKitsunePlayerState::GetAbilitySystemComponent() const
 UAttributeSet* AKitsunePlayerState::GetAttributeSet() const
 {
 	return AttributeSet;
+}
+
+void AKitsunePlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(ThisClass, PlayerUID);
+}
+
+void AKitsunePlayerState::OnRep_PlayerUID()
+{
 }

@@ -18,6 +18,7 @@ enum class EItemInstanceAction : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractableItemChange, UInventoryItemInstance*, ItemInstance, EItemInstanceAction, InstanceAction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerCategoryCapacityChanged, FName, CategoryID, int32, CategoryCapacity);
 
 /**
  * 
@@ -38,6 +39,9 @@ public:
 	/***  变化委托   `BC@` ***/
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
 	FOnAttributeChangedDelegate OnWeaponChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
+	FOnPlayerCategoryCapacityChanged CategoryCapacityChanged;
 
 	UPROPERTY(BlueprintAssignable, Category  = "ViewModel | Interact")
 	FOnInteractableItemChange OnInteractableItemChange;
@@ -52,6 +56,9 @@ public:
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
 	
 protected:
+	UFUNCTION()
+	void OnCategoryCapacityChanged(FName CategoryID, int32 CategoryCapacity);
+	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UInventorySystemComponent> CarriedInventorySystem;
 	

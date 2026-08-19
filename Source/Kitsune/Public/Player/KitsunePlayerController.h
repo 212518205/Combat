@@ -32,17 +32,17 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	/***   ...IGenericTeamAgentInterface Interface End...     ***/
 
-	/***  控制台命令函数   `BC@` ***/
-	UFUNCTION(Exec)
-	void PrintInventory();
-
 protected:
 	/***   ...APlayerController Interface Begin...   ***/
 	virtual void BeginPlay() override;
-	void OnInteraction(const FInputActionValue& InputActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	/***   ...APlayerController Interface End...     ***/
+
+	/***  SaveGame   `BC@` ***/
+	UFUNCTION(Server, Reliable)
+	void Server_ReportLocalCredential(const FString& InCredential);
+	void OnCredentialReported(const FString& InCredential) const;
 
 	/***  UI接口   `BC@` ***/
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -69,9 +69,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> ShowOrHiddenMouseAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> PickupableAction;
 
 	/*** `@BC`   描述: 技能相关输入数据，需要在蓝图指定   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")

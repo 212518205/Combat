@@ -27,4 +27,6 @@ public:
 	
 	virtual void LoadFrom(const UKitsuneSaveGame* SaveGame) = 0;
 	
+	virtual int64 GetSavePlayerUID() = 0;
+	
 };
