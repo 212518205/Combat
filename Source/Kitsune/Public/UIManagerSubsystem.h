@@ -46,7 +46,7 @@ public:
 	UPlayerViewModel* GetLocalViewModel(bool& bIsValid);
 
 	template<typename T = UAttributeViewModel>
-	T* TryGetViewModelByActor(APawn* InPawn);
+	T* TryGetViewModelByActor(AActor* InActor);
 
 	UFUNCTION(BlueprintCallable, Category = "ViewModel")
 	UAttributeViewModel* GetViewModelByPawn(APawn* InPawn);
@@ -78,14 +78,25 @@ protected:
 };
 
 template <class T>
-T* UUIManagerSubsystem::TryGetViewModelByActor(APawn* InPawn)
+T* UUIManagerSubsystem::TryGetViewModelByActor(AActor* InActor)
 {
+	if (!InActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryGetViewModelByActor: InActor is null"));
+		return nullptr;
+	}
+
+	APawn* InPawn = Cast<APawn>(InActor);
+	if (!InPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryGetViewModelByActor: Actor [%s] is not a Pawn, ViewModel not available"), *InActor->GetName());
+		return nullptr;
+	}
+
 	if (UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InPawn))
 	{
 		return CastChecked<T>(*FoundViewModel);
 	}
-
-	/*** REFACTOR: 需要添加继承自AbilityInterface的类，并且把获取属性集和能力系统组件的接口用接口类替换... [2025年10月28日 21:18:55 来自`@BC@`] ***/
 
 	T* ViewModel = UViewModelBase::GetViewModel<T>(InPawn->GetController(), InPawn);
 	RegisteredViewModels.Add(InPawn, ViewModel);

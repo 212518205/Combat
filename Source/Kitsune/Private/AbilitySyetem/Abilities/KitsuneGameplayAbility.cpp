@@ -54,7 +54,7 @@ void UKitsuneGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle
 	}
 }
 
-FGameplayEffectSpecHandle UKitsuneGameplayAbility::MakeWeaponDamageEffectSpecHandle(
+FGameplayEffectSpecHandle UKitsuneGameplayAbility::MakeDamageEffectSpecHandle(
 	const TSubclassOf<UGameplayEffect> EffectClass, const FGameplayTag AttackType, const float AttackPowerMultiplier) const
 {
 	check(EffectClass);
@@ -73,32 +73,6 @@ FGameplayEffectSpecHandle UKitsuneGameplayAbility::MakeWeaponDamageEffectSpecHan
 
 	EffectSpecHandle.Data->SetSetByCallerMagnitude(AttackType, AttackPowerMultiplier);
 	return EffectSpecHandle;
-}
-
-FGameplayEffectSpecHandle UKitsuneGameplayAbility::MakeEnemyDamageEffectSpecHandle(
-	const TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& DamageScalableFloat) const
-{
-	check(EffectClass);
-
-	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
-	EffectContextHandle.SetAbility(this);
-	EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
-	EffectContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());
-
-	FGameplayEffectSpecHandle EffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(
-		EffectClass,
-		GetAbilityLevel(),
-		EffectContextHandle
-	);
-
-	EffectSpecHandle.Data->SetSetByCallerMagnitude(
-		KitsuneGameplayTags::Shared_SetByCaller_DamageBonusMultiplier,
-		DamageScalableFloat.GetValueAtLevel(GetAbilityLevel())
-	);
-
-	return EffectSpecHandle;
-
 }
 
 FActiveGameplayEffectHandle UKitsuneGameplayAbility::NativeApplyGameplayEffectSpecToTarget(

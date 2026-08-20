@@ -32,28 +32,23 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "ViewModel")
 	UPlayerViewModel* GetOwningViewModel() const;
+	
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
 protected:
-	/***   ...UGameplayAbility Interface Begin...   ***/
 	/*** `@BC`   描述: 追加能力Give是否激活策略   `BC@` ***/
-	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
 	                        bool bWasCancelled) override;
-	/***   ...UGameplayAbility Interface End...     ***/
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune | Policy")
 	EKitsuneAbilityActivationPolicy ActivationPolicy = EKitsuneAbilityActivationPolicy::OnTriggered;
 
 	UFUNCTION(BlueprintPure, Category = "Kitsune | Player")
-	FGameplayEffectSpecHandle MakeWeaponDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass,
+	FGameplayEffectSpecHandle MakeDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass,
 		FGameplayTag AttackType,
 		float AttackPowerMultiplier) const;
-
-	UFUNCTION(BlueprintPure, Category = "KItsune | Enemy")
-	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(const TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& DamageScalableFloat) const;
-
 
 	static FActiveGameplayEffectHandle NativeApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,AActor* TargetActor);
 

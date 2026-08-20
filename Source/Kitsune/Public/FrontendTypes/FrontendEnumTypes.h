@@ -81,3 +81,9 @@ enum class EItemCategory: uint8
 	QuestItems UMETA(DisplayName = "任务道具"),
 };
 
+UENUM()
+enum class EAbilityChanged: uint8
+{
+	AddAbility,
+	RemoveAbility,
+};

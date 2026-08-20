@@ -5,6 +5,7 @@
 
 #include "FrontendDebugHelper.h"
 #include "IDetailTreeNode.h"
+#include "AbilitySyetem/Abilities/ActiveGameplayAbility.h"
 #include "Characters/KitsuneCharacter.h"
 #include "Component/Interaction/InteractionComponent.h"
 #include "Interfaces/PawnInteractInterface.h"
@@ -53,6 +54,57 @@ void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWe
 	OnWeaponChanged.Broadcast();
 }
 
+void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbilityChanged ChangedType)
+{
+    switch (ChangedType)
+    {
+    case EAbilityChanged::AddAbility:
+        {
+            if (!AbilityUIDates.ContainsByPredicate([Spec](const FAbilityUIData& Entry){return Spec.Handle == Entry.SpecHandle;}))
+            {
+                if (UActiveGameplayAbility* ActiveAbility = Cast<UActiveGameplayAbility>(Spec.Ability))
+                {
+                    FAbilityUIData Data;
+                    Data.SpecHandle = Spec.Handle;
+                    Data.DisplayName = ActiveAbility->GetDisplayName();
+                    Data.TriggerKey = ActiveAbility->GetTriggerKey();
+                    Data.Icon = ActiveAbility->GetAbilityIcon();
+                    Data.Priority = ActiveAbility->GetPriority();
+                    AbilityUIDates.Add(Data);
+                }
+            }
+        }
+        break;
+        
+    case EAbilityChanged::RemoveAbility:
+        {
+            int32 RemoveIndex = AbilityUIDates.IndexOfByPredicate([Spec](const FAbilityUIData& Entry) {
+                return Spec.Handle == Entry.SpecHandle;
+            });
+
+            if (RemoveIndex != INDEX_NONE)
+            {
+                AbilityUIDates.RemoveAt(RemoveIndex);
+            }
+            else
+            {
+                Debug::Print(TEXT("RemoveAbility: SpecHandle not found in UI list"));
+            }
+        }
+        break;
+        
+    default:
+        break;
+    }
+    
+    AbilityUIDates.Sort([](const FAbilityUIData& A, const FAbilityUIData& B)
+    {
+       return A.Priority <  B.Priority;
+    });
+    
+    OnGameplayAbilityChanged.Broadcast();
+}
+
 TArray<TPair<FName, FInventoryCategoryGroup>> UPlayerViewModel::GetAllInventoryCategories() const
 {
 	return CarriedInventorySystem ? CarriedInventorySystem->GetAllCategoryItem() : TArray<TPair<FName, FInventoryCategoryGroup>>();
@@ -68,7 +120,12 @@ int32 UPlayerViewModel::GetCategoryCapacity(const FName CategoryID) const
     return CarriedInventorySystem ? CarriedInventorySystem->GetCapacityByCategoryID(CategoryID) : 0;
 }
 
-void UPlayerViewModel::OnCategoryCapacityChanged(FName CategoryID, int32 CategoryCapacity)
+TArray<FAbilityUIData> UPlayerViewModel::GetPlayerAbilities() const
+{
+    return AbilityUIDates;
+}
+
+void UPlayerViewModel::OnCategoryCapacityChanged(const FName CategoryID, const int32 CategoryCapacity)
 {
     CategoryCapacityChanged.Broadcast(CategoryID, CategoryCapacity);
 }

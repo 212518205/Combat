@@ -9,6 +9,7 @@
 /**
  * 
  */
+
 UCLASS()
 class KITSUNE_API UKitsuneAbilitySystemComponent : public UAbilitySystemComponent
 {
@@ -21,4 +22,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Trriger")
 	bool TryActivateAbilityByTag(FGameplayTag ActivateAbilityTag);
+	
+protected:
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+	virtual void OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+	
 };

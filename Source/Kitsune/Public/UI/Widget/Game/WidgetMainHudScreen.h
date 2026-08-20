@@ -7,6 +7,8 @@
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "WidgetMainHudScreen.generated.h"
 
+class UWidgetAbilityList;
+class UTextBlock;
 class UUIManagerSubsystem;
 class UCommonTextBlock;
 class UKitsuneCommonListView;
@@ -38,8 +40,14 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UKitsuneCommonListView> CommonListView_Prompt;
 	
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UWidgetAbilityList> AbilityList;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Cached")
 	TObjectPtr<UUIManagerSubsystem> CachedUIManager;
+	
+	UFUNCTION()
+	void AbilityAddOrRemove();
 	
 private:
 	void ChangeSelectionByOffset(int32 Offset) const;

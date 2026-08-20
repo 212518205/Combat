@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "GameplayTagContainer.h"
 #include "FrontendStructTypes.generated.h"
@@ -123,7 +124,27 @@ struct FCategoryCapacityEntry
 	
 };
 
-
+/***  PlayerViewModel: 技能信息 用于UI获取显示  `BC@` ***/
+USTRUCT(BlueprintType)
+struct FAbilityUIData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayAbilitySpecHandle SpecHandle;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FString DisplayName;
+	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UTexture2D> Icon;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FKey TriggerKey;
+	
+	UPROPERTY(BlueprintReadOnly)
+	int Priority = 0;
+};
 
 
 
