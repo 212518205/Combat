@@ -15,14 +15,14 @@ class KITSUNE_API UActiveGameplayAbility : public UKitsuneGameplayAbility
 	GENERATED_BODY()
 	
 public:
-	FKey GetTriggerKey() const { return TriggerKey; }
+	UTexture2D* GetAbilityTriggerKeyIcon() const { return AbilityTriggerKeyIcon; }
 	FString GetDisplayName() const { return DisplayName; }
 	UTexture2D* GetAbilityIcon() const { return AbilityIcon; }
 	int GetPriority() const { return Priority; }
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Kitsune | Info")
-	FKey TriggerKey;
+	TObjectPtr<UTexture2D> AbilityTriggerKeyIcon;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Kitsune | Info")
 	TObjectPtr<UTexture2D> AbilityIcon;

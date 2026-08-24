@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
 	FOnAttributeChangedDelegate OnStaminaPercentChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
+	FOnAttributeChangedDelegate OnVigorPercentChanged;
+
 	/*** `@BC`   描述: Getter函数   `BC@` ***/
 	int32 GetLocalPlayerLevel() const { return LocalPlayerLevel; }
 
@@ -43,6 +46,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
 	float MaxStamina = 0.f;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
+	float Vigor = 0.f;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
+	float MaxVigor = 0.f;
 
 	/*** TODO: 需要绑定到角色或者角色身上的某个组件，监听角色等级... [2026年3月12日 20:35:17 来自`@BC@`] ***/
 	/*** `@BC`   描述: 测试，实际修改为初始化0   `BC@` ***/

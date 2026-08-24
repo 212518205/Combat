@@ -33,19 +33,27 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(UI_CategoryDisplay_Menu, "UI_CategoryDisplay.Menu");
 
 	/** Input Tag*/
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Light, "InputTag.Weapon.Light");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Heavy, "InputTag.Weapon.Heavy");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Unequip, "InputTag.Weapon.Unequip");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Hero_Jump, "InputTag.Hero.Jump");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Hero_Dodge, "InputTag.Hero.Dodge");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_LeftMouse, "InputTag.LeftMouse");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_WeaponAbility_LeftMouse, "InputTag.WeaponAbility.LeftMouse");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_WeaponAbility_RightMouse, "InputTag.WeaponAbility.RightMouse");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_WeaponAbility_ZKey, "InputTag.WeaponAbility.ZKey");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_WeaponAbility_QKey, "InputTag.WeaponAbility.QKey");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_WeaponAbility_EKey, "InputTag.WeaponAbility.EKey");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_WeaponAbility_TabKey, "InputTag.WeaponAbility.Tab");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_TabKey, "InputTag.Tab");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Space, "InputTag.Space");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Shift, "InputTag.Shift");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_FKey, "InputTag.FKey");
 
 	/*** `@BC`   描述: 角色能力标签   `BC@` ***/
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Equip_Sword, "Player.Ability.Equip.Sword");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Unequip_Sword, "Player.Ability.Unequip.Sword");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Dodge, "Player.Ability.Dodge");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Light, "Player.Ability.Light.Sword");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Heavy, "Player.Ability.Heavy.Sword");
-
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Equip_Sword, "Player.Ability.Weapon.Equip.Sword");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Unequip_Sword, "Player.Ability.Weapon.Unequip.Sword");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Light, "Player.Ability.Weapon.Light");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Heavy, "Player.Ability.Weapon.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Primary, "Player.Ability.Weapon.Primary");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Secondary, "Player.Ability.Weapon.Secondary");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Dash, "Player.Ability.Dash");
+	
 	/*** `@BC`   描述: 角色事件标签   `BC@` ***/
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Weapon_Equip_Sword, "Player.Event.Weapon.Equip.Sword");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Weapon_Unequip_Sword, "Player.Event.Weapon.Unequip.Sword");

@@ -26,6 +26,6 @@ protected:
 	TObjectPtr<UImage> Image_Ability;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	TObjectPtr<UTextBlock> TextBlock_Key;
+	TObjectPtr<UImage> Image_TriggerKey;
 	
 };

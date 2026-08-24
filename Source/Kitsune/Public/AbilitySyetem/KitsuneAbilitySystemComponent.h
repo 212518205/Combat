@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "FrontendTypes/FrontendEnumTypes.h"
 #include "KitsuneAbilitySystemComponent.generated.h"
 
 /**
@@ -26,5 +27,7 @@ public:
 protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual void OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+	
+	void NotifyAbilityChangedToUI(const FGameplayAbilitySpec& AbilitySpec, const EAbilityChanged AbilityChangedType) const;
 	
 };

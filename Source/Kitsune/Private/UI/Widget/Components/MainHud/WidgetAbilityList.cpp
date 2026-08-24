@@ -8,6 +8,7 @@
 
 void UWidgetAbilityList::FillAbilityList(const TArray<FAbilityUIData>& InAbilityUIDates)
 {
+	
 	HorizontalBox_Up->ClearChildren();
 	HorizontalBox_Down->ClearChildren();
 	AbilityUIDates = InAbilityUIDates;

@@ -3,7 +3,6 @@
 
 #include "UI/ViewModel/AttributeViewModel.h"
 
-#include "FrontendDebugHelper.h"
 #include "Characters/KitsuneCharacter.h"
 
 
@@ -23,30 +22,40 @@ void UAttributeViewModel::NativeInitialize()
 		{
 			Health = Data.NewValue;
 			OnHealthPercentChanged.Broadcast();
-		}
-	);
+		});
 
 	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxHealth = Data.NewValue;
 			OnHealthPercentChanged.Broadcast();
-		}
-	);
+		});
 
 	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetStaminaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			Stamina = Data.NewValue;
 			OnStaminaPercentChanged.Broadcast();
-		}
-	);
+		});
 
 	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxStaminaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			MaxStamina = Data.NewValue;
 			OnStaminaPercentChanged.Broadcast();
-		}
-	);
+		});
+	
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetVigorAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data)
+		{
+			Vigor = Data.NewValue;
+			OnVigorPercentChanged.Broadcast();
+		});
+	
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetMaxVigorAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data)
+		{
+			MaxVigor = Data.NewValue;
+			OnVigorPercentChanged.Broadcast();
+		});
 }

@@ -4,15 +4,14 @@
 #include "UI/ViewModel/PlayerViewModel.h"
 
 #include "FrontendDebugHelper.h"
-#include "IDetailTreeNode.h"
 #include "AbilitySyetem/Abilities/ActiveGameplayAbility.h"
 #include "Characters/KitsuneCharacter.h"
-#include "Component/Interaction/InteractionComponent.h"
-#include "Interfaces/PawnInteractInterface.h"
-#include "Inventory/InventoryItemDefinition.h"
-#include "Inventory/Trait/ItemTrait_Display.h"
-#include "Inventory/Trait/ItemTrait_Interact.h"
-#include "UI/DataObjects/ListDataObjectString.h"
+
+void UPlayerViewModel::BeginDestroy()
+{
+    Super::BeginDestroy();
+    
+}
 
 void UPlayerViewModel::NativeInitialize()
 {
@@ -26,8 +25,6 @@ void UPlayerViewModel::NativeInitialize()
     {
         CarriedInventorySystem->CapacityChanged.AddDynamic(this, &ThisClass::OnCategoryCapacityChanged);
     }
-    
-    
 }
 
 void UPlayerViewModel::AddInteractableItemInstance(UInventoryItemInstance* ItemInstance)
@@ -55,7 +52,7 @@ void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWe
 }
 
 void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbilityChanged ChangedType)
-{
+{    
     switch (ChangedType)
     {
     case EAbilityChanged::AddAbility:
@@ -67,7 +64,7 @@ void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbili
                     FAbilityUIData Data;
                     Data.SpecHandle = Spec.Handle;
                     Data.DisplayName = ActiveAbility->GetDisplayName();
-                    Data.TriggerKey = ActiveAbility->GetTriggerKey();
+                    Data.AbilityTriggerKeyIcon = ActiveAbility->GetAbilityTriggerKeyIcon();
                     Data.Icon = ActiveAbility->GetAbilityIcon();
                     Data.Priority = ActiveAbility->GetPriority();
                     AbilityUIDates.Add(Data);

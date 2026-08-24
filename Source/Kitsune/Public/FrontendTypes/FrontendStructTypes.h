@@ -140,7 +140,7 @@ struct FAbilityUIData
 	TObjectPtr<UTexture2D> Icon;
 	
 	UPROPERTY(BlueprintReadOnly)
-	FKey TriggerKey;
+	TObjectPtr<UTexture2D> AbilityTriggerKeyIcon;
 	
 	UPROPERTY(BlueprintReadOnly)
 	int Priority = 0;

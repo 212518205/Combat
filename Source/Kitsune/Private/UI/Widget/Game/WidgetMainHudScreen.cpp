@@ -3,9 +3,7 @@
 
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
 
-#include "FrontendDebugHelper.h"
 #include "UIManagerSubsystem.h"
-#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
 #include "UI/Widget/Components/KitsuneCommonListView.h"
 #include "UI/Widget/Components/MainHud/WidgetAbilityList.h"
 
@@ -59,7 +57,6 @@ void UWidgetMainHudScreen::NativeOnActivated()
 	{
 		PlayerVM->OnGameplayAbilityChanged.AddDynamic(this, &ThisClass::AbilityAddOrRemove);
 		AbilityAddOrRemove();
-		Debug::Print(TEXT("绑定回调"));
 	}
 
 }
@@ -68,6 +65,10 @@ void UWidgetMainHudScreen::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
 	
+	if (UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
+	{
+		PlayerVM->OnGameplayAbilityChanged.RemoveDynamic(this, &ThisClass::AbilityAddOrRemove);
+	}
 }
 
 FReply UWidgetMainHudScreen::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -101,10 +102,10 @@ void UWidgetMainHudScreen::InitializeMainHudScreen()
 
 void UWidgetMainHudScreen::AbilityAddOrRemove()
 {
-	Debug::Print(TEXT("触发回调"));
+	if (const UWorld* World = GetWorld(); !World || World->bIsTearingDown)return;
+	
 	if (const UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
 	{
-		Debug::Print(TEXT("获取技能列表"));
 		const TArray<FAbilityUIData> Abilities = PlayerVM->GetPlayerAbilities();
 		AbilityList->FillAbilityList(Abilities);
 	}

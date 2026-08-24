@@ -10,5 +10,5 @@ void UWidgetAbilityEntry::AbilityInitialize(const FAbilityUIData& Data)
 {
 	if (!Data.SpecHandle.IsValid())return;
 	Image_Ability->SetBrushFromTexture(Data.Icon);
-	TextBlock_Key->SetText(Data.TriggerKey.GetDisplayName());
+	Image_TriggerKey->SetBrushFromTexture(Data.AbilityTriggerKeyIcon);
 }

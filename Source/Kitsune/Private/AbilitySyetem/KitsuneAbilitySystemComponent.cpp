@@ -14,8 +14,6 @@
 void UKitsuneAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid())return;
-	
-	Debug::Print(FString::Printf(TEXT("尝试激活技能 %s"), *InputTag.ToString()));
 
 	for (auto& AbilitySpec:GetActivatableAbilities())
 	{
@@ -23,7 +21,6 @@ void UKitsuneAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
 
 		if (!AbilitySpec.IsActive())
 		{
-			Debug::Print(FString::Printf(TEXT("激活技能 %s"), *InputTag.ToString()));
 			TryActivateAbility(AbilitySpec.Handle);
 		}
 	}
@@ -61,13 +58,7 @@ void UKitsuneAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& Ability
 	
 	if (AbilitySpec.Ability.IsA(UActiveGameplayAbility::StaticClass()))
 	{
-		if (UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetAvatarActor()))
-		{
-			if (UPlayerViewModel* PlayerVM = UIManager->TryGetViewModelByActor<UPlayerViewModel>(GetAvatarActor()))
-			{
-				PlayerVM->UpdateAbilityList(AbilitySpec, EAbilityChanged::AddAbility);
-			}
-		}
+		NotifyAbilityChangedToUI(AbilitySpec, EAbilityChanged::AddAbility);
 	}
 }
 
@@ -77,11 +68,25 @@ void UKitsuneAbilitySystemComponent::OnRemoveAbility(FGameplayAbilitySpec& Abili
 	
 	if (AbilitySpec.Ability.IsA(UActiveGameplayAbility::StaticClass()))
 	{
+		NotifyAbilityChangedToUI(AbilitySpec, EAbilityChanged::RemoveAbility);
+	}
+}
+
+void UKitsuneAbilitySystemComponent::NotifyAbilityChangedToUI(const FGameplayAbilitySpec& AbilitySpec,
+	const EAbilityChanged AbilityChangedType) const
+{
+	if (const UWorld* World = GetWorld(); !World || World->bIsTearingDown)
+	{
+		return;
+	}
+	
+	if (AbilitySpec.Ability.IsA(UActiveGameplayAbility::StaticClass()))
+	{
 		if (UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetAvatarActor()))
 		{
 			if (UPlayerViewModel* PlayerVM = UIManager->TryGetViewModelByActor<UPlayerViewModel>(GetAvatarActor()))
 			{
-				PlayerVM->UpdateAbilityList(AbilitySpec, EAbilityChanged::RemoveAbility);
+				PlayerVM->UpdateAbilityList(AbilitySpec, AbilityChangedType);
 			}
 		}
 	}

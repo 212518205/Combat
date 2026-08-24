@@ -30,6 +30,7 @@ class KITSUNE_API UPlayerViewModel : public UAttributeViewModel
 	GENERATED_BODY()
 
 public:
+	virtual void BeginDestroy() override;
 	virtual void NativeInitialize() override;
 	void AddInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 	void RemoveInteractableItemInstance(UInventoryItemInstance* ItemInstance);
