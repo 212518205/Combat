@@ -48,7 +48,7 @@ protected:
 	FGameplayTag CurrentWeaponTag = FGameplayTag();
 
 	UFUNCTION()
-	void OnRep_CurrentWeaponTag();
+	void OnRep_CurrentWeaponTag(const FGameplayTag& OldValue);
 
 	TArray<TObjectPtr<AActor>> OverlappedActors;
 

@@ -20,6 +20,7 @@ enum class EItemInstanceAction : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractableItemChange, UInventoryItemInstance*, ItemInstance, EItemInstanceAction, InstanceAction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerCategoryCapacityChanged, FName, CategoryID, int32, CategoryCapacity);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameplayAbilityChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReticleStateChanged);
 
 /**
  * 
@@ -34,6 +35,8 @@ public:
 	virtual void NativeInitialize() override;
 	void AddInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 	void RemoveInteractableItemInstance(UInventoryItemInstance* ItemInstance);
+	void SetHasLockedTarget(const bool InHasLockedTarget);
+	void SetIsSensing(const bool InIsSensing);
 
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerWeaponIcon(TSoftObjectPtr<UTexture2D> InWeaponIcon);
@@ -54,12 +57,17 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
 	FOnGameplayAbilityChanged OnGameplayAbilityChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
+	FOnReticleStateChanged OnReticleStateChanged;
+
 	/***  Getter   `BC@` ***/
 	TArray<UInventoryItemInstance*>& GetOverlappedItemInstances() { return OverlappedItemInstances; }   // 与所属玩家重叠的物品
 	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllInventoryCategories() const;				    // 获取所有库存物品-按分类
 	TArray<UInventorySlotData*> GetInventoryItemsByCategory(const FName CategoryID) const;			    // 获取对应分类的物品
 	int32 GetCategoryCapacity(const FName CategoryID) const;											// 获取对应分类的格子容量
 	TArray<FAbilityUIData> GetPlayerAbilities() const;											// 获取所属玩家的可使用技能信息
+	UFUNCTION(BlueprintCallable)
+	bool GetIsShowCenterReticle() const;
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
@@ -79,5 +87,8 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Ability")
 	TArray<FAbilityUIData> AbilityUIDates;
+	
+	bool bHasLockedTarget = false;
+	bool bIsSensing = true;
 	
 };

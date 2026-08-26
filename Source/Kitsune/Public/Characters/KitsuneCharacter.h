@@ -8,6 +8,7 @@
 #include "KitsuneCharacter.generated.h"
 
 
+class USphereComponent;
 class UInventorySystemComponent;
 class UPlayerCombatComponent;
 /**
@@ -42,7 +43,7 @@ protected:
 	virtual void InitAbilityInfo() override;
 
 	/*** `@BC`   描述: 角色扩展组件   `BC@` ***/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component|Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UPlayerCombatComponent> CombatComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
@@ -50,4 +51,17 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UInventorySystemComponent> InventorySystemComp; 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<USphereComponent> Sphere;
+	
+	UFUNCTION()
+	void OnDetectionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                                   const FHitResult& SweepResult);
+	
+	UFUNCTION()
+	void OnDetectionSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 };

@@ -3,12 +3,13 @@
 
 #include "Characters/KitsuneCharacter.h"
 
-#include "FrontendDebugHelper.h"
 #include "UIManagerSubsystem.h"
+#include "Actor/EffectActor/EffectActor.h"
 #include "Characters/Data/DataAssetStartDataBase.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 #include"GameFramework/CharacterMovementComponent.h"
 #include "Component/Interaction/InteractionComponent.h"
+#include "Components/SphereComponent.h"
 #include "Inventory/InventorySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
@@ -28,6 +29,16 @@ AKitsuneCharacter::AKitsuneCharacter()
 	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractComponent"));
 	InventorySystemComp = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("InventorySystemComponent"));
+	
+	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	Sphere->SetupAttachment(GetRootComponent());
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Sphere->SetCollisionObjectType(ECC_WorldDynamic);
+	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Sphere->SetCollisionResponseToChannel(ECC_GameTraceChannel13, ECR_Overlap);
+	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnDetectionSphereBeginOverlap);
+	Sphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnDetectionSphereEndOverlap);
+	
 }
 
 void AKitsuneCharacter::PossessedBy(AController* NewController)
@@ -86,13 +97,36 @@ void AKitsuneCharacter::InitAbilityInfo()
 	//if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
 	if (IsLocallyControlled())
 	{
-		if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
-			UPlayerViewModel* ViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
-		}
+		UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
 	}
 
 	if (HasAuthority() && InitialInfoData && GetAbilitySystemComponent())
 	{
 		InitialInfoData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), CharacterLevel);
+		SetCharacterProperties(InitialInfoData->CharacterProperties);
 	}
 }
+
+void AKitsuneCharacter::OnDetectionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor)return;
+	/*** TODO: 可选，检查OtherActor是否是可锁定的目标，目前靠ECC_GameTraceChannel13检查，即为Enemy通道... [2026年8月27日 0:25:58 来自`@BC@`] ***/
+	
+	if (UPlayerCombatComponent* Combat = FindComponentByClass<UPlayerCombatComponent>())
+	{
+		Combat->LockedTargetInto(OtherActor);
+	}
+}
+
+void AKitsuneCharacter::OnDetectionSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)return;
+	
+	if (UPlayerCombatComponent* Combat = FindComponentByClass<UPlayerCombatComponent>())
+	{
+		Combat->LockedTargetLeave(OtherActor);
+	}
+}
+

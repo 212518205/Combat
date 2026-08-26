@@ -4,15 +4,12 @@
 #include "Component/Combat/KitsuneCombatComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "FrontendDebugHelper.h"
 #include "UIManagerSubsystem.h"
-#include "AbilitySyetem/KitsuneAttributeSet.h"
 #include "Actor/Weapon/DataAssetStartDataWeapon.h"
 #include "Actor/Weapon/WeaponBase.h"
 #include "Characters/EnemyCharacter.h"
 #include "Characters/KitsuneCharacter.h"
 #include "Components/BoxComponent.h"
-#include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/ViewModel/PlayerViewModel.h"
 
@@ -76,12 +73,12 @@ void UKitsuneCombatComponent::SetCurrentWeapon_Implementation(const FGameplayTag
 	
 	CurrentWeaponTag = WeaponTag;
 	
-	KitsuneNet::SetReplicatedProperty(this, CurrentWeaponTag, WeaponTag, &ThisClass::OnRep_CurrentWeaponTag);
+	SetReplicatedProperty(this,CurrentWeaponTag, WeaponTag, &ThisClass::OnRep_CurrentWeaponTag);
 }
 
 
 
-void UKitsuneCombatComponent::ToggleWeaponCollision_Implementation(bool bEnable)
+void UKitsuneCombatComponent::ToggleWeaponCollision_Implementation(const bool bEnable)
 {
 	AWeaponBase* ToggledWeapon = GetCurrentCarriedWeapon();
 	if (!ToggledWeapon)return;
@@ -104,7 +101,9 @@ void UKitsuneCombatComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeP
 	DOREPLIFETIME_CONDITION(UKitsuneCombatComponent, CarriedWeapons, COND_None);
 }
 
-void UKitsuneCombatComponent::OnRep_CurrentWeaponTag()
+// ReSharper disable CppMemberFunctionMayBeConst
+void UKitsuneCombatComponent::OnRep_CurrentWeaponTag(const FGameplayTag& OldValue)
+// ReSharper restore CppMemberFunctionMayBeConst
 {
 	const AWeaponBase* CurrentWeapon = GetCurrentCarriedWeapon();
 	if (!GetOwningPawn()->IsA(AKitsuneCharacter::StaticClass()))return;

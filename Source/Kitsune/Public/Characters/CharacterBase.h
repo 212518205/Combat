@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include"AbilitySystemInterface.h"
+#include "Data/DataAssetStartDataBase.h"
 #include "Interfaces/PawnCombatInterface.h"
 #include "CharacterBase.generated.h"
 
@@ -23,6 +24,7 @@ class KITSUNE_API ACharacterBase : public ACharacter , public IAbilitySystemInte
 
 public:
 	ACharacterBase();
+	virtual void BeginPlay() override;
 
 	/***   ...IAbilitySystemInterface Interface Begin...   ***/
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -34,15 +36,16 @@ public:
 	/***   ...IPawnCombatInterface Interface End...     ***/
 
 	UAttributeSet* GetAttributeSet() const;
+	
+	void SetCharacterProperties(const FCharacterProperties& CharacterProperties) const;
+	UDataAssetStartDataBase* GetInitialInfoData() const { return InitialInfoData; }
 
 protected:
-	virtual void BeginPlay() override;
 	virtual void InitAbilityInfo();
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
 

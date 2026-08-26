@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilitySpec.h"
+#include "Characters/CharacterBase.h"
 
 /*** [2025年9月26日 8:41:28 来自`@BC@`]
 	* TODO: KitsuneCharacter->GetDefaultLocomotionData();
@@ -13,13 +14,15 @@
 	***/
 void UDataAssetStartDataWeapon::ModifyCharacterData(ACharacterBase* KitsuneCharacter)
 {
+	KitsuneCharacter->SetCharacterProperties(CharacterProperties);
 }
 
-void UDataAssetStartDataWeapon::ResetCharacterData(ACharacterBase* KitsuneCharacter)
+void UDataAssetStartDataWeapon::ResetCharacterData(const ACharacterBase* KitsuneCharacter)
 {
+	KitsuneCharacter->SetCharacterProperties(KitsuneCharacter->GetInitialInfoData()->CharacterProperties);
 }
 
-void UDataAssetStartDataWeapon::GiveAbilitiesToASC(UAbilitySystemComponent* TargetASC, int32 AbilityLevel)
+void UDataAssetStartDataWeapon::GiveAbilitiesToASC(UAbilitySystemComponent* TargetASC, const int32 AbilityLevel)
 {
 	RemoveWeaponInitialAbilityFromASC(TargetASC);
 

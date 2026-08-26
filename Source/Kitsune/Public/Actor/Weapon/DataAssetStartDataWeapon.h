@@ -8,6 +8,8 @@
 
 class ACharacterBase;
 class AKitsuneCharacter;
+
+
 /**
  * 
  */
@@ -18,7 +20,7 @@ class KITSUNE_API UDataAssetStartDataWeapon : public UDataAssetStartDataBase
 
 public:
 	void ModifyCharacterData(ACharacterBase* KitsuneCharacter);
-	void ResetCharacterData(ACharacterBase* KitsuneCharacter);
+	void ResetCharacterData(const ACharacterBase* KitsuneCharacter);
 
 	void GiveAbilitiesToASC(UAbilitySystemComponent* TargetASC, int32 AbilityLevel);
 	void ClearAbilitiesFromASC(UAbilitySystemComponent* TargetASC) const;
@@ -30,8 +32,7 @@ public:
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
 protected:
 	/*** `@BC`   描述: 拾取或携带武器后初始能力   `BC@` ***/
-	UPROPERTY(EditDefaultsOnly,Category = "Ability", meta = (ForceInlineRow, Categories = "InputTag.Weapon"))
+	UPROPERTY(EditDefaultsOnly, Category = "Ability", meta = (ForceInlineRow, Categories = "InputTag.Weapon"))
 	FAbilityInfo InitialCarriedAbility;
-
 
 };

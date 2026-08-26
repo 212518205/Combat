@@ -9,6 +9,7 @@
 #include "UIManagerSubsystem.h"
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
 #include"Characters/KitsuneCharacter.h"
+#include "Component/Combat/PlayerCombatComponent.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 #include "Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
@@ -62,8 +63,10 @@ void AKitsunePlayerController::SetupInputComponent()
 		this,&AKitsunePlayerController::Look);
 	KitsuneInputComponent->BindAction(JumpAction, ETriggerEvent::Started, 
 		this,&AKitsunePlayerController::Jump);
-
-	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, this, &ThisClass::ToggleMouseMode);
+	KitsuneInputComponent->BindAction(ShowOrHiddenMouseAction, ETriggerEvent::Completed, 
+		this, &ThisClass::ToggleMouseMode);;
+	KitsuneInputComponent->BindAction(LockOrSwitchTarget, ETriggerEvent::Completed, 
+		this, &ThisClass::OnLockOrSwitchTarget);
 
 	KitsuneInputComponent->BindAbilityInputAction(AbilityInputConfig, this, &ThisClass::AbilityInputPressed, &ThisClass::AbilityInputReleased);
 }
@@ -166,21 +169,32 @@ void AKitsunePlayerController::ToggleMouseMode(const FInputActionValue& InputAct
 	if (UCommonUIActionRouterBase* Router = GetLocalPlayer()->GetSubsystem<UCommonUIActionRouterBase>())
 	{
 		// 获取当前真实的鼠标捕获模式
-		EMouseCaptureMode CurrentMode = Router->GetActiveMouseCaptureMode(EMouseCaptureMode::NoCapture);
+		const EMouseCaptureMode CurrentMode = Router->GetActiveMouseCaptureMode(EMouseCaptureMode::NoCapture);
         
 		// 基于当前模式决定新的模式：当前为 NoCapture 则切换为永久捕获，否则切换回 NoCapture
-		EMouseCaptureMode NewCaptureMode = (CurrentMode == EMouseCaptureMode::NoCapture)
+		const EMouseCaptureMode NewCaptureMode = (CurrentMode == EMouseCaptureMode::NoCapture)
 			? EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown
 			: EMouseCaptureMode::NoCapture;
         
 		// 根据新模式决定是否在捕获时隐藏光标
-		bool bNewHideCursorDuringCapture = (NewCaptureMode != EMouseCaptureMode::NoCapture);
+		const bool bNewHideCursorDuringCapture = (NewCaptureMode != EMouseCaptureMode::NoCapture);
         
 		// 构建新的输入配置
-		FUIInputConfig NewConfig(ECommonInputMode::All, NewCaptureMode, bNewHideCursorDuringCapture);
+		const FUIInputConfig NewConfig(ECommonInputMode::All, NewCaptureMode, bNewHideCursorDuringCapture);
         
 		// 应用新配置
 		Router->SetActiveUIInputConfig(NewConfig, this);
+	}
+}
+
+void AKitsunePlayerController::OnLockOrSwitchTarget(const FInputActionValue& InputActionValue)
+{
+	if (const APawn* OwningPawn = GetPawn())
+	{
+		if (UPlayerCombatComponent* Combat = OwningPawn->FindComponentByClass<UPlayerCombatComponent>())
+		{
+			Combat->SwitchLockedTarget();
+		}
 	}
 }
 

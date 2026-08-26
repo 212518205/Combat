@@ -3,6 +3,7 @@
 
 #include "Characters/CharacterBase.h"
 #include "MotionWarpingComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -23,8 +24,14 @@ UAttributeSet* ACharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+void ACharacterBase::SetCharacterProperties(const FCharacterProperties& CharacterProperties) const
+{
+	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
+	MovementComp->bOrientRotationToMovement = CharacterProperties.bOrientRotationToMovement;
+	MovementComp->MaxWalkSpeed = CharacterProperties.MaxWalkSpeed;
+	MovementComp->bUseControllerDesiredRotation = CharacterProperties.bUseControllerDesiredRotation;
+}
 
-// Called when the game starts or when spawned
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

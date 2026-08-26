@@ -44,6 +44,8 @@ public:
 	/*** `@BC`   描述: ViewModel相关   `BC@` ***/
 	UFUNCTION(BlueprintCallable, Category = "ViewModel", meta = (ExpandBoolAsExecs = "bIsValid"))
 	UPlayerViewModel* GetLocalViewModel(bool& bIsValid);
+	
+	UPlayerViewModel* GetLocalViewModel();
 
 	template<typename T = UAttributeViewModel>
 	T* TryGetViewModelByActor(AActor* InActor);

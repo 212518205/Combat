@@ -23,6 +23,23 @@ struct FAbilityInfo
 	FGameplayTag AbilityTag = FGameplayTag();
 };
 
+
+USTRUCT(BlueprintType)
+struct FCharacterProperties
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MaxWalkSpeed = 0.f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bOrientRotationToMovement = false;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bUseControllerDesiredRotation = false;
+	
+};
+
 /**
  *
  */
@@ -34,6 +51,9 @@ class KITSUNE_API UDataAssetStartDataBase : public UDataAsset
 public:
 	/*** `@BC`   Description: 初始化初始能力   `BC@` ***/
 	virtual void InitAbilityAndEffectToASC(UAbilitySystemComponent* InTargetASC, int32 AbilityLevel);
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character")
+	FCharacterProperties CharacterProperties;
 
 protected:
 	/*** `@BC`   Description: 初始能力   `BC@` ***/
@@ -41,19 +61,15 @@ protected:
 	TArray<FAbilityInfo> OwningAbilities;
 
 	static void GrantAbilitiesToASC(UAbilitySystemComponent* TargetASC,TArray<FAbilityInfo>& UnassignedAbilities, int32 AbilityLevel);
-	/***  注释截止  ***/
 
 	/*** `@BC`   Description: 初始属性   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effect")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultGameplayEffects;
 
 	static void ApplyGameplayEffectToASC(UAbilitySystemComponent* TargetASC,TArray<TSubclassOf<UGameplayEffect>>& UnassignedEffect, int32 EffectLevel);
-	/***  注释截止  ***/
 
-	/*** TODO: 添加一些所属Actor对ASC所属Actor将会造成的影响. [2025年9月23日 15:45:01 来自`@BC@`] ***/
 
 	/*** `@BC`   描述: 依据此父标签移除此在ASC中的能力   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability", meta = (Categories = "InputTag.Weapon"))
 	FGameplayTag AbilityParentTag = FGameplayTag();
-	/***  注释截止  ***/
 };

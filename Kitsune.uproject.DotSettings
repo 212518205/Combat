@@ -3,4 +3,5 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNamingOptions/Abbreviations/=GAS/@EntryIndexedValue">GAS</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNamingOptions/Abbreviations/=IMC/@EntryIndexedValue">IMC</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNamingOptions/Abbreviations/=IS/@EntryIndexedValue">IS</s:String>
-	<s:String x:Key="/Default/CodeStyle/Naming/CppNamingOptions/Abbreviations/=PIE/@EntryIndexedValue">PIE</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/CodeStyle/Naming/CppNamingOptions/Abbreviations/=PIE/@EntryIndexedValue">PIE</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Reticle/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

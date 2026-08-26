@@ -45,6 +45,24 @@ void UPlayerViewModel::RemoveInteractableItemInstance(UInventoryItemInstance* It
     }
 }
 
+void UPlayerViewModel::SetHasLockedTarget(const bool InHasLockedTarget)
+{
+    if (bHasLockedTarget != InHasLockedTarget)
+    {
+        bHasLockedTarget = InHasLockedTarget;
+        OnReticleStateChanged.Broadcast();
+    }
+}
+
+void UPlayerViewModel::SetIsSensing(const bool InIsSensing)
+{
+    if (bIsSensing != InIsSensing)
+    {
+        bIsSensing = InIsSensing;
+        OnReticleStateChanged.Broadcast();
+    }
+}
+
 void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWeaponIcon)
 {
 	WeaponIcon = InWeaponIcon;
@@ -120,6 +138,11 @@ int32 UPlayerViewModel::GetCategoryCapacity(const FName CategoryID) const
 TArray<FAbilityUIData> UPlayerViewModel::GetPlayerAbilities() const
 {
     return AbilityUIDates;
+}
+
+bool UPlayerViewModel::GetIsShowCenterReticle() const
+{
+    return bHasLockedTarget && bIsSensing;
 }
 
 void UPlayerViewModel::OnCategoryCapacityChanged(const FName CategoryID, const int32 CategoryCapacity)

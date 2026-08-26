@@ -71,6 +71,11 @@ UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
 	return nullptr;
 }
 
+UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel()
+{
+	bool bDummy;
+	return GetLocalViewModel(bDummy);
+}
 
 
 void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout)

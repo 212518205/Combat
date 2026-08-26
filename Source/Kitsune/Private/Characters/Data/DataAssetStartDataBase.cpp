@@ -11,12 +11,11 @@ void UDataAssetStartDataBase::InitAbilityAndEffectToASC(UAbilitySystemComponent*
 	check(InTargetASC);
 
 	GrantAbilitiesToASC(InTargetASC, OwningAbilities, AbilityLevel);
-
 	ApplyGameplayEffectToASC(InTargetASC, DefaultGameplayEffects, AbilityLevel);
 }
 
 void UDataAssetStartDataBase::GrantAbilitiesToASC(UAbilitySystemComponent* TargetASC,
-                                                  TArray<FAbilityInfo>& UnassignedAbilities, int32 AbilityLevel)
+                                                  TArray<FAbilityInfo>& UnassignedAbilities, const int32 AbilityLevel)
 {
 	for (const auto& [AbilityClass,AbilityTag] : UnassignedAbilities)
 	{
