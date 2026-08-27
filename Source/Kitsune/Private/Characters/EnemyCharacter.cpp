@@ -31,6 +31,13 @@ AEnemyCharacter::AEnemyCharacter()
 	CombatComponent = CreateDefaultSubobject<UEnemyKitsuneCombatComponent>(TEXT("CombatComponent"));
 	EnemyWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyWidgetComponent"));
 	EnemyWidgetComponent->SetupAttachment(GetRootComponent());
+	
+	LockMarkerComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockMarkerComp"));
+	LockMarkerComponent->SetupAttachment(GetMesh(), LockMarkerSocketName);
+	LockMarkerComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	LockMarkerComponent->SetDrawSize(FVector2D(32.f, 32.f));
+	LockMarkerComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LockMarkerComponent->SetVisibility(false);
 
 	SetNetUpdateFrequency(100.f);
 }
@@ -56,6 +63,14 @@ void AEnemyCharacter::BeginPlay()
 UKitsuneCombatComponent* AEnemyCharacter::GetKitsuneCombatComponent() const
 {
 	return CombatComponent;
+}
+
+void AEnemyCharacter::SetLockMarkerVisible(const bool bVisible)
+{
+	if (LockMarkerComponent)
+	{
+		LockMarkerComponent->SetVisibility(bVisible);
+	}
 }
 
 UEnemyViewModel* AEnemyCharacter::GetEnemyViewModel()

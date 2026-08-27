@@ -4,12 +4,11 @@
 #include "Characters/KitsuneCharacter.h"
 
 #include "UIManagerSubsystem.h"
-#include "Actor/EffectActor/EffectActor.h"
 #include "Characters/Data/DataAssetStartDataBase.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 #include"GameFramework/CharacterMovementComponent.h"
 #include "Component/Interaction/InteractionComponent.h"
-#include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "Inventory/InventorySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
@@ -30,14 +29,14 @@ AKitsuneCharacter::AKitsuneCharacter()
 	InteractComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractComponent"));
 	InventorySystemComp = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("InventorySystemComponent"));
 	
-	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	Sphere->SetupAttachment(GetRootComponent());
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Sphere->SetCollisionObjectType(ECC_WorldDynamic);
-	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	Sphere->SetCollisionResponseToChannel(ECC_GameTraceChannel13, ECR_Overlap);
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnDetectionSphereBeginOverlap);
-	Sphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnDetectionSphereEndOverlap);
+	DetectionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("DetectionBox"));
+	DetectionBox->SetupAttachment(GetRootComponent());
+	DetectionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	DetectionBox->SetCollisionObjectType(ECC_WorldDynamic);
+	DetectionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	DetectionBox->SetCollisionResponseToChannel(ECC_GameTraceChannel13, ECR_Overlap);
+	DetectionBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnDetectionBoxBeginOverlap);
+	DetectionBox->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnDetectionBoxEndOverlap);
 	
 }
 
@@ -107,7 +106,7 @@ void AKitsuneCharacter::InitAbilityInfo()
 	}
 }
 
-void AKitsuneCharacter::OnDetectionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void AKitsuneCharacter::OnDetectionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor)return;
@@ -119,7 +118,7 @@ void AKitsuneCharacter::OnDetectionSphereBeginOverlap(UPrimitiveComponent* Overl
 	}
 }
 
-void AKitsuneCharacter::OnDetectionSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void AKitsuneCharacter::OnDetectionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (!OtherActor)return;

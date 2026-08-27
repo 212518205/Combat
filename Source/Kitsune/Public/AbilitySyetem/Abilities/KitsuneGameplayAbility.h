@@ -28,7 +28,7 @@ class KITSUNE_API UKitsuneGameplayAbility : public UGameplayAbility
 public:
 	/*** `@BC`   描述: 蓝图纯函数   `BC@` ***/
 	UFUNCTION(BlueprintPure, Category = "Kitsune | Ability")
-	UKitsuneCombatComponent* GetPawnCombatComponentFromActorInfo() const;
+	virtual UKitsuneCombatComponent* GetPawnCombatComponentFromActorInfo() const;
 
 	UFUNCTION(BlueprintPure, Category = "ViewModel")
 	UPlayerViewModel* GetOwningViewModel() const;

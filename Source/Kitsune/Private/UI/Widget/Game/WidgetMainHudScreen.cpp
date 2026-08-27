@@ -98,6 +98,7 @@ void UWidgetMainHudScreen::InitializeMainHudScreen()
 
 	CachedLocalViewModel->OnHealthPercentChanged.Broadcast();
 	CachedLocalViewModel->OnStaminaPercentChanged.Broadcast();
+	CachedLocalViewModel->OnVigorPercentChanged.Broadcast();
 }
 
 void UWidgetMainHudScreen::AbilityAddOrRemove()

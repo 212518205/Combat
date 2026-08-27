@@ -4,7 +4,8 @@
 #include "Component/Combat/PlayerCombatComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "UIManagerSubsystem.h"
+#include "MotionWarpingComponent.h"
+#include "Characters/EnemyCharacter.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/ViewModel/PlayerViewModel.h"
@@ -38,7 +39,7 @@ void UPlayerCombatComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 		return;
 	}
 
-	UpdateLockedTargetRotation(DeltaTime);
+	UpdateViewSnap(DeltaTime);
 }
 
 void UPlayerCombatComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -96,10 +97,15 @@ void UPlayerCombatComponent::LockedTargetLeave_Implementation(AActor* InActor)
 	}
 }
 
+void UPlayerCombatComponent::ClearLockTarget_Implementation()
+{
+	SetCurrentLockedTarget(nullptr);
+}
+
 void UPlayerCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
 	Super::OnHitTargetActor(HitActor);
-
+	
 	if (HitActor == GetOwningPawn())return;
 	if (OverlappedActors.Contains(HitActor))return;
 	OverlappedActors.AddUnique(HitActor);
@@ -118,17 +124,49 @@ void UPlayerCombatComponent::OnHitTargetActor(AActor* HitActor)
 
 void UPlayerCombatComponent::OnRep_CurrentLockedActor(const AActor* OldValue)
 {
-	if (const APawn* OwnerPawn = GetOwningPawn(); !OwnerPawn || !OwnerPawn->IsLocallyControlled())
+	const APawn* OwnerPawn = GetOwningPawn(); 
+	if (!OwnerPawn || !OwnerPawn->IsLocallyControlled())
 	{
 		return;
 	}
 	
-	if (UPlayerViewModel* PlayerVM = UUIManagerSubsystem::GetUIManager(GetOwner())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPawn()))
+	if (ILockableInterface* Enemy = Cast<ILockableInterface>(const_cast<AActor*>(OldValue)))
 	{
-		PlayerVM->SetHasLockedTarget(true);
+		Enemy->SetLockMarkerVisible(false);
 	}
-	/*** TODO: 转向这个目标... [2026年8月27日 0:18:20 来自`@BC@`] ***/
+	
+	if (ILockableInterface* Enemy = Cast<ILockableInterface>(CurrentLockedActor))
+	{
+		Enemy->SetLockMarkerVisible(true);
+	}
+	
+	if (CurrentLockedActor && IsValid(CurrentLockedActor))
+	{
+		if (const AController* Controller = OwnerPawn->GetController())
+		{
+			if (const FVector ToTarget = CurrentLockedActor->GetActorLocation() - OwnerPawn->GetActorLocation(); !ToTarget.IsNearlyZero())
+			{
+				const float TargetYaw = ToTarget.Rotation().Yaw;
+				if (const float DeltaYaw = FRotator::NormalizeAxis(TargetYaw - Controller->GetControlRotation().Yaw); FMath::Abs(DeltaYaw) > LockViewSnapAngle)
+				{
+					const float RotateAmount = FMath::Abs(DeltaYaw) - LockViewSnapAngle;
+					SnapTargetYaw = Controller->GetControlRotation().Yaw + FMath::Sign(DeltaYaw) * RotateAmount;
+					bSnappingToTarget = true;
+				}
+			}
+		}
+	}
+	
 	SetComponentTickEnabled(CurrentLockedActor != nullptr);	
+}
+
+bool UPlayerCombatComponent::AddWarpTargetToLockedTarget(UMotionWarpingComponent* WarpComponent, const FName WarpTargetName) const
+{
+	if (!WarpComponent || !WarpTargetName.IsValid())return false;
+	WarpComponent->RemoveAllWarpTargets();
+	if (!CurrentLockedActor)return false;
+	WarpComponent->AddOrUpdateWarpTargetFromTransform(WarpTargetName, CurrentLockedActor->GetActorTransform());
+	return true;
 }
 
 void UPlayerCombatComponent::SetCurrentLockedTarget(AActor* NewTarget)
@@ -137,23 +175,28 @@ void UPlayerCombatComponent::SetCurrentLockedTarget(AActor* NewTarget)
 	SetComponentTickEnabled(NewTarget != nullptr);
 }
 
-void UPlayerCombatComponent::UpdateLockedTargetRotation(const float DeltaTime) const
+void UPlayerCombatComponent::UpdateViewSnap(const float DeltaTime)
 {
+	if (!bSnappingToTarget)
+	{
+		return;
+	}
+
 	AController* Controller = GetOwningController<AController>();
-	if (!Controller || !IsValid(CurrentLockedActor))
+	if (!Controller)
 	{
+		bSnappingToTarget = false;
 		return;
 	}
 
-	const FVector ToTarget = CurrentLockedActor->GetActorLocation() - GetOwningPawn()->GetActorLocation();
-	if (ToTarget.IsNearlyZero())
-	{
-		return;
-	}
-
-	const FRotator TargetRotation = ToTarget.Rotation();
 	FRotator ControlRotation = Controller->GetControlRotation();
-	ControlRotation.Yaw = FMath::FixedTurn(ControlRotation.Yaw, TargetRotation.Yaw, LockRotationSpeed * DeltaTime);
+	ControlRotation.Yaw = FMath::FixedTurn(ControlRotation.Yaw, SnapTargetYaw, LockViewSnapSpeed * DeltaTime);
 	Controller->SetControlRotation(ControlRotation);
+
+	if (FMath::Abs(FRotator::NormalizeAxis(SnapTargetYaw - ControlRotation.Yaw)) < 0.5f)
+	{
+		bSnappingToTarget = false;
+	}
 }
+
 

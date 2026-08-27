@@ -8,7 +8,7 @@
 #include "KitsuneCharacter.generated.h"
 
 
-class USphereComponent;
+class UBoxComponent;
 class UInventorySystemComponent;
 class UPlayerCombatComponent;
 /**
@@ -52,16 +52,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UInventorySystemComponent> InventorySystemComp; 
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	TObjectPtr<USphereComponent> Sphere;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UBoxComponent> DetectionBox;
 	
 	UFUNCTION()
-	void OnDetectionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnDetectionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	                                   const FHitResult& SweepResult);
 	
 	UFUNCTION()
-	void OnDetectionSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnDetectionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 };

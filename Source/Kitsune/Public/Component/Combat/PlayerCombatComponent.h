@@ -6,6 +6,7 @@
 #include "Component/Combat/KitsuneCombatComponent.h"
 #include "PlayerCombatComponent.generated.h"
 
+class UMotionWarpingComponent;
 /**
  * 
  */
@@ -27,6 +28,10 @@ public:
 	
 	UFUNCTION(Server, Reliable)
 	void LockedTargetLeave(AActor* InActor);
+	
+	UFUNCTION(Server, Reliable)
+	void ClearLockTarget();
+
 
 protected:
 	virtual void OnHitTargetActor(AActor* HitActor) override;
@@ -34,19 +39,28 @@ protected:
 	UPROPERTY()
 	TArray<AActor*> LockableActors;
 	
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentLockedActor)
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentLockedActor, BlueprintReadOnly)
 	TObjectPtr<AActor> CurrentLockedActor;
 	
 	UFUNCTION()
 	void OnRep_CurrentLockedActor(const AActor* OldValue);
 	
+	UFUNCTION(BlueprintCallable, Category = "Combat | Lock")
+	bool AddWarpTargetToLockedTarget(UMotionWarpingComponent* WarpComponent, FName WarpTargetName) const;
+	
 private:
 	void SetCurrentLockedTarget(AActor* NewTarget);
+	
+	void UpdateViewSnap(float DeltaTime);
 
-	void UpdateLockedTargetRotation(float DeltaTime) const;
-
-	/*** `@BC`   描述: 锁定转向速度（度/秒）   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, Category = "Combat | Lock")
-	float LockRotationSpeed = 360.f;
+	float LockViewSnapAngle = 60.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Lock")
+	float LockViewSnapSpeed = 540.f;
+
+	// 【新增】一次性对齐状态（非 UPROPERTY，仅运行期短暂使用）
+	bool bSnappingToTarget = false;
+	float SnapTargetYaw = 0.f;
 	
 };

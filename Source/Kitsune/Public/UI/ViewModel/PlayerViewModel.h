@@ -35,7 +35,6 @@ public:
 	virtual void NativeInitialize() override;
 	void AddInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 	void RemoveInteractableItemInstance(UInventoryItemInstance* ItemInstance);
-	void SetHasLockedTarget(const bool InHasLockedTarget);
 	void SetIsSensing(const bool InIsSensing);
 
 	UFUNCTION(BlueprintCallable)
@@ -66,8 +65,6 @@ public:
 	TArray<UInventorySlotData*> GetInventoryItemsByCategory(const FName CategoryID) const;			    // 获取对应分类的物品
 	int32 GetCategoryCapacity(const FName CategoryID) const;											// 获取对应分类的格子容量
 	TArray<FAbilityUIData> GetPlayerAbilities() const;											// 获取所属玩家的可使用技能信息
-	UFUNCTION(BlueprintCallable)
-	bool GetIsShowCenterReticle() const;
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;
@@ -88,7 +85,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Ability")
 	TArray<FAbilityUIData> AbilityUIDates;
 	
-	bool bHasLockedTarget = false;
 	bool bIsSensing = true;
 	
 };
