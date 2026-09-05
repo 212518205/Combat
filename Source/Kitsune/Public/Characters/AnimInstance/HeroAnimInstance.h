@@ -35,4 +35,7 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LocomotionData")
 	float LocomotionDirection;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LocomotionData")
+	float InputDirection;
 };

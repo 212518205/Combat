@@ -160,12 +160,27 @@ void UPlayerCombatComponent::OnRep_CurrentLockedActor(const AActor* OldValue)
 	SetComponentTickEnabled(CurrentLockedActor != nullptr);	
 }
 
-bool UPlayerCombatComponent::AddWarpTargetToLockedTarget(UMotionWarpingComponent* WarpComponent, const FName WarpTargetName) const
+FRotator UPlayerCombatComponent::GetViewRotation() const
 {
+	return GetOwningPawn()->GetControlRotation();
+}
+
+bool UPlayerCombatComponent::AddWarpTargetToLockedTarget(const FName WarpTargetName) const
+{
+	UMotionWarpingComponent* WarpComponent = GetOwningPawn()->FindComponentByClass<UMotionWarpingComponent>();
 	if (!WarpComponent || !WarpTargetName.IsValid())return false;
 	WarpComponent->RemoveAllWarpTargets();
-	if (!CurrentLockedActor)return false;
-	WarpComponent->AddOrUpdateWarpTargetFromTransform(WarpTargetName, CurrentLockedActor->GetActorTransform());
+	
+	FTransform TargetTransform;
+	if (CurrentLockedActor)TargetTransform = CurrentLockedActor->GetActorTransform();
+	else
+	{
+		FVector CurrentLocation = GetOwningPawn()->GetActorLocation();
+		FRotator ViewRotation = GetViewRotation();
+		TargetTransform = FTransform(ViewRotation, CurrentLocation);
+	}
+	
+	WarpComponent->AddOrUpdateWarpTargetFromTransform(WarpTargetName, TargetTransform);
 	return true;
 }
 

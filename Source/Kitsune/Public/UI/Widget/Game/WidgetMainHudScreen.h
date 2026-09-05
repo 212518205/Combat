@@ -46,9 +46,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Cached")
 	TObjectPtr<UUIManagerSubsystem> CachedUIManager;
 	
-	UFUNCTION()
-	void AbilityAddOrRemove();
-	
 private:
 	void ChangeSelectionByOffset(int32 Offset) const;
 

@@ -76,6 +76,7 @@ void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbili
                     Data.AbilityTriggerKeyIcon = ActiveAbility->GetAbilityTriggerKeyIcon();
                     Data.Icon = ActiveAbility->GetAbilityIcon();
                     Data.Priority = ActiveAbility->GetPriority();
+                    Data.CooldownTag = ActiveAbility->GetCooldownTag();
                     AbilityUIDates.Add(Data);
                 }
             }
@@ -107,8 +108,8 @@ void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbili
     {
        return A.Priority <  B.Priority;
     });
-    
-    OnGameplayAbilityChanged.Broadcast();
+     
+    OnGameplayAbilityChanged.Broadcast(Spec.Handle);
 }
 
 TArray<TPair<FName, FInventoryCategoryGroup>> UPlayerViewModel::GetAllInventoryCategories() const
@@ -129,6 +130,19 @@ int32 UPlayerViewModel::GetCategoryCapacity(const FName CategoryID) const
 TArray<FAbilityUIData> UPlayerViewModel::GetPlayerAbilities() const
 {
     return AbilityUIDates;
+}
+
+FAbilityUIData UPlayerViewModel::GetAbilityUIDataByHandle(const FGameplayAbilitySpecHandle& SpecHandle)
+{
+    if (const int32 Index = AbilityUIDates.IndexOfByPredicate([SpecHandle](const FAbilityUIData& Entry)
+    {
+        return SpecHandle == Entry.SpecHandle;
+    }); Index != INDEX_NONE)
+    {
+        return AbilityUIDates[Index];
+    }
+    
+    return FAbilityUIData();
 }
 
 void UPlayerViewModel::OnCategoryCapacityChanged(const FName CategoryID, const int32 CategoryCapacity)

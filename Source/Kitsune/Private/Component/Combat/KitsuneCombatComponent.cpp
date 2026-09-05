@@ -71,8 +71,6 @@ void UKitsuneCombatComponent::SetCurrentWeapon_Implementation(const FGameplayTag
 		CurrentFoundWeapon->EquipWeaponToCharacter(OwningCharacter);
 	}
 	
-	CurrentWeaponTag = WeaponTag;
-	
 	SetReplicatedProperty(this,CurrentWeaponTag, WeaponTag, &ThisClass::OnRep_CurrentWeaponTag);
 }
 

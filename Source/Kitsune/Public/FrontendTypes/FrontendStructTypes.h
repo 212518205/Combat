@@ -143,7 +143,15 @@ struct FAbilityUIData
 	TObjectPtr<UTexture2D> AbilityTriggerKeyIcon;
 	
 	UPROPERTY(BlueprintReadOnly)
-	int Priority = 0;
+	FGameplayTag CooldownTag = FGameplayTag::EmptyTag;
+	
+	UPROPERTY(BlueprintReadOnly)
+	int Priority = -1;
+	
+	bool IsValid() const
+	{
+		return Icon && Priority >= 0;
+	}
 };
 
 

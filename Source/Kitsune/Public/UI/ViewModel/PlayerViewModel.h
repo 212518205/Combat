@@ -19,7 +19,7 @@ enum class EItemInstanceAction : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractableItemChange, UInventoryItemInstance*, ItemInstance, EItemInstanceAction, InstanceAction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerCategoryCapacityChanged, FName, CategoryID, int32, CategoryCapacity);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameplayAbilityChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameplayAbilityChanged, FGameplayAbilitySpecHandle&, Handle);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReticleStateChanged);
 
 /**
@@ -65,6 +65,7 @@ public:
 	TArray<UInventorySlotData*> GetInventoryItemsByCategory(const FName CategoryID) const;			    // 获取对应分类的物品
 	int32 GetCategoryCapacity(const FName CategoryID) const;											// 获取对应分类的格子容量
 	TArray<FAbilityUIData> GetPlayerAbilities() const;											// 获取所属玩家的可使用技能信息
+	FAbilityUIData GetAbilityUIDataByHandle(const FGameplayAbilitySpecHandle& SpecHandle);				//根据SpecHandle获取对应的FAbilityUIData
 
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | WeaponIcon")
 	TSoftObjectPtr<UTexture2D> WeaponIcon;

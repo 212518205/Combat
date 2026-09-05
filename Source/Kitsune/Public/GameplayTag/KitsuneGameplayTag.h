@@ -54,6 +54,13 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Weapon_Secondary);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Dash);
 
+	/***  冷却标签   `BC@` ***/
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_AbilityCooldown_Light);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_AbilityCooldown_Heavy);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_AbilityCooldown_Primary);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_AbilityCooldown_Secondary);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_AbilityCooldown_Unequip);
+
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Weapon_Equip_Sword);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Weapon_Unequip_Sword);
 

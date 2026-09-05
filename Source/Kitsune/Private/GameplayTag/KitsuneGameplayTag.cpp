@@ -53,6 +53,13 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Primary, "Player.Ability.Weapon.Primary");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Secondary, "Player.Ability.Weapon.Secondary");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Dash, "Player.Ability.Dash");
+
+	/***  冷却标签   `BC@` ***/
+	UE_DEFINE_GAMEPLAY_TAG(Player_AbilityCooldown_Light, "Player.AbilityCooldown.Light");
+	UE_DEFINE_GAMEPLAY_TAG(Player_AbilityCooldown_Heavy, "Player.AbilityCooldown.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(Player_AbilityCooldown_Primary, "Player.AbilityCooldown.Primary");
+	UE_DEFINE_GAMEPLAY_TAG(Player_AbilityCooldown_Secondary, "Player.AbilityCooldown.Secondary");
+	UE_DEFINE_GAMEPLAY_TAG(Player_AbilityCooldown_Unequip, "Player.AbilityCooldown.Unequip");
 	
 	/*** `@BC`   描述: 角色事件标签   `BC@` ***/
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Weapon_Equip_Sword, "Player.Event.Weapon.Equip.Sword");

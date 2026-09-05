@@ -41,11 +41,9 @@ public:
 	FOnPushSoftWidgetDelegate AfterPush;
 
 private:
-	/** Variable Begin*/ 
 	TWeakObjectPtr<UWorld> CachedOwningWorld;
 	TWeakObjectPtr<APlayerController> CachedOwningPC;
 	FGameplayTag CachedWidgetTag;
 	FGameplayTag CachedWidgetStackTag;
 	bool bCachedFocusOnNewlyPushedWidget = false;
-	/** Variable End*/
 };

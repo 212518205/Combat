@@ -25,8 +25,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	AWeaponBase* FindWeaponByTag(const FGameplayTag& WeaponTag) const;
-
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	AWeaponBase* GetCurrentCarriedWeapon() const;
 
@@ -52,8 +51,6 @@ protected:
 
 	TArray<TObjectPtr<AActor>> OverlappedActors;
 
-
-protected:
 	virtual void OnHitTargetActor(AActor* HitActor);
 	virtual void OnPulledFromTargetActor(AActor* InteractedActor);
 

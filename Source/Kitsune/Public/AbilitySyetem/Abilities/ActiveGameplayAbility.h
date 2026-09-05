@@ -22,6 +22,7 @@ public:
 	UTexture2D* GetAbilityTriggerKeyIcon() const { return AbilityTriggerKeyIcon; }
 	FString GetDisplayName() const { return DisplayName; }
 	UTexture2D* GetAbilityIcon() const { return AbilityIcon; }
+	FGameplayTag GetCooldownTag() const { return CooldownTag; }
 	int GetPriority() const { return Priority; }
 	
 protected:
@@ -36,5 +37,8 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Kitsune | Info")
 	int Priority = 0;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Kitsune | Info", meta = (Categories = "Player.AbilityCooldown"))
+	FGameplayTag CooldownTag = FGameplayTag::EmptyTag;
 	
 };

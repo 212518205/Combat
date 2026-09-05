@@ -5,6 +5,7 @@
 
 #include "KismetAnimationLibrary.h"
 #include "Characters/KitsuneCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UHeroAnimInstance::NativeInitializeAnimation()
 {
@@ -29,4 +30,7 @@ void UHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	GroundSpeed = static_cast<float>(OwningCharacter->GetVelocity().Size2D());
 
 	LocomotionDirection = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
+	const FVector& Accel = OwningMovementComponent->GetCurrentAcceleration(); 
+	const FVector BasisDir = Accel.IsNearlyZero() ? OwningCharacter->GetVelocity() : Accel;
+	InputDirection = UKismetAnimationLibrary::CalculateDirection(BasisDir, OwningCharacter->GetControlRotation());
 }

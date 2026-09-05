@@ -44,9 +44,10 @@ protected:
 	
 	UFUNCTION()
 	void OnRep_CurrentLockedActor(const AActor* OldValue);
-	
+
+	FRotator GetViewRotation() const;
 	UFUNCTION(BlueprintCallable, Category = "Combat | Lock")
-	bool AddWarpTargetToLockedTarget(UMotionWarpingComponent* WarpComponent, FName WarpTargetName) const;
+	bool AddWarpTargetToLockedTarget(FName WarpTargetName) const;
 	
 private:
 	void SetCurrentLockedTarget(AActor* NewTarget);

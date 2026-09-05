@@ -50,7 +50,7 @@ public:
 		if (!Pawn->HasAuthority())
 		{
 			Debug::Print(TEXT("SetReplicatedProperty: 客户端尝试设置，已拒绝"));
-			return true;
+			return true;                 
 		}
 		if (Property == NewValue)return false;
 		

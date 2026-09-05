@@ -18,8 +18,11 @@ class KITSUNE_API UWidgetAbilityEntry : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void AbilityInitialize(const FAbilityUIData& Data);
+	UFUNCTION(BlueprintNativeEvent)
+	void AbilityEntryInitialize(const FAbilityUIData& Data);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void ClearAbilityEntry();
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

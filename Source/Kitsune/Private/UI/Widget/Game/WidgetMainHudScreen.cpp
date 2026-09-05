@@ -53,22 +53,12 @@ void UWidgetMainHudScreen::NativeOnActivated()
 {
 	Super::NativeOnActivated();
 	
-	if (UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
-	{
-		PlayerVM->OnGameplayAbilityChanged.AddDynamic(this, &ThisClass::AbilityAddOrRemove);
-		AbilityAddOrRemove();
-	}
-
 }
 
 void UWidgetMainHudScreen::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
 	
-	if (UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
-	{
-		PlayerVM->OnGameplayAbilityChanged.RemoveDynamic(this, &ThisClass::AbilityAddOrRemove);
-	}
 }
 
 FReply UWidgetMainHudScreen::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -99,17 +89,6 @@ void UWidgetMainHudScreen::InitializeMainHudScreen()
 	CachedLocalViewModel->OnHealthPercentChanged.Broadcast();
 	CachedLocalViewModel->OnStaminaPercentChanged.Broadcast();
 	CachedLocalViewModel->OnVigorPercentChanged.Broadcast();
-}
-
-void UWidgetMainHudScreen::AbilityAddOrRemove()
-{
-	if (const UWorld* World = GetWorld(); !World || World->bIsTearingDown)return;
-	
-	if (const UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
-	{
-		const TArray<FAbilityUIData> Abilities = PlayerVM->GetPlayerAbilities();
-		AbilityList->FillAbilityList(Abilities);
-	}
 }
 
 void UWidgetMainHudScreen::ChangeSelectionByOffset(const int32 Offset) const
