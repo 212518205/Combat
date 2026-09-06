@@ -5,8 +5,10 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "MotionWarpingComponent.h"
 #include "UIManagerSubsystem.h"
 #include "Component/Combat/KitsuneCombatComponent.h"
+#include "Component/Combat/PlayerCombatComponent.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 
 UKitsuneCombatComponent* UKitsuneGameplayAbility::GetPawnCombatComponentFromActorInfo() const
@@ -36,9 +38,21 @@ void UKitsuneGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* Act
 	}
 }
 
-void UKitsuneGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
+void UKitsuneGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-	bool bReplicateEndAbility, bool bWasCancelled)
+	const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	
+	if (bMotionWarpingEnable)
+	{
+		UpdateWarpingTarget();
+	}
+}
+
+void UKitsuneGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
+                                         const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+                                         bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
@@ -94,6 +108,23 @@ FActiveGameplayEffectHandle UKitsuneGameplayAbility::BP_ApplyGameplayEffectSpecT
 	ApplySuccessType = ActiveEffectHandle.IsValid() ? EKitsuneSuccessType::Successful : EKitsuneSuccessType::Failed;
 
 	return ActiveEffectHandle;
+}
+
+void UKitsuneGameplayAbility::UpdateWarpingTarget() const
+{
+	UMotionWarpingComponent* MotionWarpingComp = GetAvatarActorFromActorInfo()->FindComponentByClass<UMotionWarpingComponent>();
+	const UPlayerCombatComponent* CombatComp = GetAvatarActorFromActorInfo()->FindComponentByClass<UPlayerCombatComponent>();
+	
+	if (!MotionWarpingComp || !CombatComp)
+	{
+		Debug::Print(TEXT("AvatarActor 无Combat组件或MotionWarping组件"));
+		return;
+	}
+	MotionWarpingComp->RemoveAllWarpTargets();
+	if (const AActor* TargetActor = CombatComp->GetCurrentLockActor())
+	{
+		MotionWarpingComp->AddOrUpdateWarpTarget(FMotionWarpingTarget(TargetName, TargetActor->GetActorTransform()));
+	}
 }
 
 

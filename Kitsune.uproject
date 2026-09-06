@@ -16,7 +16,8 @@
 				"CommonUI",
 				"DeveloperSettings",
 				"EnhancedInput",
-				"AIModule"
+				"AIModule",
+				"MotionWarping"
 			]
 		}
 	],

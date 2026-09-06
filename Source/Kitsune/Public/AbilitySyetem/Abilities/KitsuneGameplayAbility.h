@@ -36,11 +36,19 @@ public:
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
 protected:
-	/*** `@BC`   描述: 追加能力Give是否激活策略   `BC@` ***/
-
+	/*** `@BC`   描述: 追加能力Give是否激活策略   `BC@` ***/	
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	                             const FGameplayAbilityActivationInfo ActivationInfo,
+	                             const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
 	                        bool bWasCancelled) override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
+	bool bMotionWarpingEnable = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
+	FName TargetName = NAME_None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune | Policy")
 	EKitsuneAbilityActivationPolicy ActivationPolicy = EKitsuneAbilityActivationPolicy::OnTriggered;
@@ -56,4 +64,7 @@ protected:
 		meta = (DesplayName = "ApplyGameplayEffectSpecToTarget", ExpandEnumAsExecs = ApplySuccessType))
 	static FActiveGameplayEffectHandle BP_ApplyGameplayEffectSpecToTarget(const FGameplayEffectSpecHandle& SpecHandle,
 		AActor* TargetActor, EKitsuneSuccessType& ApplySuccessType);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateWarpingTarget() const;
 };

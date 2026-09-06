@@ -32,6 +32,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ClearLockTarget();
 
+	AActor* GetCurrentLockActor() const { return CurrentLockedActor; }
 
 protected:
 	virtual void OnHitTargetActor(AActor* HitActor) override;
@@ -46,8 +47,6 @@ protected:
 	void OnRep_CurrentLockedActor(const AActor* OldValue);
 
 	FRotator GetViewRotation() const;
-	UFUNCTION(BlueprintCallable, Category = "Combat | Lock")
-	bool AddWarpTargetToLockedTarget(FName WarpTargetName) const;
 	
 private:
 	void SetCurrentLockedTarget(AActor* NewTarget);
