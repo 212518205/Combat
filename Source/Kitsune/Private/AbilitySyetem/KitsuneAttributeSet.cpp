@@ -51,7 +51,6 @@ void UKitsuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 void UKitsuneAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
-
 	
 }
 
@@ -98,6 +97,14 @@ void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCa
 			Debug::Print(TEXT("被打死了"));
 		}else
 		{
+			FGameplayEventData HitReactEventData;
+			HitReactEventData.Instigator = Data.EffectSpec.GetContext().GetInstigator();
+			HitReactEventData.Target = Data.Target.GetAvatarActor();
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.Target.GetAvatarActor(),
+				KitsuneGameplayTags::Shared_Event_HitReact,
+				HitReactEventData);
+			
 			FGameplayEventData EventData;
 			EventData.Instigator = Data.EffectSpec.GetContext().GetInstigator();
 			EventData.Target = Data.Target.GetAvatarActor();

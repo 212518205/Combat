@@ -9,7 +9,6 @@
 #include "UIManagerSubsystem.h"
 #include "Component/Combat/KitsuneCombatComponent.h"
 #include "Component/Combat/PlayerCombatComponent.h"
-#include "GameplayTag/KitsuneGameplayTag.h"
 
 UKitsuneCombatComponent* UKitsuneGameplayAbility::GetPawnCombatComponentFromActorInfo() const
 {
@@ -121,7 +120,8 @@ void UKitsuneGameplayAbility::UpdateWarpingTarget() const
 		return;
 	}
 	MotionWarpingComp->RemoveAllWarpTargets();
-	if (const AActor* TargetActor = CombatComp->GetCurrentLockActor())
+	if (const AActor* TargetActor = CombatComp->GetCurrentLockActor();
+		TargetActor && FVector::Dist(GetAvatarActorFromActorInfo()->GetActorLocation(), TargetActor->GetActorLocation()) < MaxWarpingDist)
 	{
 		MotionWarpingComp->AddOrUpdateWarpTarget(FMotionWarpingTarget(TargetName, TargetActor->GetActorTransform()));
 	}

@@ -20,6 +20,7 @@ void UAttributeViewModel::NativeInitialize()
 	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
+			OldHealth = Health;
 			Health = Data.NewValue;
 			OnHealthPercentChanged.Broadcast();
 		});

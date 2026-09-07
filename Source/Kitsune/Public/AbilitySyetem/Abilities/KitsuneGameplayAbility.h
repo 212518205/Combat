@@ -47,8 +47,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
 	bool bMotionWarpingEnable = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = bMotionWarpingEnable, EditConditionHides = bMotionWarpingEnable))
 	FName TargetName = NAME_None;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = bMotionWarpingEnable, EditConditionHides = bMotionWarpingEnable))
+	float MaxWarpingDist = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Kitsune | Policy")
 	EKitsuneAbilityActivationPolicy ActivationPolicy = EKitsuneAbilityActivationPolicy::OnTriggered;

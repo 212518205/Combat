@@ -48,9 +48,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component | Combat")
 	TObjectPtr<UEnemyKitsuneCombatComponent> CombatComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component | UI")
-	TObjectPtr<UWidgetComponent> EnemyWidgetComponent;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component | UI")
 	TObjectPtr<UWidgetComponent> LockMarkerComponent;
 

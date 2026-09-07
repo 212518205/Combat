@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly,Category = "ViewModel | Attribute")
 	float Health = 0.f;
 	
+	UPROPERTY(BlueprintReadOnly,Category = "ViewModel | Attribute")
+	float OldHealth = 0.f;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Attribute")
 	float MaxHealth = 0.f;
 	
