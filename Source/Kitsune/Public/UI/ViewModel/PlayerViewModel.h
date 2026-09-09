@@ -32,7 +32,7 @@ class KITSUNE_API UPlayerViewModel : public UAttributeViewModel
 
 public:
 	virtual void BeginDestroy() override;
-	virtual void NativeInitialize() override;
+	virtual bool NativeInitialize() override;
 	void AddInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 	void RemoveInteractableItemInstance(UInventoryItemInstance* ItemInstance);
 	void SetIsSensing(const bool InIsSensing);

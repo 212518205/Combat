@@ -16,7 +16,7 @@ class KITSUNE_API UViewModelBase : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void NativeInitialize() {}
+	virtual bool NativeInitialize() { return true; }
 
 	template <class T = UViewModelBase>
 	static T* GetViewModel(AController* InController, APawn* InPawn);
@@ -35,6 +35,9 @@ inline T* UViewModelBase::GetViewModel(AController* InController, APawn* InPawn)
 	T* ViewModel = NewObject<T>();
 	ViewModel->OwningController = InController;
 	ViewModel->OwningPawn = InPawn;
-	ViewModel->NativeInitialize();
-	return ViewModel;
+	if (ViewModel->NativeInitialize())
+	{
+		return ViewModel;
+	}
+	return nullptr;
 }

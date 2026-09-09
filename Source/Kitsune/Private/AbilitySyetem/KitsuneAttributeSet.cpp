@@ -8,7 +8,6 @@
 #include"Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
-#include "GameFramework/Character.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 
 
@@ -58,10 +57,6 @@ void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCa
 {
 	Super::PostGameplayEffectExecute(Data);
 
-
-	FEffectProperties Props;
-	SetEffectProperties(Data, Props);
-
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		const float CurrentHealth = FMath::Clamp(GetHealth(), 0.f, GetMaxHealth());
@@ -80,10 +75,8 @@ void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCa
 		SetVigor(CurrentVigor);
 	}
 
-
-	if (const float a = GetDamageTaken(); Data.EvaluatedData.Attribute == GetDamageTakenAttribute() && a !=0.f)
+	if (const float CurrentDamageTaken = GetDamageTaken(); Data.EvaluatedData.Attribute == GetDamageTakenAttribute() && CurrentDamageTaken !=0.f)
 	{
-		const float CurrentDamageTaken = GetDamageTaken();
 		if (CurrentDamageTaken <= 0)
 		{
 			/*** TODO: 伤害值不足以击穿护甲，将造成1的伤害... [2025年10月25日 23:32:58 来自`@BC@`] ***/
@@ -94,7 +87,6 @@ void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCa
 		if ( FinalHealth == 0.f)
 		{
 			UKitsuneFunctionLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), KitsuneGameplayTags::Shared_Status_Dead);
-			Debug::Print(TEXT("被打死了"));
 		}else
 		{
 			FGameplayEventData HitReactEventData;
@@ -114,39 +106,6 @@ void UKitsuneAttributeSet::PostGameplayEffectExecute(const  FGameplayEffectModCa
 				EventData);
 		}
 
-	}
-}
-
-void UKitsuneAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallbackData& Data,
-	FEffectProperties& Props)
-{
-	Props.EffectContextHandle = Data.EffectSpec.GetContext();
-	Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
-
-	if (IsValid(Props.SourceASC) && Props.SourceASC->AbilityActorInfo.IsValid() 
-		&& Props.SourceASC->AbilityActorInfo->AvatarActor.IsValid())
-	{
-		Props.SourceAvatarActor = Props.SourceASC->AbilityActorInfo->AvatarActor.Get();
-		Props.SourceController = Props.SourceASC->AbilityActorInfo->PlayerController.Get();
-		if (Props.SourceController==nullptr && Props.SourceASC->AbilityActorInfo->AvatarActor.Get())
-		{
-			if (const APawn* Pawn = Cast<APawn>(Props.SourceAvatarActor))
-			{
-				Props.SourceController = Pawn->GetController();
-			}
-		}
-		if (Props.SourceController)
-		{
-			Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
-		}
-
-		if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
-		{
-			Props.TargetAvatarActor = Data.Target.GetAvatarActor();
-			Props.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
-			Props.TargetCharacter = Cast<ACharacter>(Props.TargetAvatarActor);
-			Props.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
-		}
 	}
 }
 

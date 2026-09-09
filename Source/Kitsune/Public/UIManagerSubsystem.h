@@ -101,6 +101,11 @@ T* UUIManagerSubsystem::TryGetViewModelByActor(AActor* InActor)
 	}
 
 	T* ViewModel = UViewModelBase::GetViewModel<T>(InPawn->GetController(), InPawn);
+	if (!ViewModel)
+	{
+		Debug::Print(FString::Printf(TEXT("%s ViewModel 初始化失败"), *InActor->GetName()));
+		return nullptr;
+	}
 	RegisteredViewModels.Add(InPawn, ViewModel);
 
 	return ViewModel;

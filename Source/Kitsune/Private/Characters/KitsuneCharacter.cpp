@@ -9,6 +9,7 @@
 #include"GameFramework/CharacterMovementComponent.h"
 #include "Component/Interaction/InteractionComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Inventory/InventorySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
@@ -54,6 +55,8 @@ void AKitsuneCharacter::OnRep_PlayerState()
 	InitAbilityInfo();
 	
 	BindAndLoadSave();
+	
+	
 }
 
 UKitsuneCombatComponent* AKitsuneCharacter::GetKitsuneCombatComponent() const
@@ -88,15 +91,16 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 	AKitsunePlayerState* KitsunePlayerState = GetPlayerState<AKitsunePlayerState>();
 	check(KitsunePlayerState);
-	AbilitySystemComponent = KitsunePlayerState->GetAbilitySystemComponent();
-	AbilitySystemComponent->InitAbilityActorInfo(KitsunePlayerState, this);
+	AbilitySystemComp = KitsunePlayerState->GetAbilitySystemComponent();
+	AbilitySystemComp->InitAbilityActorInfo(KitsunePlayerState, this);
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
 
 	//if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
-	if (IsLocallyControlled())
+	if (GetNetMode() != NM_DedicatedServer)
 	{
 		UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
+		OnWidgetComponentInitialized();
 	}
 
 	if (HasAuthority() && InitialInfoData && GetAbilitySystemComponent())
@@ -106,8 +110,13 @@ void AKitsuneCharacter::InitAbilityInfo()
 	}
 }
 
+UPlayerViewModel* AKitsuneCharacter::GetOwningViewModel()
+{
+	return UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
+}
+
 void AKitsuneCharacter::OnDetectionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor)return;
 	/*** TODO: 可选，检查OtherActor是否是可锁定的目标，目前靠ECC_GameTraceChannel13检查，即为Enemy通道... [2026年8月27日 0:25:58 来自`@BC@`] ***/

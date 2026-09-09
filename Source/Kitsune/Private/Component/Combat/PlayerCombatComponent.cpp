@@ -131,12 +131,12 @@ void UPlayerCombatComponent::OnRep_CurrentLockedActor(const AActor* OldValue)
 	
 	if (ILockableInterface* Enemy = Cast<ILockableInterface>(const_cast<AActor*>(OldValue)))
 	{
-		Enemy->SetLockMarkerVisible(false);
+		Enemy->UpdateLockMarkerVisible(false);
 	}
 	
 	if (ILockableInterface* Enemy = Cast<ILockableInterface>(CurrentLockedActor))
 	{
-		Enemy->SetLockMarkerVisible(true);
+		Enemy->UpdateLockMarkerVisible(true);
 	}
 	
 	if (CurrentLockedActor && IsValid(CurrentLockedActor))

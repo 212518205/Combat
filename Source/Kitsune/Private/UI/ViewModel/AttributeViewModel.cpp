@@ -6,7 +6,7 @@
 #include "Characters/KitsuneCharacter.h"
 
 
-void UAttributeViewModel::NativeInitialize()
+bool UAttributeViewModel::NativeInitialize()
 {
 	Super::NativeInitialize();
 
@@ -15,12 +15,15 @@ void UAttributeViewModel::NativeInitialize()
 		CachedKitsuneASC = Cast<UKitsuneAbilitySystemComponent>(OwningCharacter->GetAbilitySystemComponent());
 		CachedKitsuneAttributeSet = Cast<UKitsuneAttributeSet>(OwningCharacter->GetAttributeSet());
 	}
+	else
+	{
+		return false;
+	}
 
-	if (!(CachedKitsuneAttributeSet && CachedKitsuneASC))return;
+	if (!(CachedKitsuneAttributeSet && CachedKitsuneASC))return false;
 	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
-			OldHealth = Health;
 			Health = Data.NewValue;
 			OnHealthPercentChanged.Broadcast();
 		});
@@ -59,4 +62,24 @@ void UAttributeViewModel::NativeInitialize()
 			MaxVigor = Data.NewValue;
 			OnVigorPercentChanged.Broadcast();
 		});
+	
+	CachedKitsuneASC->GetGameplayAttributeValueChangeDelegate(UKitsuneAttributeSet::GetDamageTakenAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data)
+		{
+			TakenDamage = Data.NewValue;
+			OnTakenDamageChanged.Broadcast();
+		});
+	
+	Health    = CachedKitsuneASC->GetNumericAttribute(UKitsuneAttributeSet::GetHealthAttribute());
+	MaxHealth = CachedKitsuneASC->GetNumericAttribute(UKitsuneAttributeSet::GetMaxHealthAttribute());
+	Stamina   = CachedKitsuneASC->GetNumericAttribute(UKitsuneAttributeSet::GetStaminaAttribute());
+	MaxStamina= CachedKitsuneASC->GetNumericAttribute(UKitsuneAttributeSet::GetMaxStaminaAttribute());
+	Vigor     = CachedKitsuneASC->GetNumericAttribute(UKitsuneAttributeSet::GetVigorAttribute());
+	MaxVigor  = CachedKitsuneASC->GetNumericAttribute(UKitsuneAttributeSet::GetMaxVigorAttribute());
+
+	OnHealthPercentChanged.Broadcast();
+	OnStaminaPercentChanged.Broadcast();
+	OnVigorPercentChanged.Broadcast();
+	
+	return true;
 }

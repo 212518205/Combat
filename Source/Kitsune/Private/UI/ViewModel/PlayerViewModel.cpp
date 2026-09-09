@@ -13,9 +13,9 @@ void UPlayerViewModel::BeginDestroy()
     
 }
 
-void UPlayerViewModel::NativeInitialize()
+bool UPlayerViewModel::NativeInitialize()
 {
-	Super::NativeInitialize();
+	const bool bSuperInitSuccess = Super::NativeInitialize();
     
     if (const AKitsuneCharacter* Character = Cast<AKitsuneCharacter>(OwningPawn))
     {
@@ -25,6 +25,8 @@ void UPlayerViewModel::NativeInitialize()
     {
         CarriedInventorySystem->CapacityChanged.AddDynamic(this, &ThisClass::OnCategoryCapacityChanged);
     }
+    
+    return bSuperInitSuccess;
 }
 
 void UPlayerViewModel::AddInteractableItemInstance(UInventoryItemInstance* ItemInstance)

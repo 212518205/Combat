@@ -6,9 +6,12 @@
 #include "GameFramework/Character.h"
 #include"AbilitySystemInterface.h"
 #include "Data/DataAssetStartDataBase.h"
+#include "Interfaces/LockableInterface.h"
 #include "Interfaces/PawnCombatInterface.h"
 #include "CharacterBase.generated.h"
 
+class UKitsuneWidgetComponent;
+class UWidgetComponent;
 class UMotionWarpingComponent;
 class UPlayerCombatComponent;
 class UDataAssetStartDataBase;
@@ -18,7 +21,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 
 UCLASS()
-class KITSUNE_API ACharacterBase : public ACharacter , public IAbilitySystemInterface, public IPawnCombatInterface
+class KITSUNE_API ACharacterBase : public ACharacter , public IAbilitySystemInterface, public IPawnCombatInterface, public ILockableInterface
 {
 	GENERATED_BODY()
 
@@ -34,6 +37,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interface")
 	virtual UKitsuneCombatComponent* GetKitsuneCombatComponent() const override { return nullptr; }
 	/***   ...IPawnCombatInterface Interface End...     ***/
+	
+	/***   ...ILockableInterface Interface Begin...   ***/
+	virtual void UpdateLockMarkerVisible(const bool bVisible) override;
+	/***   ...ILockableInterface Interface End...     ***/
 
 	UAttributeSet* GetAttributeSet() const;
 	
@@ -42,12 +49,23 @@ public:
 
 protected:
 	virtual void InitAbilityInfo();
+	
+	void OnWidgetComponentInitialized();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComp;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
+	TObjectPtr<UMotionWarpingComponent> MotionWarpingComp;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component | UI")
+	TObjectPtr<UKitsuneWidgetComponent> LockMarkerComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component | UI")
+	TObjectPtr<UKitsuneWidgetComponent> CharacterStateComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component | UI")
+	TObjectPtr<UKitsuneWidgetComponent> DamagePopupComp;
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
@@ -58,4 +76,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Initial Info")
 	int32 CharacterLevel = 1;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FName LockMarkerSocketName;
 };

@@ -22,6 +22,6 @@ class KITSUNE_API ILockableInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual  void SetLockMarkerVisible(const bool bVisible) = 0;
+	virtual  void UpdateLockMarkerVisible(const bool bVisible) = 0;
 	
 };

@@ -15,5 +15,5 @@ class KITSUNE_API UEnemyViewModel : public UAttributeViewModel
 	GENERATED_BODY()
 
 public:
-	virtual void NativeInitialize() override;
+	virtual bool NativeInitialize() override;
 };

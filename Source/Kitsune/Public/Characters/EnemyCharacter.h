@@ -16,7 +16,7 @@ class UWidgetComponent;
  * 
  */
 UCLASS()
-class KITSUNE_API AEnemyCharacter : public ACharacterBase, public ILockableInterface
+class KITSUNE_API AEnemyCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 
@@ -27,10 +27,6 @@ public:
 	/***   ...IPawnCombatInterface Interface Begin...   ***/
 	virtual UKitsuneCombatComponent* GetKitsuneCombatComponent() const override;
 	/***   ...IPawnCombatInterface Interface End...     ***/
-
-	/***   ...ILockableInterface Interface Begin...   ***/
-	virtual void SetLockMarkerVisible(const bool bVisible) override;
-	/***   ...ILockableInterface Interface End...     ***/
 
 protected:
 	/***   ...ACharacterBase Interface Begin...   ***/
@@ -48,12 +44,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component | Combat")
 	TObjectPtr<UEnemyKitsuneCombatComponent> CombatComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component | UI")
-	TObjectPtr<UWidgetComponent> LockMarkerComponent;
-
 	UPROPERTY(BlueprintReadOnly)
 	UEnemyViewModel* EnemyViewModel;
 	
-	UPROPERTY(EditDefaultsOnly)
-	FName LockMarkerSocketName;
 };
