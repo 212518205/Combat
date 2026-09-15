@@ -21,6 +21,7 @@ public:
 
 	/***   ...IGenericTeamAgentInterface Interface Begin...   ***/
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+	virtual FGenericTeamId GetGenericTeamId() const override;
 	/***   ...IGenericTeamAgentInterface Interface End...     ***/
 
 protected:

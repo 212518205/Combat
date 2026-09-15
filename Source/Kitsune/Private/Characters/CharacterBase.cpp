@@ -6,6 +6,7 @@
 #include "Component/UI/KitsuneWidgetComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "UI/Widget/Components/CharacterWidget/WidgetCharacterComponentObject.h"
 
 // Sets default values
@@ -38,13 +39,17 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComp;
 }
 
-
 void ACharacterBase::UpdateLockMarkerVisible(const bool bVisible)
 {
 	if (LockMarkerComp)
 	{
 		LockMarkerComp->SetVisibility(bVisible);
 	}
+}
+
+FGenericTeamId ACharacterBase::GetGenericTeamId() const
+{
+	return ActorTeamID;
 }
 
 UAttributeSet* ACharacterBase::GetAttributeSet() const
@@ -60,10 +65,16 @@ void ACharacterBase::SetCharacterProperties(const FCharacterProperties& Characte
 	MovementComp->bUseControllerDesiredRotation = CharacterProperties.bUseControllerDesiredRotation;
 }
 
+void ACharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME_CONDITION_NOTIFY(ACharacterBase, ActorTeamID, COND_None, REPNOTIFY_Always);
+}
+
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ACharacterBase::InitAbilityInfo()

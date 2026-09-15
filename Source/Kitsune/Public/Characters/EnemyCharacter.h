@@ -32,8 +32,7 @@ protected:
 	/***   ...ACharacterBase Interface Begin...   ***/
 	virtual void InitAbilityInfo() override;
 	/***   ...ACharacterBase Interface End...     ***/
-
-
+	
 	UFUNCTION(BlueprintCallable, Category = "UI | ViewModel")
 	UEnemyViewModel* GetEnemyViewModel();
 

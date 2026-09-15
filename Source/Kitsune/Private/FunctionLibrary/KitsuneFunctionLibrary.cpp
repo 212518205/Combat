@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GenericTeamAgentInterface.h"
 #include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
+#include "FunctionLibrary/KitsuneTeamStatics.h"
 #include "Interfaces/PawnCombatInterface.h"
 
 void UKitsuneFunctionLibrary::AddGameplayTagToActorIfNone(AActor* TargetActor, const FGameplayTag ActorTag)
@@ -77,17 +78,9 @@ void UKitsuneFunctionLibrary::BP_CheckHitResult(const float HitChance, bool& Out
 	OutHitResult = NativeCheckHitResult(HitChance);
 }
 
-bool UKitsuneFunctionLibrary::IsHostileToPawn(const APawn* QueryPawn, const APawn* TargetPawn)
+bool UKitsuneFunctionLibrary::IsHostileToActor(AActor* QueryActor, AActor* TargetActor)
 {
-	check(QueryPawn && TargetPawn);
+	check(QueryActor && TargetActor);
 
-	IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
-	IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
-
-	if (QueryTeamAgent && TargetTeamAgent)
-	{
-		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
-	}
-
-	return false;
+	return UKitsuneTeamStatics::GetAttitude(QueryActor, TargetActor) == ETeamAttitude::Hostile;
 }

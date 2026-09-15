@@ -3,3 +3,15 @@
 
 #include "Game/KitsuneGameModeBase.h"
 
+#include "Game/KitsuneGameStateBase.h"
+
+void AKitsuneGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if (!HasAuthority() || !FactionPreset.IsValid())return;
+	if (AKitsuneGameStateBase* KitsuneGameState = GetGameState<AKitsuneGameStateBase>())
+	{
+		KitsuneGameState->SetFactionPreset(FactionPreset.LoadSynchronous());
+	}
+}

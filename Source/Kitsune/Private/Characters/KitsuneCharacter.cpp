@@ -9,7 +9,6 @@
 #include"GameFramework/CharacterMovementComponent.h"
 #include "Component/Interaction/InteractionComponent.h"
 #include "Components/BoxComponent.h"
-#include "Components/WidgetComponent.h"
 #include "Inventory/InventorySystemComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
@@ -103,10 +102,14 @@ void AKitsuneCharacter::InitAbilityInfo()
 		OnWidgetComponentInitialized();
 	}
 
-	if (HasAuthority() && InitialInfoData && GetAbilitySystemComponent())
+	if (HasAuthority())
 	{
-		InitialInfoData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), CharacterLevel);
-		SetCharacterProperties(InitialInfoData->CharacterProperties);
+		if (InitialInfoData && GetAbilitySystemComponent())
+		{
+			InitialInfoData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), CharacterLevel);
+			SetCharacterProperties(InitialInfoData->CharacterProperties);
+		}
+		ActorTeamID = FGenericTeamId(static_cast<uint8>(EKitsuneTeamID::TeamA));
 	}
 }
 

@@ -52,6 +52,6 @@ public:
 	static void BP_CheckHitResult(const float HitChance, bool& OutHitResult);
 
 	UFUNCTION(BlueprintPure, Category = "FunctionLibrary|")
-	static bool IsHostileToPawn(const APawn* QueryPawn, const APawn* TargetPawn);
+	static bool IsHostileToActor(AActor* QueryActor, AActor* TargetActor);
 
 };

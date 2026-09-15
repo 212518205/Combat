@@ -21,16 +21,12 @@ struct FInputActionValue;
  * 
  */
 UCLASS()
-class KITSUNE_API AKitsunePlayerController : public APlayerController, public IGenericTeamAgentInterface
+class KITSUNE_API AKitsunePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
 	AKitsunePlayerController();
-
-	/***   ...IGenericTeamAgentInterface Interface Begin...   ***/
-	virtual FGenericTeamId GetGenericTeamId() const override;
-	/***   ...IGenericTeamAgentInterface Interface End...     ***/
 
 protected:
 	/***   ...APlayerController Interface Begin...   ***/
@@ -95,8 +91,6 @@ protected:
 	UKitsuneAbilitySystemComponent* GetKitsuneASCFromPawn();
 
 private:
-	FGenericTeamId PlayerTeamId;
-
 	UPROPERTY(BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess))
 	bool bForceMouse = false;
 };

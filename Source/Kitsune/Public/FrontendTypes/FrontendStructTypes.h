@@ -3,6 +3,7 @@
 #include "GameplayAbilitySpecHandle.h"
 #include "FrontendTypes/FrontendEnumTypes.h"
 #include "GameplayTagContainer.h"
+#include "GenericTeamAgentInterface.h"
 #include "FrontendStructTypes.generated.h"
 
 
@@ -154,8 +155,28 @@ struct FAbilityUIData
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FFactionRelation
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<uint8, TEnumAsByte<ETeamAttitude::Type>> Attitudes;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TEnumAsByte<ETeamAttitude::Type> DefaultAttitude = ETeamAttitude::Neutral;
+	
+};
 
 
+USTRUCT(BlueprintType)
+struct FFactionPreset
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<uint8, FFactionRelation> Table;
+};
 
 
 

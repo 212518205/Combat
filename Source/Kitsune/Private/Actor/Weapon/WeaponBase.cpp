@@ -42,7 +42,7 @@ void AWeaponBase::OnWeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	if (APawn* HitPawn=Cast<APawn>(OtherActor))
 	{
-		if (UKitsuneFunctionLibrary::IsHostileToPawn(GetInstigator(),HitPawn))
+		if (UKitsuneFunctionLibrary::IsHostileToActor(GetInstigator(),HitPawn))
 		{
 			WeaponBeginOverlap.ExecuteIfBound(HitPawn);
 		}
@@ -57,7 +57,7 @@ void AWeaponBase::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (UKitsuneFunctionLibrary::IsHostileToPawn(GetInstigator(), HitPawn))
+		if (UKitsuneFunctionLibrary::IsHostileToActor(GetInstigator(), HitPawn))
 		{
 			WeaponEndOverlap.ExecuteIfBound(HitPawn);
 		}

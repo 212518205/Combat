@@ -112,12 +112,7 @@ UInventoryItemInstance* AKitsunePlayerController::GetSelectedInteractableItemIns
 
 AKitsunePlayerController::AKitsunePlayerController()
 {
-	PlayerTeamId = FGenericTeamId(0);
-}
-
-FGenericTeamId AKitsunePlayerController::GetGenericTeamId() const
-{
-	return PlayerTeamId;
+	
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

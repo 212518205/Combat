@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include"AbilitySystemInterface.h"
+#include "GenericTeamAgentInterface.h"
 #include "Data/DataAssetStartDataBase.h"
 #include "Interfaces/LockableInterface.h"
 #include "Interfaces/PawnCombatInterface.h"
@@ -21,13 +22,15 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 
 UCLASS()
-class KITSUNE_API ACharacterBase : public ACharacter , public IAbilitySystemInterface, public IPawnCombatInterface, public ILockableInterface
+class KITSUNE_API ACharacterBase : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface,
+                                   public ILockableInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 public:
 	ACharacterBase();
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	/***   ...IAbilitySystemInterface Interface Begin...   ***/
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -41,13 +44,20 @@ public:
 	/***   ...ILockableInterface Interface Begin...   ***/
 	virtual void UpdateLockMarkerVisible(const bool bVisible) override;
 	/***   ...ILockableInterface Interface End...     ***/
-
+	
+	/***   ...IGenericTeamAgentInterface Interface Begin...   ***/
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	/***   ...IGenericTeamAgentInterface Interface End...     ***/
+	
 	UAttributeSet* GetAttributeSet() const;
 	
 	void SetCharacterProperties(const FCharacterProperties& CharacterProperties) const;
 	UDataAssetStartDataBase* GetInitialInfoData() const { return InitialInfoData; }
 
-protected:
+protected:	
+	UFUNCTION()
+	virtual void OnRep_ActorTeamID() {}
+	
 	virtual void InitAbilityInfo();
 	
 	void OnWidgetComponentInitialized();
@@ -79,4 +89,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly)
 	FName LockMarkerSocketName;
+	
+	UPROPERTY(ReplicatedUsing = OnRep_ActorTeamID)
+	FGenericTeamId ActorTeamID;
 };

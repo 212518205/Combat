@@ -43,6 +43,7 @@ void AEnemyCharacter::InitAbilityInfo()
 	if (HasAuthority())
 	{
 		StartData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), 1);
+		ActorTeamID = FGenericTeamId(static_cast<uint8>(EKitsuneTeamID::TeamB));
 	}
 	
 }

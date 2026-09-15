@@ -1,10 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
+﻿
 #include "AI/KitsuneAIController.h"
 
-#include "FrontendDebugHelper.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "FrontendTypes/FrontendEnumTypes.h"
+#include "FunctionLibrary/KitsuneTeamStatics.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
@@ -25,7 +24,6 @@ AKitsuneAIController::AKitsuneAIController(const FObjectInitializer& ObjectIniti
 	EnemyPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
 	EnemyPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnEnemyPerceptionUpdated);
 
-	AAIController::SetGenericTeamId(FGenericTeamId(1));
 }
 
 void AKitsuneAIController::BeginPlay()
@@ -54,16 +52,22 @@ void AKitsuneAIController::BeginPlay()
 
 ETeamAttitude::Type AKitsuneAIController::GetTeamAttitudeTowards(const AActor& Other) const
 {
+	const APawn* SelfPawn = GetPawn();
+	if (!SelfPawn)return ETeamAttitude::Neutral;
+	return UKitsuneTeamStatics::GetAttitude(SelfPawn, &Other);
+}
 
-	const APawn* PawnToCheck = Cast<const APawn>(&Other);
-	if (const IGenericTeamAgentInterface* OtherTeamAgent = Cast<const IGenericTeamAgentInterface>(PawnToCheck->GetController());
-		OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() < GetGenericTeamId())
+FGenericTeamId AKitsuneAIController::GetGenericTeamId() const
+{
+	if (APawn* SelfPawn = GetPawn())
 	{
-		return ETeamAttitude::Hostile;
-		
+		if (const IGenericTeamAgentInterface* AgentInterface = Cast<IGenericTeamAgentInterface>(SelfPawn))
+		{
+			return AgentInterface->GetGenericTeamId();
+		}
 	}
-
-	return ETeamAttitude::Friendly;
+	
+	return FGenericTeamId();
 }
 
 void AKitsuneAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

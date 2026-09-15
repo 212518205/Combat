@@ -87,3 +87,12 @@ enum class EAbilityChanged: uint8
 	AddAbility,
 	RemoveAbility,
 };
+
+UENUM(BlueprintType)
+enum class EKitsuneTeamID: uint8
+{
+	TeamA = 0 UMETA(DisplayName = "友方"),
+	TeamB = 1 UMETA(DisplayName = "敌方"),
+	Neutral =2 UMETA(DisplayName = "中立"),
+	Invalid = 255 UMETA(Hidden),
+};
