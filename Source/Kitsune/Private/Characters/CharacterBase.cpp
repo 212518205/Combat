@@ -3,6 +3,7 @@
 
 #include "Characters/CharacterBase.h"
 #include "MotionWarpingComponent.h"
+#include "UIManagerSubsystem.h"
 #include "Component/UI/KitsuneWidgetComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -70,6 +71,16 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME_CONDITION_NOTIFY(ACharacterBase, ActorTeamID, COND_None, REPNOTIFY_Always);
+}
+
+void ACharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(this))
+	{
+		UIManager->UnRegisterViewModel(this);
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 void ACharacterBase::BeginPlay()

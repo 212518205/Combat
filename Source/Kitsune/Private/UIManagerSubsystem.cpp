@@ -43,6 +43,23 @@ bool UUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	return false;
 }
 
+void UUIManagerSubsystem::OnWorldChangedCleanup(const UWorld* NewWorld)
+{
+	if (RegisteredPrimaryLayout
+		&& (!IsValid(RegisteredPrimaryLayout) || RegisteredPrimaryLayout->GetWorld() != NewWorld))
+	{
+		RegisteredPrimaryLayout = nullptr;
+	}
+
+	for (auto It = RegisteredViewModels.CreateIterator(); It; ++It)
+	{
+		if (const AActor* Actor = It.Key(); !IsValid(Actor) || Actor->GetWorld() != NewWorld)
+		{
+			It.RemoveCurrent();
+		}
+	}
+}
+
 AKitsuneCharacter* UUIManagerSubsystem::GetLocalPlayerPawn() const
 {
 	const UGameInstance* GameInstance = GetGameInstance();
@@ -94,6 +111,11 @@ UAttributeViewModel* UUIManagerSubsystem::GetViewModelByPawn(APawn* InPawn)
 
 	UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InPawn);
 	return FoundViewModel ? *FoundViewModel : nullptr;
+}
+
+void UUIManagerSubsystem::UnRegisterViewModel(const AActor* InActor)
+{
+	RegisteredViewModels.Remove(InActor);
 }
 
 void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,

@@ -37,6 +37,8 @@ class KITSUNE_API UUIManagerSubsystem : public UGameInstanceSubsystem
 public:
 	static UUIManagerSubsystem* GetUIManager(const UObject* WorldContextObject);
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+	
+	void OnWorldChangedCleanup(const UWorld* NewWorld);
 
 	UWidgetPrimaryLayout* GetRegisteredPrimaryLayout()const {return RegisteredPrimaryLayout;}
 	AKitsuneCharacter* GetLocalPlayerPawn() const;
@@ -52,6 +54,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "ViewModel")
 	UAttributeViewModel* GetViewModelByPawn(APawn* InPawn);
+	
+	void UnRegisterViewModel(const AActor* InActor);
 	
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
 	                                const FGameplayTag InWidgetTag,
@@ -75,7 +79,7 @@ protected:
 	UWidgetPrimaryLayout* RegisteredPrimaryLayout=nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Registered ViewModel")
-	TMap<APawn*, UAttributeViewModel*> RegisteredViewModels;
+	TMap<AActor*, UAttributeViewModel*> RegisteredViewModels;
 	/** Function End*/
 };
 

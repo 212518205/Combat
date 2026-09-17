@@ -16,19 +16,23 @@ class KITSUNE_API UKitsuneInputComponent : public UEnhancedInputComponent
 	GENERATED_BODY()
 
 public:
-	template<class UserObject, typename CallBackFunc>
+	template <class UserObject, typename CallBackFunc>
 	void BindAbilityInputAction(UKitsuneInputConfig* InputConfig, UserObject* ObjectContext,
 	                            CallBackFunc CallBackPressed, CallBackFunc CallBackReleased);
-
+	template <class UserObject>
+	void BindNativeInputAction(UKitsuneInputConfig* InputConfig, const FGameplayTag& InputTag,
+	                                              const ETriggerEvent TriggerEvent, UserObject* ObjectContext,
+	                                              FEnhancedInputActionHandlerValueSignature::TMethodPtr<UserObject>
+	                                              CallBack);
 };
 
 template <class UserObject, typename CallBackFunc>
 void UKitsuneInputComponent::BindAbilityInputAction(UKitsuneInputConfig* InputConfig, UserObject* ObjectContext,
-	CallBackFunc CallBackPressed, CallBackFunc CallBackReleased)
+                                                    CallBackFunc CallBackPressed, CallBackFunc CallBackReleased)
 {
 	check(InputConfig);
 
-	for (auto& [InputAction, InputTag]:InputConfig->InputActions)
+	for (auto& [InputAction, InputTag] : InputConfig->SkillsInputActions)
 	{
 		if (CallBackPressed)
 		{
@@ -41,3 +45,17 @@ void UKitsuneInputComponent::BindAbilityInputAction(UKitsuneInputConfig* InputCo
 	}
 }
 
+template <class UserObject>
+void UKitsuneInputComponent::BindNativeInputAction(UKitsuneInputConfig* InputConfig, const FGameplayTag& InputTag,
+                                              const ETriggerEvent TriggerEvent, UserObject* ObjectContext,
+                                              FEnhancedInputActionHandlerValueSignature::TMethodPtr<UserObject>
+                                              CallBack)
+{
+	check(InputConfig);
+	if (!CallBack) return;
+
+	if (const UInputAction* InputAction = InputConfig->FindNativeActionByTag(InputTag, true))
+	{
+		BindAction(InputAction, TriggerEvent, ObjectContext, CallBack);
+	}
+}

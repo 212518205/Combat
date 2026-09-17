@@ -16,6 +16,7 @@ class KITSUNE_API UKitsuneGameInstance : public UGameInstance
 	
 public:
 	virtual FGameInstancePIEResult InitializeForPlayInEditor(int32 PIEInstanceIndex, const FGameInstancePIEParameters& Params) override;
+	virtual void OnWorldChanged(UWorld* OldWorld, UWorld* NewWorld) override;
 	
 	FString GetPIEOverrideCredential() const { return PIEOverrideCredential; }
 	

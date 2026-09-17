@@ -3,6 +3,7 @@
 
 #include "Game/GameInstance/KitsuneGameInstance.h"
 
+#include "UIManagerSubsystem.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 
 FGameInstancePIEResult UKitsuneGameInstance::InitializeForPlayInEditor(int32 PIEInstanceIndex,
@@ -11,4 +12,14 @@ FGameInstancePIEResult UKitsuneGameInstance::InitializeForPlayInEditor(int32 PIE
 	PIEOverrideCredential = FString::Printf(TEXT("PIE_Client_%d"), PIEInstanceIndex);
 	
 	return Super::InitializeForPlayInEditor(PIEInstanceIndex, Params);
+}
+
+void UKitsuneGameInstance::OnWorldChanged(UWorld* OldWorld, UWorld* NewWorld)
+{
+	Super::OnWorldChanged(OldWorld, NewWorld);
+	
+	if (UUIManagerSubsystem* UIManager = GetSubsystem<UUIManagerSubsystem>())
+	{
+		UIManager->OnWorldChangedCleanup(NewWorld);
+	}
 }

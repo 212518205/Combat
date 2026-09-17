@@ -5,16 +5,29 @@
 
 #include "FrontendDebugHelper.h"
 
-const UInputAction* UKitsuneInputConfig::FindInputActionByTag(const FGameplayTag& InTag, const bool bNoFindLog)
+const UInputAction* UKitsuneInputConfig::FindNativeActionByTag(const FGameplayTag& InTag, const bool bNoFindLog)
 {
-	for (const auto [InputAction, InputTag]:InputActions)
+	for (const auto [InputAction, InputTag] : NativeInputActions)
 	{
-		if (InputAction&&InputTag.IsValid())
+		if (InputTag == InTag)
 		{
-			if (InputTag==InTag)
-			{
-				return InputAction;
-			}
+			return InputAction;
+		}
+	}
+	if (bNoFindLog)
+	{
+		Debug::Print(TEXT("InputAction No Find,Tag == ") + InTag.ToString());
+	}
+	return nullptr;
+}
+
+const UInputAction* UKitsuneInputConfig::FindSkillsInputActionByTag(const FGameplayTag& InTag, const bool bNoFindLog)
+{
+	for (const auto [InputAction, InputTag] : SkillsInputActions)
+	{
+		if (InputTag == InTag)
+		{
+			return InputAction;
 		}
 	}
 	if (bNoFindLog)

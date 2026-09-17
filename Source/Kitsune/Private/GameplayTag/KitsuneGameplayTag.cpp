@@ -44,6 +44,12 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Space, "InputTag.Space");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Shift, "InputTag.Shift");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_FKey, "InputTag.FKey");
+	
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Move, "InputTag.Move");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Look, "InputTag.Look");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Jump, "InputTag.Jump");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_ToggleMouseMode, "InputTag.ToggleMouseMode");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_LockOrSwitchTarget, "InputTag.LockOrSwitchTarget");
 
 	/*** `@BC`   描述: 角色能力标签   `BC@` ***/
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Weapon_Equip_Sword, "Player.Ability.Weapon.Equip.Sword");

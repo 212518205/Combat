@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GenericTeamAgentInterface.h"
+#include "KitsunePlayerControllerBase.h"
 #include "GameFramework/PlayerController.h"
 #include "KitsunePlayerController.generated.h"
 
@@ -21,24 +21,15 @@ struct FInputActionValue;
  * 
  */
 UCLASS()
-class KITSUNE_API AKitsunePlayerController : public APlayerController
+class KITSUNE_API AKitsunePlayerController : public AKitsunePlayerControllerBase
 {
 	GENERATED_BODY()
 
-public:
-	AKitsunePlayerController();
-
 protected:
-	/***   ...APlayerController Interface Begin...   ***/
-	virtual void BeginPlay() override;
+	virtual auto BeginPlay() -> void override;
 	virtual void SetupInputComponent() override;
-	virtual void OnPossess(APawn* InPawn) override;
-	/***   ...APlayerController Interface End...     ***/
-
-	/***  SaveGame   `BC@` ***/
-	UFUNCTION(Server, Reliable)
-	void Server_ReportLocalCredential(const FString& InCredential);
-	void OnCredentialReported(const FString& InCredential) const;
+	virtual void OnControlledPawnChanged() override;
+	virtual UKitsuneInputConfig* GetInputConfig() override;
 
 	/***  UI接口   `BC@` ***/
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -47,31 +38,11 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	UInventoryItemInstance* GetSelectedInteractableItemInstance() const;
 
-	/*** `@BC`   描述: 输入上下文以及输入动作   `BC@` ***/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputMappingContext> IMC_GAS_Skills;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputMappingContext> IMC_Gameplay;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> MoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> LookAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> JumpAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> ShowOrHiddenMouseAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TObjectPtr<UInputAction> LockOrSwitchTarget;
+	/*** `@BC`   描述: 输入配置  `BC@` ***/
 
 	/*** `@BC`   描述: 技能相关输入数据，需要在蓝图指定   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UKitsuneInputConfig> AbilityInputConfig;
+	TObjectPtr<UKitsuneInputConfig> InputConfig;
 
 	/*** `@BC`   描述: InputAction 触发回调   `BC@` ***/
 	void Move(const FInputActionValue& Value);

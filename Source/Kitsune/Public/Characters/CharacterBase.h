@@ -31,6 +31,7 @@ public:
 	ACharacterBase();
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/***   ...IAbilitySystemInterface Interface Begin...   ***/
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

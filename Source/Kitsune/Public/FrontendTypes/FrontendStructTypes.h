@@ -168,7 +168,6 @@ struct FFactionRelation
 	
 };
 
-
 USTRUCT(BlueprintType)
 struct FFactionPreset
 {
@@ -178,6 +177,19 @@ struct FFactionPreset
 	TMap<uint8, FFactionRelation> Table;
 };
 
+USTRUCT(BlueprintType)
+struct FKitsuneInitialWidgetConfig
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "UI.WidgetStack"))
+	FGameplayTag StackTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "UI.Widget"))
+	FGameplayTag WidgetTag;
+
+	bool IsValid() const { return StackTag.IsValid() && WidgetTag.IsValid(); }
+};
 
 
 
