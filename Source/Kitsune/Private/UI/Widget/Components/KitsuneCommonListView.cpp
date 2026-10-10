@@ -1,16 +1,16 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Widget/Components/KitsuneCommonListView.h"
 
-#include "FrontendDebugHelper.h"
+#include "DebugHelper.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "Inventory/InventoryItemTrait.h"
 #include "Inventory/Trait/ItemTrait_Interact.h"
 #include "UI/DataObjects/ListDataObjectCollection.h"
 #include "UI/Widget/Components/ListEntryMapping.h"
-#include "UI/Widget/Option/ListEntries/WidgetListEntryBase.h"
+#include "UI/Widget/Option/ListEntries/ListEntryBase.h"
 
 UUserWidget& UKitsuneCommonListView::OnGenerateEntryWidgetInternal(UObject* Item,
                                                                    TSubclassOf<UUserWidget> DesiredEntryClass, const TSharedRef<STableViewBase>& OwnerTable)
@@ -30,14 +30,14 @@ UUserWidget& UKitsuneCommonListView::OnGenerateEntryWidgetInternal(UObject* Item
 		}
 		if (const auto FoundEntryClass = ListEntryMapping->FindEntryClassByItemTrait(TraitInteract))
 		{
-			return GenerateTypedEntry<UWidgetListEntryBase>(FoundEntryClass, OwnerTable);
+			return GenerateTypedEntry<UListEntryBase>(FoundEntryClass, OwnerTable);
 		}
 	}
 	else
 	{
 		if (const auto FoundEntryClass = ListEntryMapping->FindEntryClassByDataObject(CastChecked<UListDataObjectBase>(Item)))
 		{
-			return GenerateTypedEntry<UWidgetListEntryBase>(FoundEntryClass, OwnerTable);
+			return GenerateTypedEntry<UListEntryBase>(FoundEntryClass, OwnerTable);
 		}
 	}
 	return Super::OnGenerateEntryWidgetInternal(Item, DesiredEntryClass, OwnerTable);

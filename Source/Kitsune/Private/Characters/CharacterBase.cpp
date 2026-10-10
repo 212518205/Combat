@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/CharacterBase.h"
@@ -8,7 +8,7 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "UI/Widget/Components/CharacterWidget/WidgetCharacterComponentObject.h"
+#include "UI/Widget/Components/CharacterWidget/CharacterWidgetBase.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -98,7 +98,7 @@ void ACharacterBase::OnWidgetComponentInitialized()
 	for (const UKitsuneWidgetComponent* WidgetComp : {DamagePopupComp, CharacterStateComp})
 	{
 		if (!WidgetComp)continue;
-		if (UWidgetCharacterComponentObject* StateWidget = Cast<UWidgetCharacterComponentObject>(WidgetComp->GetUserWidgetObject()))
+		if (UCharacterWidgetBase* StateWidget = Cast<UCharacterWidgetBase>(WidgetComp->GetUserWidgetObject()))
 		{
 			StateWidget->OnBindAndInitialized(this);
 		}

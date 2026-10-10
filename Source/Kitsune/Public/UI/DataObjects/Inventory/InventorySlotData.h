@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "InventorySlotData.generated.h"
@@ -38,7 +38,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FText GetUnlockMessage() const
 	{
-		TMap<FName, FInventoryInfo> CategoryInfo = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(
+		TMap<FName, FInventoryInfo> CategoryInfo = UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(
 			 KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 		int32 OnceUnlockCount = 7;
 		if (const FInventoryInfo* Info = CategoryInfo.Find(CategoryID))

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "DataAssetFactionMatrix.generated.h"
 
 /**

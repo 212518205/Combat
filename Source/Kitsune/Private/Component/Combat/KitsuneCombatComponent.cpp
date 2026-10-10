@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/Combat/KitsuneCombatComponent.h"
@@ -111,7 +111,7 @@ void UKitsuneCombatComponent::OnRep_CurrentWeaponTag(const FGameplayTag& OldValu
 	{
 		WeaponIcon = CurrentWeapon->GetWeaponInfo()->WeaponIcon;
 	}
-	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPawn()))
+	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(GetOwningPawn()))
 	{ 
 		LocalViewModel->SetPlayerWeaponIcon(WeaponIcon); 
 	}

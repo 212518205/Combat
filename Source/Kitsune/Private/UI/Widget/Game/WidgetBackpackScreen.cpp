@@ -1,0 +1,120 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "UI/Widget/Game/WidgetBackpackScreen.h"
+
+#include "CommonTypes/StructTypes.h"
+#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
+#include "Inventory/InventoryItemDefinition.h"
+#include "Inventory/InventorySystemComponent.h"
+#include "Inventory/Trait/ItemTrait_Stack.h"
+#include "UI/ViewModel/PlayerViewModel.h"
+#include "UI/Widget/Components/KitsuneCommonTileView.h"
+#include "UI/Widget/Components/KitsuneTabListWidgetBase.h"
+
+void UWidgetBackpackScreen::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+
+	for (auto& [CategoryID, Group] : GetAllCategoryItems())
+	{
+		if (TabList_BagCategory->GetTabButtonBaseByID(CategoryID))continue;
+		TabList_BagCategory->RequestRegisterTab(CategoryID, Group.CategoryDisplayName);
+	}
+	if (UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
+	{
+		PlayerVM->CategoryCapacityChanged.AddUniqueDynamic(this, &ThisClass::OnCapacityChanged);
+	}
+}
+
+void UWidgetBackpackScreen::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	
+	TabList_BagCategory->OnTabSelected.AddUniqueDynamic(this, &ThisClass::OnTabSelected);
+}
+
+TArray<TPair<FName, FInventoryCategoryGroup>> UWidgetBackpackScreen::GetAllCategoryItems()
+{
+	if (const UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel())
+	{
+		return LocalViewModel->GetAllInventoryCategories();
+	}
+	return {};
+}
+
+void UWidgetBackpackScreen::OnTabSelected(const FName TabID)
+{
+	TArray<UInventorySlotData*> ItemSlots = GetLocalPlayerViewModel()->GetInventoryItemsByCategory(TabID);
+	const TArray<UInventorySlotData*> Slots = BuildCategorySlots(TabID, ItemSlots);
+	TileView_Backpack->SetListItems(Slots);
+	TileView_Backpack->RequestRefresh();
+}
+
+void UWidgetBackpackScreen::OnCapacityChanged(FName CategoryID, int32 CategoryCapacity)
+{
+	OnTabSelected(CategoryID);
+}
+
+TArray<UInventorySlotData*> UWidgetBackpackScreen::BuildCategorySlots(const FName& CategoryID,
+                                                                     TArray<UInventorySlotData*>& Slots)
+{
+	TArray<UInventorySlotData*> Result;
+	for (UInventorySlotData* SlotData : Slots)
+	{
+		UInventoryItemInstance* Item = SlotData->ItemInstance;
+		if (!Item || !Item->GetItemDef())continue;
+		
+		if (!Item->HasFeature(EItemFeature::Stackable))
+		{
+			Result.Add(SlotData);
+			continue;
+		}
+
+		const UItemTrait_Stack* TraitStack = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Stack>(Item->GetItemDef());
+		checkf(TraitStack, TEXT("可堆叠但无法获取到TraitStack"));
+		const int32 MaxStackCount = TraitStack->MaxStackCount;
+		int32 CurrentStackCount = FMath::Max(1, Item->GetStackCount());
+
+		while (CurrentStackCount > 0)
+		{
+			UInventorySlotData* NewSlot = NewObject<UInventorySlotData>(this);
+			NewSlot->ItemInstance = Item;
+			NewSlot->StackCount = FMath::Min(MaxStackCount, CurrentStackCount);
+			NewSlot->bIsLocked = false;
+			NewSlot->UnlockCost = SlotData->UnlockCost;
+			NewSlot->CategoryID = SlotData->CategoryID;
+			Result.Add(NewSlot);
+			CurrentStackCount -= MaxStackCount;
+		}
+	}
+	
+	const auto [CategoryInfo] = UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item);
+	const int32 CategoryCapacity = GetLocalPlayerViewModel()->GetCategoryCapacity(CategoryID);
+	const FInventoryInfo* Info = CategoryInfo.Find(CategoryID);
+	const int32 EmptyCount = Info ? CategoryCapacity-Result.Num() : 0;
+	const int32 LockCount = Info ? Info->LockSlotCount : 0;
+	const int32 UnlockCost = Info ? Info->UnlockCost : 0;
+
+	for (int32 i = 0; i < EmptyCount; ++i)
+	{
+		UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+		Data->ItemInstance = nullptr;
+		Data->bIsLocked = false;
+		Data->CategoryID = CategoryID;
+		Result.Add(Data);
+	}
+	for (int32 i = 0; i < LockCount; ++i)
+	{
+		UInventorySlotData* Data = NewObject<UInventorySlotData>(this);
+		Data->ItemInstance = nullptr;
+		Data->bIsLocked = true;
+		Data->UnlockCost = UnlockCost;
+		Data->CategoryID = CategoryID;
+		Result.Add(Data);
+	}
+
+	return Result;
+}
+

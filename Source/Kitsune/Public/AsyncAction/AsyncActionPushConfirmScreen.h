@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FrontendTypes/FrontendEnumTypes.h"
+#include "CommonTypes/EnumTypes.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "AsyncActionPushConfirmScreen.generated.h"
 

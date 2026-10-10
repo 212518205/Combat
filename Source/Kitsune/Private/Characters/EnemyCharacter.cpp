@@ -1,11 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Characters/EnemyCharacter.h"
 
 #include "UIManagerSubsystem.h"
-#include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
-#include "AbilitySyetem/KitsuneAttributeSet.h"
+#include "AbilitySystem/KitsuneAbilitySystemComponent.h"
+#include "AbilitySystem/KitsuneAttributeSet.h"
 #include "Characters/Data/DataAssetStartDataEnemy.h"
 #include "Component/Combat/EnemyKitsuneCombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -37,7 +35,7 @@ void AEnemyCharacter::InitAbilityInfo()
 	
 	if (GetNetMode() != NM_DedicatedServer)
 	{
-		EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModelByActor<UEnemyViewModel>(this);
+		EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModel<UEnemyViewModel>(this);
 		OnWidgetComponentInitialized();
 	}
 	if (HasAuthority())
@@ -63,7 +61,7 @@ UKitsuneCombatComponent* AEnemyCharacter::GetKitsuneCombatComponent() const
 UEnemyViewModel* AEnemyCharacter::GetEnemyViewModel()
 {
 	if (EnemyViewModel)return EnemyViewModel;
-	EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModelByActor<UEnemyViewModel>(this);
+	EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModel<UEnemyViewModel>(this);
 
 	return EnemyViewModel;
 }

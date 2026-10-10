@@ -1,9 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/Widget/Option/ListEntries/WidgetListEntryBase.h"
+#include "UI/Widget/Option/ListEntries/ListEntryBase.h"
 #include "ListEntryInteract.generated.h"
 
 class UInventoryItemInstance;
@@ -13,7 +13,7 @@ class UItemTrait_Interact;
  * 
  */
 UCLASS()
-class KITSUNE_API UListEntryInteract : public UWidgetListEntryBase
+class KITSUNE_API UListEntryInteract : public UListEntryBase
 {
 	GENERATED_BODY()
 

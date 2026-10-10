@@ -1,10 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/ViewModel/PlayerViewModel.h"
 
-#include "FrontendDebugHelper.h"
-#include "AbilitySyetem/Abilities/ActiveGameplayAbility.h"
+#include "DebugHelper.h"
+#include "AbilitySystem/Abilities/ActiveGameplayAbility.h"
 #include "Characters/KitsuneCharacter.h"
 
 void UPlayerViewModel::BeginDestroy()
@@ -62,13 +61,13 @@ void UPlayerViewModel::SetPlayerWeaponIcon(const TSoftObjectPtr<UTexture2D> InWe
 	OnWeaponChanged.Broadcast();
 }
 
-void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbilityChanged ChangedType)
+void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbilityChangeType ChangedType)
 {    
     switch (ChangedType)
     {
-    case EAbilityChanged::AddAbility:
+    case EAbilityChangeType::AddAbility:
         {
-            if (!AbilityUIDates.ContainsByPredicate([Spec](const FAbilityUIData& Entry){return Spec.Handle == Entry.SpecHandle;}))
+            if (!AbilityUIData.ContainsByPredicate([Spec](const FAbilityUIData& Entry){return Spec.Handle == Entry.SpecHandle;}))
             {
                 if (UActiveGameplayAbility* ActiveAbility = Cast<UActiveGameplayAbility>(Spec.Ability))
                 {
@@ -79,21 +78,21 @@ void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbili
                     Data.Icon = ActiveAbility->GetAbilityIcon();
                     Data.Priority = ActiveAbility->GetPriority();
                     Data.CooldownTag = ActiveAbility->GetCooldownTag();
-                    AbilityUIDates.Add(Data);
+                    AbilityUIData.Add(Data);
                 }
             }
         }
         break;
         
-    case EAbilityChanged::RemoveAbility:
+    case EAbilityChangeType::RemoveAbility:
         {
-            int32 RemoveIndex = AbilityUIDates.IndexOfByPredicate([Spec](const FAbilityUIData& Entry) {
+            int32 RemoveIndex = AbilityUIData.IndexOfByPredicate([Spec](const FAbilityUIData& Entry) {
                 return Spec.Handle == Entry.SpecHandle;
             });
 
             if (RemoveIndex != INDEX_NONE)
             {
-                AbilityUIDates.RemoveAt(RemoveIndex);
+                AbilityUIData.RemoveAt(RemoveIndex);
             }
             else
             {
@@ -106,7 +105,7 @@ void UPlayerViewModel::UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbili
         break;
     }
     
-    AbilityUIDates.Sort([](const FAbilityUIData& A, const FAbilityUIData& B)
+    AbilityUIData.Sort([](const FAbilityUIData& A, const FAbilityUIData& B)
     {
        return A.Priority <  B.Priority;
     });
@@ -131,17 +130,17 @@ int32 UPlayerViewModel::GetCategoryCapacity(const FName CategoryID) const
 
 TArray<FAbilityUIData> UPlayerViewModel::GetPlayerAbilities() const
 {
-    return AbilityUIDates;
+    return AbilityUIData;
 }
 
 FAbilityUIData UPlayerViewModel::GetAbilityUIDataByHandle(const FGameplayAbilitySpecHandle& SpecHandle)
 {
-    if (const int32 Index = AbilityUIDates.IndexOfByPredicate([SpecHandle](const FAbilityUIData& Entry)
+    if (const int32 Index = AbilityUIData.IndexOfByPredicate([SpecHandle](const FAbilityUIData& Entry)
     {
         return SpecHandle == Entry.SpecHandle;
     }); Index != INDEX_NONE)
     {
-        return AbilityUIDates[Index];
+        return AbilityUIData[Index];
     }
     
     return FAbilityUIData();

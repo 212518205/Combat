@@ -6,7 +6,7 @@
 #include "Characters/KitsuneCharacter.h"
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "Engine/AssetManager.h"
-#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/ViewModel/AttributeViewModel.h"
@@ -75,13 +75,13 @@ AKitsuneCharacter* UUIManagerSubsystem::GetLocalPlayerPawn() const
 	return Cast<AKitsuneCharacter>(Pawn);
 }
 
-UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
+UPlayerViewModel* UUIManagerSubsystem::GetLocalPlayerViewModel(bool& bIsValid)
 {
 	bIsValid = false;
 
 	if (APawn* Pawn = GetLocalPlayerPawn())
 	{
-		UPlayerViewModel* VM = TryGetViewModelByActor<UPlayerViewModel>(Pawn);
+		UPlayerViewModel* VM = TryGetViewModel<UPlayerViewModel>(Pawn);
 		if (VM)
 		{
 			bIsValid = true;
@@ -92,10 +92,10 @@ UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel(bool& bIsValid)
 	return nullptr;
 }
 
-UPlayerViewModel* UUIManagerSubsystem::GetLocalViewModel()
+UPlayerViewModel* UUIManagerSubsystem::GetLocalPlayerViewModel()
 {
 	bool bDummy;
-	return GetLocalViewModel(bDummy);
+	return GetLocalPlayerViewModel(bDummy);
 }
 
 
@@ -103,14 +103,6 @@ void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPr
 {
 	check(InPrimaryLayout);
 	RegisteredPrimaryLayout = InPrimaryLayout;
-}
-
-UAttributeViewModel* UUIManagerSubsystem::GetViewModelByPawn(APawn* InPawn)
-{
-	if (!InPawn)return nullptr;
-
-	UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InPawn);
-	return FoundViewModel ? *FoundViewModel : nullptr;
 }
 
 void UUIManagerSubsystem::UnRegisterViewModel(const AActor* InActor)
@@ -126,7 +118,7 @@ void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidge
 	check(InWidgetTag.IsValid());
 
 	TSoftClassPtr<UWidgetActivatableBase> WidgetClass =
-		UFrontendBlueprintFunctionLibrary::GetScreenSoftWidgetClassByTag(InWidgetTag);
+		UKitsuneWidgetFunctionLibrary::GetScreenSoftWidgetClassByTag(InWidgetTag);
 	UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(WidgetClass.ToSoftObjectPath(),
 	                                                             FStreamableDelegate::CreateLambda(
 		                                                             [this, InWidgetStackTag, AsyncPushCallback,
@@ -168,7 +160,7 @@ void UUIManagerSubsystem::PushConfirmScreenToModalStackAsync(const EConfirmScree
 
 	switch (InScreenType)
 	{
-	case EConfirmScreenType::Ok:
+	case EConfirmScreenType::OK:
 		CreatedInfoObject = UConfirmScreenInfoObject::CreateOKScreen(InScreenTitle, InScreenMsg);
 		break;
 

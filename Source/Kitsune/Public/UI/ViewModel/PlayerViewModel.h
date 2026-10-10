@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -41,7 +41,7 @@ public:
 	void SetPlayerWeaponIcon(TSoftObjectPtr<UTexture2D> InWeaponIcon);
 	
 	UFUNCTION(BlueprintCallable)
-	void UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbilityChanged ChangedType);
+	void UpdateAbilityList(FGameplayAbilitySpec Spec, const EAbilityChangeType ChangedType);
 
 	/***  变化委托   `BC@` ***/
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
@@ -84,7 +84,7 @@ protected:
 	TArray<UInventoryItemInstance*> OverlappedItemInstances;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "ViewModel | Ability")
-	TArray<FAbilityUIData> AbilityUIDates;
+	TArray<FAbilityUIData> AbilityUIData;
 	
 	bool bIsSensing = true;
 	

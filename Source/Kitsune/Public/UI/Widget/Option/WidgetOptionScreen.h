@@ -23,7 +23,7 @@ protected:
 	virtual void NativeOnActivated() override;
 
 	UFUNCTION()
-	void OnTabSelected(FName TabId);
+	void OnTabSelected(FName TabID);
 	/** Function End*/
 
 private:
@@ -40,7 +40,7 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget,AllowPrivateAccess="true"))
 	UKitsuneCommonListView* CommonListView_OptionsList;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Frontend Options Screen", meta = (RowType = "/Script/CommonUI.CommonInputActionDataBase"))
+	UPROPERTY(EditDefaultsOnly, Category = "UI | Options Screen", meta = (RowType = "/Script/CommonUI.CommonInputActionDataBase"))
 	FDataTableRowHandle ResetAction;
 
 	FUIActionBindingHandle ResetActionHandle;

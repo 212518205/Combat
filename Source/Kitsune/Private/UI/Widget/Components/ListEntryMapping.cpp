@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Widget/Components/ListEntryMapping.h"
@@ -7,7 +7,7 @@
 #include "Inventory/InventoryItemTrait.h"
 #include "UI/DataObjects/ListDataObjectBase.h"
 
-TSubclassOf<UWidgetListEntryBase> UListEntryMapping::FindEntryClassByDataObject(const UListDataObjectBase* InListDataObject) const
+TSubclassOf<UListEntryBase> UListEntryMapping::FindEntryClassByDataObject(const UListDataObjectBase* InListDataObject) const
 {
 	check(InListDataObject)
 
@@ -25,7 +25,7 @@ TSubclassOf<UWidgetListEntryBase> UListEntryMapping::FindEntryClassByDataObject(
 	return {};
 }
 
-TSubclassOf<UWidgetListEntryBase> UListEntryMapping::FindEntryClassByItemTrait(
+TSubclassOf<UListEntryBase> UListEntryMapping::FindEntryClassByItemTrait(
 	const UInventoryItemTrait* InItemTrait) const
 {
 	check(InItemTrait);

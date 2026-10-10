@@ -6,7 +6,7 @@
 #include "Component/KitsuneExtensionComponent.h"
 #include "InteractionComponent.generated.h"
 
-class UInventorySystem;
+
 class UPlayerViewModel;
 class UInventoryItemInstance;
 /**

@@ -16,25 +16,25 @@ void UWidgetPrimaryLayout::NativeOnInitialized()
 	Super::NativeOnInitialized();
 }
 
-void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag,
+void UWidgetPrimaryLayout::RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag,
                                                UKitsuneActivatableWidgetStack* InStack)
 {
 	if (IsDesignTime())return;
 	
-	if (!GameplayTagToStackMap.Contains(InGameplayTag))
+	if (!GameplayTagToStackMap.Contains(InTag))
 	{
-		GameplayTagToStackMap.Add(InGameplayTag, InStack);
+		GameplayTagToStackMap.Add(InTag, InStack);
 	}
 	
 }
 
-UKitsuneActivatableWidgetStack* UWidgetPrimaryLayout::FindWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag)const
+UKitsuneActivatableWidgetStack* UWidgetPrimaryLayout::FindWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag)const
 {
 	checkf(GameplayTagToStackMap.Contains(InTag), TEXT("GameplayTagToStackMap no find stack by %s"), *InTag.ToString());
 	return GameplayTagToStackMap.FindRef(InTag);
 }
 
-void UWidgetPrimaryLayout::ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag) const
+void UWidgetPrimaryLayout::ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag) const
 {
 	UKitsuneActivatableWidgetStack* WidgetStack = FindWidgetStackByTag(InTag);
 	if (!WidgetStack)return;
@@ -42,7 +42,7 @@ void UWidgetPrimaryLayout::ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI
 	WidgetStack->ClearStack();
 }
 
-void UWidgetPrimaryLayout::PopWidgetStackByTag(const FGameplayTag InTag) const
+void UWidgetPrimaryLayout::PopWidgetStackByTag(FGameplayTag InTag) const
 {
 	UKitsuneActivatableWidgetStack* WidgetStack = FindWidgetStackByTag(InTag);;
 	if (!WidgetStack)return;

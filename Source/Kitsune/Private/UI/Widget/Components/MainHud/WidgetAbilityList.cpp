@@ -100,7 +100,7 @@ UPlayerViewModel* UWidgetAbilityList::GetLocalPlayerViewModel()
 {
 	if (!CachedLocalViewModel)
 	{
-		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetOwningPlayer())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPlayerPawn());
+		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetOwningPlayer())->TryGetViewModel<UPlayerViewModel>(GetOwningPlayerPawn());
 	}
 
 	return CachedLocalViewModel;

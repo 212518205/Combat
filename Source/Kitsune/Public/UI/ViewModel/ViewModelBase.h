@@ -1,10 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
-#include "AbilitySyetem/KitsuneAttributeSet.h"
+#include "AbilitySystem/KitsuneAbilitySystemComponent.h"
+#include "AbilitySystem/KitsuneAttributeSet.h"
 #include "ViewModelBase.generated.h"
 
 /**
@@ -22,10 +20,10 @@ public:
 	static T* GetViewModel(AController* InController, APawn* InPawn);
 
 protected:
-	UPROPERTY(BlueprintReadOnly,Category="Player")
+	UPROPERTY(BlueprintReadOnly,Category = "Player")
 	AController* OwningController = nullptr;
 
-	UPROPERTY(BlueprintReadOnly,Category="Player")
+	UPROPERTY(BlueprintReadOnly,Category = "Player")
 	APawn* OwningPawn = nullptr;
 };
 

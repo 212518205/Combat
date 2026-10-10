@@ -1,11 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
 #include "Characters/KitsuneCharacter.h"
-#include "FrontendTypes/FrontendEnumTypes.h"
+#include "CommonTypes/EnumTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/ViewModel/EnemyViewModel.h"
 #include "UI/ViewModel/PlayerViewModel.h"
@@ -45,16 +45,18 @@ public:
 
 	/*** `@BC`   描述: ViewModel相关   `BC@` ***/
 	UFUNCTION(BlueprintCallable, Category = "ViewModel", meta = (ExpandBoolAsExecs = "bIsValid"))
-	UPlayerViewModel* GetLocalViewModel(bool& bIsValid);
+	UPlayerViewModel* GetLocalPlayerViewModel(bool& bIsValid);
 	
-	UPlayerViewModel* GetLocalViewModel();
+	UPlayerViewModel* GetLocalPlayerViewModel();
 
+	/** 取用 ViewModel：未注册时会创建并注册（仅用于 Pawn 自身初始化） */
 	template<typename T = UAttributeViewModel>
-	T* TryGetViewModelByActor(AActor* InActor);
+	T* TryGetViewModel(AActor* InActor);
 
-	UFUNCTION(BlueprintCallable, Category = "ViewModel")
-	UAttributeViewModel* GetViewModelByPawn(APawn* InPawn);
-	
+	/** 只读查询已注册的 ViewModel：不创建、不注册，未注册或类型不匹配时返回 nullptr（供 UI 侧使用） */
+	template<typename T = UAttributeViewModel>
+	T* FindViewModel(AActor* InActor) const;
+
 	void UnRegisterViewModel(const AActor* InActor);
 	
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,
@@ -84,24 +86,30 @@ protected:
 };
 
 template <class T>
-T* UUIManagerSubsystem::TryGetViewModelByActor(AActor* InActor)
+T* UUIManagerSubsystem::TryGetViewModel(AActor* InActor)
 {
 	if (!InActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TryGetViewModelByActor: InActor is null"));
+		UE_LOG(LogTemp, Warning, TEXT("TryGetViewModel: InActor is null"));
 		return nullptr;
 	}
 
 	APawn* InPawn = Cast<APawn>(InActor);
 	if (!InPawn)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TryGetViewModelByActor: Actor [%s] is not a Pawn, ViewModel not available"), *InActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TryGetViewModel: Actor [%s] is not a Pawn, ViewModel not available"), *InActor->GetName());
 		return nullptr;
 	}
 
 	if (UAttributeViewModel** FoundViewModel = RegisteredViewModels.Find(InPawn))
 	{
-		return CastChecked<T>(*FoundViewModel);
+		if (T* CastedViewModel = Cast<T>(*FoundViewModel))
+		{
+			return CastedViewModel;
+		}
+		UE_LOG(LogTemp, Warning,
+			TEXT("TryGetViewModel: Actor [%s] 已注册的 ViewModel 类型不匹配，返回 nullptr"), *InActor->GetName());
+		return nullptr;
 	}
 
 	T* ViewModel = UViewModelBase::GetViewModel<T>(InPawn->GetController(), InPawn);
@@ -113,4 +121,17 @@ T* UUIManagerSubsystem::TryGetViewModelByActor(AActor* InActor)
 	RegisteredViewModels.Add(InPawn, ViewModel);
 
 	return ViewModel;
+}
+
+template <class T>
+T* UUIManagerSubsystem::FindViewModel(AActor* InActor) const
+{
+	if (!InActor) return nullptr;
+
+	if (UAttributeViewModel* const* FoundViewModel = RegisteredViewModels.Find(InActor))
+	{
+		return Cast<T>(*FoundViewModel);
+	}
+
+	return nullptr;
 }

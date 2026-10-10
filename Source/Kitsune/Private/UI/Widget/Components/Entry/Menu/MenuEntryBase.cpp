@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Widget/Components/Entry/Menu/MenuEntryBase.h"
@@ -6,7 +6,7 @@
 #include "CommonTextBlock.h"
 #include "UIManagerSubsystem.h"
 #include "Components/Image.h"
-#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "UI/DataObjects/Inventory/MenuEntryData.h"
 #include "UI/Widget/WidgetActivatableBase.h"

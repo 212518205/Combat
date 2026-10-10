@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "KitsuneFactionSubsystem.generated.h"
 

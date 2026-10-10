@@ -1,15 +1,15 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Inventory/InventorySystemComponent.h"
 
-#include "FrontendDebugHelper.h"
+#include "DebugHelper.h"
 #include "Engine/AssetManager.h"
-#include "FunctionLibrary/FrontendBlueprintFunctionLibrary.h"
+#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "Game/SaveGame/KitsuneSaveGame.h"
@@ -205,7 +205,7 @@ void UInventorySystemComponent::UnlockCategorySlots_Implementation(const FName C
 {
 	const FInventoryInfo* Info = GetCategoryInfo(CategoryID);
 	if (!Info)return;
-	if (!TrySpendGold(Info->UnLockCost))return;
+	if (!TrySpendGold(Info->UnlockCost))return;
 	
 	const int32 CurrentCapacity = GetCapacityByCategoryID(CategoryID);
 	const int32 NewCapacity = CurrentCapacity + Info->OnceUnlockCount;
@@ -257,7 +257,7 @@ int32 UInventorySystemComponent::GetCapacityByCategoryID(const FName CategoryID)
 TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystemComponent::GetAllCategoryItem()
 {
 	TMap<FName, FInventoryCategoryGroup> ReturnGroup;
-	TMap<FName, FInventoryInfo> CategoryInfo = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
+	TMap<FName, FInventoryInfo> CategoryInfo = UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 
 	for (const FInventoryItemEntry& Entry : InventoryItems.Items)
 	{
@@ -272,7 +272,7 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystemComponent::GetAllC
 			if (CategoryInfo.Contains(CategoryID))
 			{
 				Data->bIsLocked = false;
-				Data->UnlockCost = CategoryInfo.Find(CategoryID)->UnLockCost;
+				Data->UnlockCost = CategoryInfo.Find(CategoryID)->UnlockCost;
 			}
 			Data->CategoryID = CategoryID;
 			ReturnGroup.FindOrAdd(CategoryID).CategorySlots.Add(Data);
@@ -304,7 +304,7 @@ TArray<TPair<FName, FInventoryCategoryGroup>> UInventorySystemComponent::GetAllC
 
 TArray<UInventorySlotData*> UInventorySystemComponent::GetAllItemsByCategory(const FName CategoryID)
 {
-	TMap<FName, FInventoryInfo> Info = UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
+	TMap<FName, FInventoryInfo> Info = UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 	
 	TArray<UInventorySlotData*> Slots;
 	for (FInventoryItemEntry& Entry : InventoryItems.Items)
@@ -359,7 +359,7 @@ const FInventoryInfo* UInventorySystemComponent::GetCategoryInfo(const FName Cat
 {
 	/*** TODO: 需重构... [2026年8月17日 23:42:35 来自`@BC@`] ***/
 	static const TMap<FName, FInventoryInfo> CategoryInfo =
-		 UFrontendBlueprintFunctionLibrary::GetCategoryNameByModuleTag(
+		 UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(
 			 KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
 
 	return CategoryInfo.Find(CategoryID);

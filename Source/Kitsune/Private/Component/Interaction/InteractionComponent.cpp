@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/Interaction/InteractionComponent.h"
@@ -69,7 +69,7 @@ UPlayerViewModel* UInteractionComponent::GetLocalPlayerViewModel()
 {
 	if (!CachedLocalViewModel.Get())
 	{
-		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(GetOwningPawn());
+		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(GetOwningPawn());
 	}
 	return CachedLocalViewModel.Get();
 }

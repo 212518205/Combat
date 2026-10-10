@@ -1,10 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/DataObjects/OptionsDataRegistry.h"
 #include "InputCoreTypes.h"
 #include "EnhancedInputSubsystems.h"
-#include "FrontendDebugHelper.h"
+#include "DebugHelper.h"
 #include "GameSettings/GameSettingsSaveHelper.h"
 #include "GameSettings/KitsuneGameUserSettings.h"
 #include "UserSettings/EnhancedInputUserSettings.h"

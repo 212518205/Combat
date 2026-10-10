@@ -1,9 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Widget/Option/WidgetOptionScreen.h"
 
-#include "FrontendDebugHelper.h"
+#include "DebugHelper.h"
 #include "Input/CommonUIInputTypes.h"
 #include "ICommonInputModule.h"
 #include "UI/DataObjects/ListDataObjectCollection.h"
@@ -51,10 +51,10 @@ void UWidgetOptionScreen::NativeOnActivated()
 	}
 }
 
-void UWidgetOptionScreen::OnTabSelected(const FName TabId)
+void UWidgetOptionScreen::OnTabSelected(const FName TabID)
 {
 
-	const TArray<UListDataObjectBase*> FoundListData = GetDataRegistry()->GetAllListDataByTabID(TabId);
+	const TArray<UListDataObjectBase*> FoundListData = GetDataRegistry()->GetAllListDataByTabID(TabID);
 
 	CommonListView_OptionsList->SetListItems(FoundListData);
 	CommonListView_OptionsList->RequestRefresh();

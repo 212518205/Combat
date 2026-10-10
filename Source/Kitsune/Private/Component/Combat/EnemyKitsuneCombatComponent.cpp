@@ -1,10 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/Combat/EnemyKitsuneCombatComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "FrontendDebugHelper.h"
+#include "DebugHelper.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 
 void UEnemyKitsuneCombatComponent::OnHitTargetActor(AActor* HitActor)

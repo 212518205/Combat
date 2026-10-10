@@ -1,8 +1,8 @@
-﻿
+
 #include "AI/KitsuneAIController.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "FrontendTypes/FrontendEnumTypes.h"
+#include "CommonTypes/EnumTypes.h"
 #include "FunctionLibrary/KitsuneTeamStatics.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"

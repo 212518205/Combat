@@ -25,17 +25,17 @@ protected:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InGameplayTag, UKitsuneActivatableWidgetStack*
+	void RegisterWidgetStack(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag, UKitsuneActivatableWidgetStack*
 	                         InStack);
 
 	UFUNCTION(BlueprintCallable)
-	UKitsuneActivatableWidgetStack* FindWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag)const;
+	UKitsuneActivatableWidgetStack* FindWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag)const;
 	
 	UFUNCTION(BlueprintCallable)
-	void ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag) const;
+	void ClearWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag) const;
 	
 	UFUNCTION(BlueprintCallable)
-	void PopWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) const FGameplayTag InTag) const;
+	void PopWidgetStackByTag(UPARAM(meta = (Categories = "UI.WidgetStack")) FGameplayTag InTag) const;
 	
 	UCommonActivatableWidget* GetTopWidget() const;
 	void UpdateInteractState() const;	

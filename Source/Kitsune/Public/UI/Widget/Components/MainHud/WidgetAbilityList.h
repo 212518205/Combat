@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "WidgetAbilityList.generated.h"
 
 class UPlayerViewModel;
@@ -42,7 +42,7 @@ protected:
 	int32 DownRowSlotCount;
 	
 	UPROPERTY(BlueprintReadOnly)
-	TArray<FAbilityUIData> AbilityUIDates;
+	TArray<FAbilityUIData> AbilityUIData;
 	
 	UFUNCTION()
 	void HandleAbilityChanged(FGameplayAbilitySpecHandle& SpecHandle);

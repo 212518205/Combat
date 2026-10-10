@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -85,7 +85,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Initial Info")
 	TObjectPtr<UDataAssetStartDataBase> InitialInfoData;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Initial Info")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Initial Info")
 	int32 CharacterLevel = 1;
 	
 	UPROPERTY(EditDefaultsOnly)

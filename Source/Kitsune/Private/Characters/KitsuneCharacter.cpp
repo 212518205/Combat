@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/KitsuneCharacter.h"
@@ -98,7 +98,7 @@ void AKitsuneCharacter::InitAbilityInfo()
 	//if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
 	if (GetNetMode() != NM_DedicatedServer)
 	{
-		UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
+		UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(this);
 		OnWidgetComponentInitialized();
 	}
 
@@ -115,7 +115,7 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 UPlayerViewModel* AKitsuneCharacter::GetOwningViewModel()
 {
-	return UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModelByActor<UPlayerViewModel>(this);
+	return UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(this);
 }
 
 void AKitsuneCharacter::OnDetectionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

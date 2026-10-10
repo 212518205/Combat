@@ -1,9 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Game/KitsunePlayerState.h"
-#include"AbilitySyetem/KitsuneAbilitySystemComponent.h"
-#include"AbilitySyetem/KitsuneAttributeSet.h"
+#include"AbilitySystem/KitsuneAbilitySystemComponent.h"
+#include"AbilitySystem/KitsuneAttributeSet.h"
 #include "Net/UnrealNetwork.h"
 
 AKitsunePlayerState::AKitsunePlayerState()

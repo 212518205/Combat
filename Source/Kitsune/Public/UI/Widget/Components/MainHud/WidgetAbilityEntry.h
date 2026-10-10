@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "WidgetAbilityEntry.generated.h"
 
 class UTextBlock;

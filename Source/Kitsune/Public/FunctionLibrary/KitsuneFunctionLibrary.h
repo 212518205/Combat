@@ -1,10 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "FrontendTypes/FrontendEnumTypes.h"
+#include "CommonTypes/EnumTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "KitsuneFunctionLibrary.generated.h"
 
@@ -36,7 +36,7 @@ public:
 	/*** `@BC`   描述: Get Component API   `BC@` ***/
 	static UKitsuneCombatComponent* NativeGetKitsuneCombatComponentFromActor(AActor* Actor);
 	UFUNCTION(BlueprintCallable, Category = "FunctionLibrary",
-		meta = (DisplayName = "Get Kitsune Combate Component", ExpandEnumAsExecs = "OutValidType"))
+		meta = (DisplayName = "Get Kitsune Combat Component", ExpandEnumAsExecs = "OutValidType"))
 	static UKitsuneCombatComponent* BP_GetKitsuneCombatComponentFromActor(AActor* Actor, EKitsuneValidType& OutValidType);
 
 	static UKitsuneAbilitySystemComponent* NativeGetKitsuneASCFromActor(AActor* OwningActor);
@@ -51,7 +51,7 @@ public:
 		meta = (DisplayName = "Check Chance Hit Result", ExpandBoolAsExecs = "OutHitResult"))
 	static void BP_CheckHitResult(const float HitChance, bool& OutHitResult);
 
-	UFUNCTION(BlueprintPure, Category = "FunctionLibrary|")
+	UFUNCTION(BlueprintPure, Category = "FunctionLibrary")
 	static bool IsHostileToActor(AActor* QueryActor, AActor* TargetActor);
 
 };

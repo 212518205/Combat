@@ -1,9 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FrontendTypes/FrontendEnumTypes.h"
+#include "CommonTypes/EnumTypes.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "MenuEntryData.generated.h"
 
@@ -36,7 +36,7 @@ public:
 	int32 RequestLevel = 1;
 
 	UPROPERTY(BlueprintReadOnly)
-	ETileViewEntryType EntryType;
+	EListEntryIconStyle EntryType;
 	
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag ScreenToOpen;

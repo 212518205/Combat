@@ -6,7 +6,7 @@
 #include "Inventory/InventoryItemTrait.h"
 #include "ItemTrait_Stack.generated.h"
 
-class UInventorySystem;
+
 /**
  * 
  */

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "GameFramework/PlayerController.h"
 #include "KitsunePlayerControllerBase.generated.h"
 

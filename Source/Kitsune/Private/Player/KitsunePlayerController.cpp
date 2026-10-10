@@ -1,11 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Player/KitsunePlayerController.h"
 
 #include "CommonInputModeTypes.h"
 #include "UIManagerSubsystem.h"
-#include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
+#include "AbilitySystem/KitsuneAbilitySystemComponent.h"
 #include"Characters/KitsuneCharacter.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"

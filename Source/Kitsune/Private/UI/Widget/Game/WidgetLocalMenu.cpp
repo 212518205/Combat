@@ -1,11 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Widget/Game/WidgetLocalMenu.h"
 
 #include "UIManagerSubsystem.h"
 #include "Components/WrapBox.h"
-#include "FrontendTypes/FrontendStructTypes.h"
+#include "CommonTypes/StructTypes.h"
 #include "UI/DataObjects/Inventory/MenuEntryData.h"
 #include "UI/Widget/Components/Entry/MenuEntryMapping.h"
 #include "UI/Widget/Components/Entry/Menu/MenuEntryBase.h"
@@ -34,7 +34,7 @@ void UWidgetLocalMenu::LoadAllMenuTileData()
         EntryData->DisplayIcon = TileRow->Icon.LoadSynchronous();
         EntryData->DisplayName = TileRow->DisplayName;
         EntryData->HotKeyText = TileRow->HotKeyText;
-        EntryData->ShowAsNewText = TileRow->bIsShowAsNew ? FText::FromString(TEXT("新")) : FText::GetEmpty();
+        EntryData->ShowAsNewText = TileRow->bShowAsNew ? FText::FromString(TEXT("新")) : FText::GetEmpty();
         EntryData->RequestLevel = TileRow->RequiredLevel;
         EntryData->EntryType = TileRow->EntryType;
         EntryData->ScreenToOpen = TileRow->ScreenToOpen;

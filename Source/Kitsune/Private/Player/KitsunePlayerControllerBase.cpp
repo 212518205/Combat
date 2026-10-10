@@ -6,7 +6,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Characters/KitsuneCharacter.h"
-#include "Component/Combat/KitsuneCombatComponent.h"
 #include "Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "GameFramework/GameModeBase.h"

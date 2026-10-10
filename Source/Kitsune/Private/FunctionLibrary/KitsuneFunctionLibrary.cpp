@@ -1,11 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GenericTeamAgentInterface.h"
-#include "AbilitySyetem/KitsuneAbilitySystemComponent.h"
+#include "AbilitySystem/KitsuneAbilitySystemComponent.h"
 #include "FunctionLibrary/KitsuneTeamStatics.h"
 #include "Interfaces/PawnCombatInterface.h"
 
@@ -49,7 +47,7 @@ UKitsuneCombatComponent* UKitsuneFunctionLibrary::BP_GetKitsuneCombatComponentFr
 {
 	UKitsuneCombatComponent* KitsuneCombatComponent = NativeGetKitsuneCombatComponentFromActor(Actor);
 
-	OutValidType = KitsuneCombatComponent ? EKitsuneValidType::Valid : EKitsuneValidType::InValid;
+	OutValidType = KitsuneCombatComponent ? EKitsuneValidType::Valid : EKitsuneValidType::Invalid;
 
 	return KitsuneCombatComponent;
 }
@@ -63,7 +61,7 @@ UKitsuneAbilitySystemComponent* UKitsuneFunctionLibrary::BP_GetKitsuneAbilitySys
 	AActor* OwningActor, EKitsuneValidType& OutValidType)
 {
 	UKitsuneAbilitySystemComponent* KitsuneAbilitySystemComponent = NativeGetKitsuneASCFromActor(OwningActor);
-	OutValidType = KitsuneAbilitySystemComponent ? EKitsuneValidType::Valid : EKitsuneValidType::InValid;
+	OutValidType = KitsuneAbilitySystemComponent ? EKitsuneValidType::Valid : EKitsuneValidType::Invalid;
 
 	return KitsuneAbilitySystemComponent;
 }

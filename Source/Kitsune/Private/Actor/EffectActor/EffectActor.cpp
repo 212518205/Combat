@@ -1,9 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Actor/EffectActor/EffectActor.h"
 
-#include "AbilitySyetem/KitsuneAttributeSet.h"
+#include "AbilitySystem/KitsuneAttributeSet.h"
 #include"AbilitySystemBlueprintLibrary.h"
 
 // Sets default values
@@ -26,7 +24,7 @@ void AEffectActor::ApplyEffectToTarget(AActor* TargetActor, const TSubclassOf<UG
 	FActiveGameplayEffectHandle ActiveEffectHandle = TargetAsc->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
-	if (InfiniteGameplayEffectRemovePolicy==EGameplayEffectRemovePolicy::EOverlapEnd&&bIsInfinite)
+	if (InfiniteGameplayEffectRemovePolicy==EGameplayEffectRemovePolicy::OverlapEnd&&bIsInfinite)
 	{
 		RemoveActiveEffectHandle.Add(ActiveEffectHandle, TargetAsc);
 	}
@@ -34,15 +32,15 @@ void AEffectActor::ApplyEffectToTarget(AActor* TargetActor, const TSubclassOf<UG
 
 void AEffectActor::OverlapBegin(AActor* TargetActor)
 {
-	if (InstantGameplayEffectApplyPolicy==EGameplayEffectApplyPolicy::EOverlapBegin)
+	if (InstantGameplayEffectApplyPolicy==EGameplayEffectApplyPolicy::OverlapBegin)
 	{
 		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
 	}
-	if (DurationGameplayEffectApplyPolicy == EGameplayEffectApplyPolicy::EOverlapBegin)
+	if (DurationGameplayEffectApplyPolicy == EGameplayEffectApplyPolicy::OverlapBegin)
 	{
 		ApplyEffectToTarget(TargetActor,DurationGameplayEffectClass);
 	}
-	if (InfiniteGameplayEffectApplyPolicy == EGameplayEffectApplyPolicy::EOverlapBegin)
+	if (InfiniteGameplayEffectApplyPolicy == EGameplayEffectApplyPolicy::OverlapBegin)
 	{
 		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
 	}

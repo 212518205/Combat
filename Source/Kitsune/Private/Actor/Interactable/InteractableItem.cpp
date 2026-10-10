@@ -1,9 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Actor/Interactable/InteractableItem.h"
 
-#include "FrontendDebugHelper.h"
+#include "DebugHelper.h"
 #include "Component/Interaction/InteractionComponent.h"
 #include "Components/BoxComponent.h"
 #include "Interfaces/PawnInteractInterface.h"
