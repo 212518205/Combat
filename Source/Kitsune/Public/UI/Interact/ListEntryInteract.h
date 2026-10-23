@@ -8,7 +8,7 @@
 
 class UInventoryItemInstance;
 class UImage;
-class UItemTrait_Interact;
+class UInventoryItemTrait_Interact;
 /**
  * 
  */
@@ -34,7 +34,7 @@ protected:
 
 private:
 	UPROPERTY(Transient)
-	TObjectPtr<UItemTrait_Interact> CachedInteractTrait;
+	TObjectPtr<UInventoryItemTrait_Interact> CachedInteractTrait;
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UInventoryItemInstance> CachedItemInstance;

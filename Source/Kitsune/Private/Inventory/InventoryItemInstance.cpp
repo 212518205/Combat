@@ -32,7 +32,6 @@ namespace
 
 UInventoryItemInstance::UInventoryItemInstance()
 {
-	ItemID = FGuid::NewGuid();
 }
 
 void UInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -41,7 +40,6 @@ void UInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 
 	DOREPLIFETIME(ThisClass, ItemDef);
 	DOREPLIFETIME(ThisClass, ItemFeatures);
-	DOREPLIFETIME(ThisClass, ItemID);
 	DOREPLIFETIME(ThisClass, StackCount);
 }
 
@@ -55,7 +53,6 @@ UInventoryItemInstance* UInventoryItemInstance::CreateInstanceCopy(UObject* NewO
 	UInventoryItemInstance* Copy = NewObject<UInventoryItemInstance>(NewOuter);
 	Copy->ItemDef = ItemDef;
 	Copy->ItemFeatures = ItemFeatures;
-	Copy->ItemID = ItemID;
 	Copy->StackCount = StackCount;
 	
 	return Copy;

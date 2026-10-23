@@ -1,96 +1,170 @@
-# Kitsune-UE5-Framework - UE5 模块化游戏战斗框架原型
+# Kitsune - UE5 模块化战斗框架原型
+
+> 基于 **Unreal Engine 5.6** 的 C++ 战斗框架原型。
+> 本项目的核心目标并非制作一个内容完整的游戏，而是**工程实践**：构建一套数据驱动、高度模块化、符合生产级开发规范的客户端架构范本。
 
 ## 项目概述
 
-这是一个基于 Unreal Engine 5.6 的 C++ 战斗框架原型。**本项目的核心目标并非制作一个内容完整的游戏，而是工程实践，旨在构建一个数据驱动、高度模块化、符合生产级开发规范的客户端架构范本。**
+项目聚焦 UE5 的几套核心框架：`Gameplay Ability System (GAS)`、自实现的 `MVVM` 数据驱动 UI、基于接口的交互系统、组件化的背包与存档，以及行为树驱动的 AI。
 
-项目预计实践 Unreal Engine 5 的核心框架，包括` Gameplay Ability System (GAS)` 技能架构、`MVVM (Model-View-ViewModel) `数据驱动UI、**行为树AI**决策系统以及基于接口的泛化交互系统。所有系统设计均以“可配置”、“可扩展”、“低耦合”为首要原则，为快速的功能迭代与复杂的游戏逻辑管理提供自身所了解的最优解决方案。
+所有系统的设计都以 **可配置、可扩展、低耦合** 为首要原则：能力形态由继承层级表达、内容分类由 `GameplayTag` / `DataAsset` 表达、UI 与逻辑之间只通过 ViewModel 的委托通信。
 
-## 系统架构
+> 当前状态：GAS 能力父类分层已完成（`Charged` 完整实现，`Channeled` / `Toggle` / `Passive` 为骨架）；背包系统已完成组件化重构；UI 层已切换为 ViewModel 注入式绑定。
 
-> **设计理念**：数据驱动，模块解耦。游戏逻辑与表现分离，系统功能通过数据资产配置，核心模块间通过接口和事件通信。
->
-> 
+---
 
-## ✨ 特性与设计理念
+## ✨ 核心模块
 
-- **模块化战斗系统**：基于 **GAS**，将技能、属性、效果彻底组件化。所有技能逻辑（如Player连招、伤害计算）均由可复用的 `GameplayAbility` 和可配置的 `DataAsset` 驱动，脱离硬编码。
-- **数据驱动的 UI 框架**：独立实现了 **MVVM 模式**。`ViewModel` 层自动同步角色属性（生命值、能量、等级）、技能状态、背包状态等至UMG界面，实现了业务逻辑与表现层的彻底解耦，使UI开发更高效、更易测试。
-- **可扩展的 AI 决策层**：利用 **行为树** 与 **环境查询系统 (EQS)** 构建AI。将行为（如侧移、概率攻击）拆分为独立的 `BTTask` 和 `BTService`，支持通过行为树资产灵活组合复杂行为逻辑。
-- **基于接口的交互系统**：通过 `InteractComponent` 为主要组件接口定义角色与世界的交互契约。场景中的 `EffectActor`（如血瓶）仅需配置不同的 `GameplayEffect`，即可实现多样化的交互效果，并可以通过`InteractableItem`作为基类与背包系统与交互组件共同协作联动，系统扩展性极强。
-- **生产级开发规范**：项目结构严格遵循 `Public/Private` 头文件分离，代码模块清晰（`Kitsune.Build.cs` 管理），并实践了输入映射、游戏用户设置保存等完整功能流程。
+### 1. 分层的能力框架（GAS）
 
-## 📁 项目结构详解
-本项目采用清晰、模块化的C++代码结构，严格遵循Unreal Engine模块规范。以下为主要目录概览：
+`UKitsuneGameplayAbility` 是**唯一基类**，承载所有能力共用的一切：UI 数据（图标 / 键位图标 / 显示名 / 优先级 / 冷却 Tag）、`AbilityTypeTag`、玩家/战斗组件便捷函数、伤害 `GameplayEffectSpec` 构造、MotionWarping。
+
+在此之上按**终止语义**分支出 6 个语义父类（不再用 `IsA` 判定 UI，改用 `AbilityTypeTag`）：
+
+| 父类 | 触发源 | 花费/冷却结算 | 谁负责 End | 蓝图钩子 |
+|---|---|---|---|---|
+| `UKitsuneInstantAbility` | 输入 / 代码 | 激活时 | **框架写死**（契约=无异步） | `K2_OnInstantExecute` |
+| `UKitsuneInputAbility` | 输入 | 派生自己调 | **派生**（蒙太奇 Task 三回调） | `K2_OnPressed` / `K2_OnReleased` |
+| `UKitsuneChargedAbility` | 输入 | **松手且达标才结算** | 框架 | `K2_OnChargeBegin` / `K2_OnCharged` / `K2_OnChargeCancelled` |
+| `UKitsuneChanneledAbility` | 输入 | 按下即结算 | 框架（松开时） | *待实现* |
+| `UKitsuneToggleAbility` | 输入 | 第一次按下结算 | 框架（再按一次） | *待实现* |
+| `UKitsuneEventAbility` | `AbilityTriggers` / `SendGameplayEvent` | 激活时 | **派生** | 引擎的 `Event ActivateAbilityFromEvent` |
+| `UKitsunePassiveAbility` | 授予（`OnGiven`） | 无 | 永不（常驻） | *待实现* |
+
+**钩子机制统一为「方式二」**：C++ 侧是普通 `virtual On*`（蓝图里看不到），蓝图侧是 `K2_On*`（`BlueprintImplementableEvent`，可选实现、永远会被调用）。因此蓝图**不需要任何 `Call Parent`**，也不用担心「重写了却忘了调父级」。
+
+选型规则、行为契约与决策树见本地设计文档 `Kitsune/GAS能力框架重构/00_总览与执行顺序.md`（该目录仅本地保留，未纳入仓库）。
+
+### 2. AbilitySystemComponent 与输入路由
+
+`UKitsuneAbilitySystemComponent` 把「输入事件」映射到「能力实例」：
 
 ```
-Kitsune
-├── Private/Public
-│   ├── AbilitySystem/     # GAS核心：技能组件、属性集(AttributeSet)、伤害计算(ExecCalc)
-│   ├── Actor/            # 场景交互物基类(EffectActor)与武器系统
-│   ├── AI/               # AI控制器、行为树任务(BTTask)与服务(BTService)
-│   ├── Characters/       # 角色基类、动画实例及角色数据资产(DataAsset)
-│   ├── UI/               # **MVVM框架核心**：ViewModel, DataObject, 控件组件
-│   ├── Input/           # 增强输入(Enhanced Input)配置与管理
-│   └── GameSettings/    # 游戏设置与存档系统
-└── ...
+InputTag 按下 → 未激活 → TryActivateAbility（激活）
+              → 已激活 → AbilitySpecInputPressed（转发，支撑蓄力/引导/开关）
+InputTag 松开 → 已激活 → AbilitySpecInputReleased（转发，支撑「松手结算」）
 ```
 
-详细到文件粒度的完整目录结构，请参阅：[项目源代码结构详情](PROJECT_STRUCTURE.md) 可能并未及时更新。
-自2026|3|18起开始记录开发日志，每一版: [每次打开项目日志](Source/Kitsune/DevLog.md)
+能力的增删不再由 ASC 反向调用 UI，而是广播 `OnAbilityNumChanged`，由 `PlayerViewModel` 订阅后重建技能栏数据 —— ASC 因此不依赖任何 UI 类型。
+
+### 3. 数据驱动 UI（MVVM）
+
+- `UViewModelBase`：`GetViewModel<T>(Controller, Pawn)` 创建实例，`NativeInitialize(APawn*)` 完成初始化，并通过 `BindAbilitySystemComponent` / `BindCombatComponent` / `BindInventorySystemComponent` 三个虚函数把组件能力注入派生 ViewModel（不再持有 `OwningController` / `OwningPawn`）。
+- `UAttributeViewModel`：把 `AttributeSet` 的属性变化回调收敛成 `BlueprintAssignable` 委托（血量 / 体力 / 精力 / 受击）。
+- `UPlayerViewModel`：技能的增删、背包物品变化、当前武器切换全部由组件委托驱动，维护「镜像数据」并广播给 UI。
+- `UUIManagerSubsystem` 管理 Widget 生命周期；`UListDataObject` 系列把任意数据源抽象为可被 `CommonListView` 绑定的列表项（按键重映射、选项设置、背包格子都走这套）。
+
+### 4. 背包与物品
+
+| 层 | 类 | 职责 |
+|---|---|---|
+| 数据 | `UInventoryItemDefinition` | 静态定义，用 `Instanced` 的 **Trait** 组合能力：`Display` / `Stack` / `Interact` / `Use` / `Trade` |
+| 实例 | `UInventoryItemInstance` | 运行时实例：堆叠数、`EInventoryItemFeature` 位掩码、序列化 |
+| 容器 | `UInventoryComponent` | 继承 `UKitsuneExtensionComponent` + `ISavableInterface`，FastArray 复制，服务端 RPC `AddItem` / `UnlockCategorySlots`，分类容量与金币消耗 |
+| 展示 | `FInventoryCategoryConfig` | 分类名、初始解锁格数、单次解锁数、解锁花费、固定显示的锁格数、排序 |
+
+背包分类容量走 `TArray<FCategoryCapacityEntry>` 并随存档持久化（存档版本号 `4`），归类 UI 通过 `PlayerViewModel` 暴露的委托增量刷新，不再整表重建。
+
+### 5. 交互与战斗
+
+- **交互**：`IPawnInteractInterface` 定义契约，`UInteractionComponent` 负责扫描与转发，`AInteractable` 作为场景物基类，`ListEntryInteract` 在 UI 侧呈现可交互条目。
+- **战斗**：`UKitsuneCombatComponent` 为基类，玩家/敌人各自派生；武器由 `AWeaponBase` + `DataAsset` 配置，装备切换通过 `OnCurrentWeaponChanged` 广播通知 UI，而不是直接写 ViewModel。
+- **阵营**：`UDataAssetFactionMatrix` 配置阵营矩阵，由 `UKitsuneFactionSubsystem` 在服务端加载，替代早期「比较 TeamID」的判敌方式。
+
+### 6. AI
+
+`AKitsuneAIController` 搭载行为树；`BTTask_RotateToFaceTarget` 等任务负责执行行为，`BTService_OrientToTargetActor` 等服务提供持续决策信息，任务与服务均可独立复用。
+
+### 7. 存档
+
+`UKitsuneSaveSubsystem` 统一读写：玩家存档按 `PlayerUID` 分槽（`MakePlayerSlotName`），全局数据走 `UGlobalSaveGame`，背包等业务对象只要实现 `ISavableInterface` 即可接入。存档带 `SaveVersion`，字段结构调整时通过版本号做迁移。
+
+---
+
+## 📁 目录结构
+
+```
+Source/Kitsune/
+├── Public|Private/
+│   ├── AbilitySystem/     # KitsuneGameplayAbility + 6 个语义父类、AttributeSet、ExecCalc
+│   ├── Actor/             # EffectActor / Interactable / Weapon
+│   ├── AI/                # AIController、BTTask、BTService
+│   ├── AsyncAction/       # 异步蓝图节点（冷却监听、软引用 UI 入栈等）
+│   ├── Characters/        # 角色基类、AnimInstance、角色数据资产
+│   ├── CommonTypes/       # 跨层枚举与结构体（UI 数据、背包条目等）
+│   ├── Component/         # ExtensionComponent / Combat / Interaction / UI(WidgetComponent)
+│   ├── FunctionLibrary/   # 蓝图函数库（含 Inventory 相关查询）
+│   ├── Game/              # GameMode / GameState / PlayerState / 存档 / Subsystem / 阵营矩阵
+│   ├── GameplayTag/       # 原生 GameplayTag 声明与定义
+│   ├── GameSettings/      # 游戏设置项
+│   ├── Input/             # Enhanced Input 配置与管理
+│   ├── Interfaces/        # Lockable / PawnCombat / PawnInteract / Savable
+│   ├── Inventory/         # Definition / Instance / Trait / Component
+│   ├── Player/            # PlayerController
+│   ├── UI/                # ViewModel / Widget / DataObjects / HUD / Interact
+│   └── UISettings/        # UI 相关 DeveloperSettings
+├── Kitsune.Build.cs
+└── DevLog.md
+```
+
+内容侧统一放在 `Content/BluePrints/`（能力、角色、UI、地图、输入配置）与 `Content/OutSide`、`Content/OutsideAssets`（外部美术资源）。
+
+---
+
+## 📚 设计文档
+
+> 以下文档位于仓库根目录的 `Kitsune/` 下，**仅本地保留、未纳入版本控制**（已在 `.gitignore` 中忽略），克隆仓库不会包含它们。
+
+| 文档 | 内容 |
+|---|---|
+| `Kitsune/GAS能力框架重构/00_总览与执行顺序.md` | 父类分层方案、阶段划分（S1~S4）、行为契约表、选型决策树 |
+| `Kitsune/GAS_ParentClasses/README.md` | 能力父类的另一种组织方式（参考集，另有 S1~S4 伪镜像文件） |
+| `Kitsune/ARCHITECTURE_REVIEW.md` | 架构评审记录 |
+| `Kitsune/ARCH_ISSUES.md` | 已知架构问题清单 |
+| `Kitsune/NAMING_TODO.md` | 命名统一待办 |
+| `Kitsune/Kitsune_UI架构讨论记录.md` | MVVM 分层与 Widget 组织方式的讨论 |
+| `Source/Kitsune/DevLog.md` | 开发日志（新建，内容待补，此文件在仓库内） |
+
+---
 
 ## 🚀 快速开始
 
 ### 环境要求
-- **引擎**: Unreal Engine 5.6
-- **插件**: Gameplay Ability System, Common UI, Motion Warping 等相关插件
-- **IDE**: Visual Studio 2022 或 Rider for Unreal  (个人使用VS 2022 + Resharper插件)
+
+- **引擎**：Unreal Engine 5.6
+- **插件**：Gameplay Abilities、Common UI、Enhanced Input、Motion Warping、Modeling Tools Editor Mode
+- **IDE**：Visual Studio 2022 或 Rider for Unreal（个人使用 VS 2022 + ReSharper）
 
 ### 构建与运行
-1.  克隆仓库：
-    ```bash
-    git clone https://github.com/212518205/Combat.git
-    ```
-2.  使用 UE5.6 打开 `Kitsune.uproject`(建议从Visual Studio编译运行)
-3.  首次打开将提示编译C++模块，点击“Yes”确认。
-4.  编译成功后，在内容浏览器中打开演示关卡(Content/Blueprints/Maps/TestPawn，是的，Pawn是笔误，测试地图就这个名字)
-5.  点击“运行”即可查看框架原型。
 
-## 🧪 技术演示与截图
+1. 克隆仓库：
 
-本项目侧重于框架逻辑验证。以下演示展示了系统的**数据驱动特性**与**模块化能力**：
+   ```bash
+   git clone https://github.com/212518205/Combat.git
+   ```
 
-1.  **技能系统配置**：在编辑器中直接调整 `DataAsset` 中的伤害值等，运行时立即生效，无需重启游戏。
-2.  **AI行为调整**：修改行为树中的概率权重或EQS查询半径，AI的决策逻辑与移动模式实时改变。
-3.  **UI数据绑定**：角色受伤后，HUD上的血条通过 `AttributeViewModel` 自动同步更新(Calculate类里做计算，AttributeSet类里有做限制和事件通知)
-
-效果展示：https://b23.tv/vSw7Bco b站BV号：BV1DvBpB3EAt
-
-## 🔧 核心模块深度解析
-
-### 1. Gameplay Ability System (GAS) 技能框架
-- **设计**：`KitsuneAbilitySystemComponent` 作为能力系统组件，管理所有 `GameplayAbility` 和 `GameplayEffect`。
-- **实现**：`ExecCalcDamageTaken` 展示了自定义伤害计算流程，支持复杂的公式扩展。所有技能参数均由 `DataAsset` 配置。
-
-### 2. MVVM 数据驱动 UI
-- **设计**：完全自主实现的MVVM层，包含 `ViewModelBase`、`AttributeViewModel`、`PlayerViewModel`、 等。
-- **实现**：`UIManagerSubsystem` 全局管理UI生命周期。`ListDataObject` 系列类将任意数据源（如设置选项）抽象为可被 `CommonListView` 绑定的列表项，实现了按键重映射等复杂UI功能。
-
-### 3. 行为树与AI决策
-- **设计**：`KitsuneAIController` 搭载行为树，AI逻辑与控制器逻辑分离。
-- **实现**：`BTService_OrientToTargetActor` 等服务提供持续决策信息，`BTTask_RotateToFaceTarget` 等任务执行具体行为，两者均可独立复用。
-
-## 📝 后续规划
-- [ ] 编写更详细的模块技术设计文档。
-- [ ] 为关键类添加单元测试示例。
-- [ ] 实现一个简单的网络同步原型，展示属性与技能的复制ing。
-- [ ] 扩展工具链，开发简易的数据资产编辑器辅助工具。
-
-## 📄 许可证
-
-本项目采用 **MIT 许可证**。这是一种高度宽松的许可证，允许他人自由使用、复制、修改、合并、发布你的代码，唯一要求是保留原作者的版权和许可声明。
-
+2. 使用 UE 5.6 打开 `Kitsune.uproject`（建议从 IDE 编译后启动）。
+3. 首次打开会提示编译 C++ 模块，确认即可。
+4. 默认启动关卡为 `Content/BluePrints/Maps/Start`；想直接看战斗原型可打开测试关卡 `Content/BluePrints/Maps/TestPawn`。
+5. 运行时默认 GameMode 为 `BP_KitsuneGameModeBase`。
 
 ---
 
-**欢迎探讨！** 如果你对这个框架的设计或实现有任何疑问或建议，欢迎通过 Issues 或 Pull Requests 参与贡献。
+## 📝 后续规划
+
+- [ ] 补齐 `UKitsuneChanneledAbility` / `UKitsuneToggleAbility` / `UKitsunePassiveAbility` 的实现（当前为骨架）。
+- [ ] 连招（Combo）按「蓝图配方」实现，不提供 C++ 父类：一条蒙太奇多 Section + 动画通知开输入窗口。
+- [ ] ASC 内部输入缓冲（Pressed / Held / Released 队列 + 每帧 `ProcessAbilityInput`），替代「做不成独立组件」的旧方案。
+- [ ] 联机预测：能力激活、属性、背包的预测与回滚。
+- [ ] 补全设计文档与开发日志，为关键类补单元测试示例。
+- [ ] 编辑器辅助工具（数据资产批量校验 / 命名检查）。
+
+---
+
+## 📄 许可证
+
+本项目采用 **MIT 许可证**：允许自由使用、复制、修改、合并、发布，唯一要求是保留原作者的版权与许可声明。
+
+---
+
+**欢迎探讨！** 对框架设计或实现有疑问、建议，欢迎通过 Issues 或 Pull Requests 参与。

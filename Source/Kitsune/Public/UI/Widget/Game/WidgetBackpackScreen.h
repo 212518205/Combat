@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Inventory/InventorySystemComponent.h"
+#include "Inventory/InventoryComponent.h"
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "WidgetBackpackScreen.generated.h"
 
@@ -21,7 +21,7 @@ protected:
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnInitialized() override;
 	
-	TArray<TPair<FName, FInventoryCategoryGroup>> GetAllCategoryItems();
+	TArray<TPair<FName, FText>> GetAllCategoryItems();
 	
 	UPROPERTY(meta = (BindWidget))
 	UKitsuneTabListWidgetBase* TabList_BagCategory;
@@ -33,9 +33,14 @@ protected:
 	void OnTabSelected(const FName TabID);
 	
 	UFUNCTION()
-	void OnCapacityChanged(FName CategoryID, int32 CategoryCapacity);
+	void HandleCapacityChanged(FName CategoryID, int32 CategoryCapacity);
+	
+	UFUNCTION()
+	void HandleInventoryItemChanged(UInventoryItemInstance* Instance, EInventoryItemChangeType ChangeType);
 	
 private:
-	TArray<UInventorySlotData*> BuildCategorySlots(const FName& CategoryID, TArray<UInventorySlotData*>& Slots);
+	void RefreshCurrentTab();
+	
+	FName CurrentTabID = NAME_None; 
 	
 };

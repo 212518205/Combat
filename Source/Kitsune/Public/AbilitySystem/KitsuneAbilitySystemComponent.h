@@ -9,6 +9,8 @@
  * 
  */
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAbilityNumChanged, FGameplayAbilitySpec, EAbilityChangeType);
+
 UCLASS()
 class KITSUNE_API UKitsuneAbilitySystemComponent : public UAbilitySystemComponent
 {
@@ -22,10 +24,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Trigger")
 	bool TryActivateAbilityByTag(FGameplayTag ActivateAbilityTag);
 	
+	FOnAbilityNumChanged OnAbilityNumChanged;
+	
 protected:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual void OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	
-	void NotifyAbilityChangedToUI(const FGameplayAbilitySpec& AbilitySpec, const EAbilityChangeType AbilityChangedType) const;
+	static bool MatchesInputTag(const FGameplayAbilitySpec& Spec, const FGameplayTag& InputTag); 
 	
 };

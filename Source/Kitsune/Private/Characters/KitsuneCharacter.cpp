@@ -9,7 +9,7 @@
 #include"GameFramework/CharacterMovementComponent.h"
 #include "Component/Interaction/InteractionComponent.h"
 #include "Components/BoxComponent.h"
-#include "Inventory/InventorySystemComponent.h"
+#include "Inventory/InventoryComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
 #include "UI/ViewModel/AttributeViewModel.h"
@@ -27,7 +27,7 @@ AKitsuneCharacter::AKitsuneCharacter()
 
 	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractComponent"));
-	InventorySystemComp = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("InventorySystemComponent"));
+	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
 	DetectionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("DetectionBox"));
 	DetectionBox->SetupAttachment(GetRootComponent());

@@ -5,15 +5,13 @@
 
 #include "CommonLazyImage.h"
 #include "CommonTextBlock.h"
-#include "Inventory/InventoryItemDefinition.h"
+#include "DebugHelper.h"
+#include "CommonTypes/StructTypes.h"
+#include "FunctionLibrary/KitsuneInventoryFunctionLibrary.h"
+#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemInstance.h"
-#include "Inventory/InventorySystemComponent.h"
-#include "Inventory/Trait/ItemTrait_Display.h"
-
-void UBackpackEntryBase::RefreshEntry() const
-{
-	RefreshStackCount();
-}
+#include "Inventory/Trait/InventoryItemTrait_Display.h"
 
 void UBackpackEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
@@ -30,14 +28,14 @@ void UBackpackEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 	
 	if (const UInventoryItemInstance* ItemInstance = CachedSlotData->ItemInstance)
 	{
-		if (const UItemTrait_Display* Trait_Display = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Display>(ItemInstance->GetItemDef()))
+		if (const UInventoryItemTrait_Display* Trait_Display = UInventoryFunctionLibrary::FindItemDefinitionTrait<UInventoryItemTrait_Display>(ItemInstance->GetItemDef()))
 		{
 			SetButtonIcon(Trait_Display->DisplayIcon.LoadSynchronous());
 		}
 		
 		RefreshStackCount();
 		
-		const bool bShowLockFlag = !ItemInstance->HasFeature(EItemFeature::Discardable) || ItemInstance->HasFeature(EItemFeature::Locked);
+		const bool bShowLockFlag = !ItemInstance->HasFeature(EInventoryItemFeature::Discardable) || ItemInstance->HasFeature(EInventoryItemFeature::Locked);
 		Image_LockFlag->SetVisibility(bShowLockFlag ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 		
 		TextBlock_ShowNew->SetText(FText::FromString(TEXT("新")));
@@ -46,7 +44,6 @@ void UBackpackEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 	else if (CachedSlotData->bIsLocked)
 	{
 		ClearEntryStyle();
-		// 锁图放在按钮图标上。LoadSynchronous 未配置/路径错误时会返回 nullptr,这里打日志方便排查。
 		if (UTexture2D* LockTexture = LockBackgroundIcon.LoadSynchronous())
 		{
 			SetButtonIcon(LockTexture);
@@ -54,7 +51,7 @@ void UBackpackEntryBase::NativeOnListItemObjectSet(UObject* ListItemObject)
 		else
 		{
 			SetButtonIcon(nullptr);
-			UE_LOG(LogTemp, Warning, TEXT("[BackpackEntry] LockBackgroundIcon 未配置或加载失败,锁定格不显示锁图"));
+			Debug::Print(TEXT("[BackpackEntry] LockBackgroundIcon 未配置或加载失败,锁定格不显示锁图"));
 		}
 		Button_Icon->SetIsEnabled(true);
 	}else
@@ -98,9 +95,29 @@ UInventoryItemInstance* UBackpackEntryBase::GetItemInstance() const
 	return CachedSlotData->ItemInstance;
 }
 
+FText UBackpackEntryBase::GetUnlockMessage() const
+{
+	if (!CachedSlotData)return FText::GetEmpty();
+
+	int32 SlotsPerUnlock = 1;
+	const TMap<FName, FInventoryCategoryConfig> CategoryInfo =
+		UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(
+			KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
+	if (const FInventoryCategoryConfig* Info = CategoryInfo.Find(CachedSlotData->CategoryID))
+	{
+		SlotsPerUnlock = Info->SlotsPerUnlock;
+	}
+
+	return FText::Format(
+		NSLOCTEXT("Inventory", "UnlockSlotConfirm", "是否花费 {0} 金币解锁 {1} 个格子？"),
+		FText::AsNumber(CachedSlotData->UnlockCost),
+		FText::AsNumber(SlotsPerUnlock)
+	);
+}
+
 void UBackpackEntryBase::RefreshStackCount() const
 {
-	if (const UInventoryItemInstance* ItemInstance = GetItemInstance(); ItemInstance && ItemInstance->HasFeature(EItemFeature::Stackable))
+	if (CachedSlotData && CachedSlotData->StackCount > 0)
 	{
 		TextBlock_StackCount->SetText(FText::AsNumber(CachedSlotData->StackCount));
 	}

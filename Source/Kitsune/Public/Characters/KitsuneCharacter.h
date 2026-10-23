@@ -10,7 +10,7 @@
 
 class UPlayerViewModel;
 class UBoxComponent;
-class UInventorySystemComponent;
+class UInventoryComponent;
 class UPlayerCombatComponent;
 /**
  * 
@@ -37,7 +37,7 @@ public:
 	
 	void BindAndLoadSave() const;
 	
-	UInventorySystemComponent* GetInventorySystemComponent() const { return InventorySystemComp; }
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComp; }
 
 protected:
 	/*** `@BC`   描述: 初始化Gameplay框架相关信息   `BC@` ***/
@@ -53,7 +53,7 @@ protected:
 	TObjectPtr<UInteractionComponent> InteractComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	TObjectPtr<UInventorySystemComponent> InventorySystemComp; 
+	TObjectPtr<UInventoryComponent> InventoryComp; 
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UBoxComponent> DetectionBox;

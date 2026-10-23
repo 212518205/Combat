@@ -1,5 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿
 #pragma once
 
 #include "CoreMinimal.h"
@@ -18,7 +17,7 @@ class KITSUNE_API UAttributeViewModel : public UViewModelBase
 
 public:
 
-	virtual bool NativeInitialize() override;
+	virtual bool NativeInitialize(APawn* InPawn) override;
 
 	/*** `@BC`   描述: 已捕获的属性值变化后需在蓝图处理   `BC@` ***/
 	UPROPERTY(BlueprintAssignable, Category = "ViewModel | Delegate")
@@ -37,6 +36,8 @@ public:
 	int32 GetLocalPlayerLevel() const { return LocalPlayerLevel; }
 
 protected:
+	virtual void BindAbilitySystemComponent(UKitsuneAbilitySystemComponent* ASC) override;
+	
 	/*** `@BC`   描述: ViewModel需捕获的属性值   `BC@` ***/
 	UPROPERTY(BlueprintReadOnly,Category = "ViewModel | Attribute")
 	float Health = 0.f;
@@ -63,13 +64,5 @@ protected:
 	/*** `@BC`   描述: 测试，实际修改为初始化0   `BC@` ***/
 	UPROPERTY(BlueprintReadWrite, Category = "ViewModel | Player")
 	int32 LocalPlayerLevel = 20;
-
-	/*** `@BC`   描述: Pawn衍生变量   `BC@` ***/
-	UPROPERTY(BlueprintReadWrite, Category = "Character")
-	TObjectPtr<UKitsuneAbilitySystemComponent> CachedKitsuneASC;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Character")
-	TObjectPtr<UKitsuneAttributeSet> CachedKitsuneAttributeSet;
-
 
 };

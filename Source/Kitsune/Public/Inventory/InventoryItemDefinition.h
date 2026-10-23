@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "InventoryItemTrait.h"
-#include "Inventory/Trait/ItemTrait_Interact.h"
-#include "Inventory/Trait/ItemTrait_Stack.h"
+#include "Inventory/Trait/InventoryItemTrait_Display.h"
+#include "Inventory/Trait/InventoryItemTrait_Interact.h"
+#include "Inventory/Trait/InventoryItemTrait_Stack.h"
+#include "Inventory/Trait/InventoryItemTrait_Use.h"
+#include "Inventory/Trait/InventoryItemTrait_Trade.h"
 #include "InventoryItemDefinition.generated.h"
-
-#define GET_TRAIT(ItemInstance, TraitSuffix) \
-		UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_##TraitSuffix>((ItemInstance)->GetItemDef())
 
 class UInventoryItemTrait;
 /**
@@ -31,27 +31,3 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Instanced)
 	TArray<TObjectPtr<UInventoryItemTrait>> ItemTraits;
 };
-
-UCLASS()
-class KITSUNE_API UInventoryFunctionLibrary : public UBlueprintFunctionLibrary
-{
-	GENERATED_BODY()
-
-public:
-	template<typename ResultType = UInventoryItemTrait>
-	static ResultType* FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef);
-};
-
-template <typename ResultType>
-ResultType* UInventoryFunctionLibrary::FindItemDefinitionTrait(const UInventoryItemDefinition* ItemDef)
-{
-	static_assert(TIsDerivedFrom<ResultType, UInventoryItemTrait>::Value, "ResultType 必须是 UInventoryItemTrait 子类");
-
-	if (ItemDef == nullptr)
-	{
-		return nullptr;
-	}
-
-	UInventoryItemTrait* FoundTrait = ItemDef->FindTraitByClass(ResultType::StaticClass());
-	return Cast<ResultType>(FoundTrait);
-}

@@ -19,7 +19,7 @@ UCLASS()
 class KITSUNE_API UMenuEntryBase : public UCommonUserWidget
 {
 	GENERATED_BODY()
-
+							
 public:
 	UFUNCTION(BlueprintCallable)
 	void NativeOnEntryInitialize(UObject* ListItemObject);

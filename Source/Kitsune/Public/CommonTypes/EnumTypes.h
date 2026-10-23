@@ -42,9 +42,9 @@ enum class EKitsuneSuccessType: uint8
 };
 
 UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EItemFeature : uint32
+enum class EInventoryItemFeature : uint32
 {
-	None = 0 UMETA(Hidden),                    
+	None = 0 UMETA(Hidden),
 	Locked = 1 << 0 UMETA(DisplayName = "已锁定"),
 	Discardable = 1 << 1 UMETA(DisplayName = "可丢弃"),
 	Tradable = 1 << 2 UMETA(DisplayName = "可交易"),
@@ -52,9 +52,8 @@ enum class EItemFeature : uint32
 	Interactable = 1 << 4 UMETA(DisplayName = "可交互"),
 	Equipable = 1 << 5 UMETA(DisplayName = "可装备"),
 	Combinable = 1 << 6 UMETA(DisplayName = "可合成"),
-	Stackable = 1 << 7 UMETA(DisplayName = "可堆叠"),
 };
-ENUM_CLASS_FLAGS(EItemFeature);
+ENUM_CLASS_FLAGS(EInventoryItemFeature);
 
 UENUM(BlueprintType)
 enum class EListEntryIconStyle : uint8
@@ -65,20 +64,12 @@ enum class EListEntryIconStyle : uint8
 };
 
 UENUM()
-enum class EInstanceModifyType
+enum class EInventoryItemChangeType
 {
 	None UMETA(Hidden),
-	AddStackCount,
-	RemoveItem,
-	AddItem,
-};
-
-UENUM(BlueprintType)
-enum class EItemCategory: uint8
-{
-	Equipment UMETA(DisplayName = "装备"),
-	CommonItem UMETA(DisplayName = "常用道具"),
-	QuestItem UMETA(DisplayName = "任务道具"),
+	Added,
+	StackChanged,
+	Removed,
 };
 
 UENUM()

@@ -5,12 +5,12 @@
 
 #include "UIManagerSubsystem.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
-#include "Inventory/InventorySystemComponent.h"
+#include "Inventory/InventoryComponent.h"
 #include "Net/UnrealNetwork.h"
 
 void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
-	if (ItemInstance && ItemInstance->HasFeature(EItemFeature::Interactable))
+	if (ItemInstance && ItemInstance->HasFeature(EInventoryItemFeature::Interactable))
 	{
 		ItemOverlapChange(ItemInstance, EItemInstanceAction::EAddInstance);
 	}
@@ -18,7 +18,7 @@ void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemIns
 
 void UInteractionComponent::RemoveInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
-	if (ItemInstance && ItemInstance->HasFeature(EItemFeature::Interactable))
+	if (ItemInstance && ItemInstance->HasFeature(EInventoryItemFeature::Interactable))
 	{
 		ItemOverlapChange(ItemInstance, EItemInstanceAction::ERemoveInstance);
 	}

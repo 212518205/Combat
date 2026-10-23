@@ -1,10 +1,6 @@
 #include "AbilitySystem/KitsuneAbilitySystemComponent.h"
-
-#include "DebugHelper.h"
 #include "UIManagerSubsystem.h"
-#include "AbilitySystem/Abilities/ActiveGameplayAbility.h"
 #include "AbilitySystem/Abilities/KitsuneGameplayAbility.h"
-#include "Characters/EnemyCharacter.h"
 #include "UI/ViewModel/PlayerViewModel.h"
 
 
@@ -12,11 +8,15 @@ void UKitsuneAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
 {
 	if (!InputTag.IsValid())return;
 
-	for (auto& AbilitySpec:GetActivatableAbilities())
+	for (auto& AbilitySpec : GetActivatableAbilities())
 	{
-		if (!AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))continue;
+		if (!MatchesInputTag(AbilitySpec, InputTag))continue;
 
-		if (!AbilitySpec.IsActive())
+		if (AbilitySpec.IsActive())
+		{
+			AbilitySpecInputPressed(AbilitySpec);
+		}
+		else
 		{
 			TryActivateAbility(AbilitySpec.Handle);
 		}
@@ -25,7 +25,18 @@ void UKitsuneAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
 
 void UKitsuneAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InputTag)
 {
-	 
+	if (!InputTag.IsValid())return;
+
+	for (FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if (!MatchesInputTag(Spec, InputTag))continue;
+		
+		if (Spec.IsActive())
+		{
+			AbilitySpecInputReleased(Spec);
+		}
+	}
+
 }
 
 bool UKitsuneAbilitySystemComponent::TryActivateAbilityByTag(const FGameplayTag ActivateAbilityTag)
@@ -39,11 +50,11 @@ bool UKitsuneAbilitySystemComponent::TryActivateAbilityByTag(const FGameplayTag 
 	{
 		const int32 ActivatableAbilityIndex = FMath::RandRange(0, FoundAbilitySpec.Num() - 1);
 
-		if (const FGameplayAbilitySpec* SpecToActive = FoundAbilitySpec[ActivatableAbilityIndex]; !SpecToActive->IsActive())
+		if (const FGameplayAbilitySpec* SpecToActive = FoundAbilitySpec[ActivatableAbilityIndex]; !SpecToActive->
+			IsActive())
 		{
 			return TryActivateAbility(SpecToActive->Handle);
 		}
-
 	}
 
 	return false;
@@ -52,40 +63,30 @@ bool UKitsuneAbilitySystemComponent::TryActivateAbilityByTag(const FGameplayTag 
 void UKitsuneAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
 	Super::OnGiveAbility(AbilitySpec);
-	
-	if (AbilitySpec.Ability.IsA(UActiveGameplayAbility::StaticClass()))
+
+	if (const UKitsuneGameplayAbility* Ability = Cast<UKitsuneGameplayAbility>(AbilitySpec.Ability))
 	{
-		NotifyAbilityChangedToUI(AbilitySpec, EAbilityChangeType::AddAbility);
+		if (Ability->AbilityTypeTag != KitsuneGameplayTags::Ability_Type_Hidden)
+		{
+			OnAbilityNumChanged.Broadcast(AbilitySpec, EAbilityChangeType::AddAbility);
+		}
 	}
 }
 
 void UKitsuneAbilitySystemComponent::OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
 	Super::OnRemoveAbility(AbilitySpec);
-	
-	if (AbilitySpec.Ability.IsA(UActiveGameplayAbility::StaticClass()))
-	{
-		NotifyAbilityChangedToUI(AbilitySpec, EAbilityChangeType::RemoveAbility);
-	}
-}
 
-void UKitsuneAbilitySystemComponent::NotifyAbilityChangedToUI(const FGameplayAbilitySpec& AbilitySpec,
-	const EAbilityChangeType AbilityChangedType) const
-{
-	if (const UWorld* World = GetWorld(); !World || World->bIsTearingDown)
+	if (const UKitsuneGameplayAbility* Ability = Cast<UKitsuneGameplayAbility>(AbilitySpec.Ability))
 	{
-		return;
-	}
-	
-	if (AbilitySpec.Ability.IsA(UActiveGameplayAbility::StaticClass()))
-	{
-		if (UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetAvatarActor()))
+		if (Ability->AbilityTypeTag != KitsuneGameplayTags::Ability_Type_Hidden)
 		{
-			if (UPlayerViewModel* PlayerVM = UIManager->TryGetViewModel<UPlayerViewModel>(GetAvatarActor()))
-			{
-				PlayerVM->UpdateAbilityList(AbilitySpec, AbilityChangedType);
-			}
+			OnAbilityNumChanged.Broadcast(AbilitySpec, EAbilityChangeType::RemoveAbility);
 		}
 	}
 }
 
+bool UKitsuneAbilitySystemComponent::MatchesInputTag(const FGameplayAbilitySpec& Spec, const FGameplayTag& InputTag)
+{
+	return Spec.GetDynamicSpecSourceTags().HasTagExact(InputTag);
+}

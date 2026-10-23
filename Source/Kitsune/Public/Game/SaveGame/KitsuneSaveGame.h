@@ -32,7 +32,7 @@ public:
 	
 	UPROPERTY()
 	TArray<FCategoryCapacityEntry> InventoryCapacity;
-	
+
 };
 
 USTRUCT()
@@ -57,20 +57,21 @@ class KITSUNE_API UKitsuneSaveGame : public USaveGame
 	GENERATED_BODY()
 	
 public:
+	// @BC: 存档格式变更（背包容量 TMap → TArray<FCategoryCapacityEntry>），版本号 3 → 4
 	UPROPERTY()
-	int32 SaveVersion = 2;
-	
+	int32 SaveVersion = 4;
+
 	UPROPERTY()
 	FPlayerProfileSave PlayerProfile;
-	
+
 	UPROPERTY()
 	FInventorySave Inventory;
-	
+
 	static UKitsuneSaveGame* LoadOrCreate(const FString& SlotName);	
 	static const FString& GetGlobalSlotName();
 	static FString MakePlayerSlotName(const int64 PlayerUID);
 	void SaveToSlot(const FString& SlotName);
-	
+
 };
 
 UCLASS()
@@ -81,9 +82,9 @@ class UGlobalSaveGame : public USaveGame
 public:
 	UPROPERTY()
 	FGlobalSaveData Data;
-	
+
 	static UGlobalSaveGame* LoadOrCreate();
-	
+
 	void SaveToSlot();
-	
+
 };

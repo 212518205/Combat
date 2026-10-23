@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
-#include "GameplayTag/KitsuneGameplayTag.h"
 #include "Inventory/InventoryItemInstance.h"
 #include "InventorySlotData.generated.h"
 
@@ -34,39 +32,5 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	FName CategoryID;
-	
-	UFUNCTION(BlueprintCallable)
-	FText GetUnlockMessage() const
-	{
-		TMap<FName, FInventoryInfo> CategoryInfo = UKitsuneWidgetFunctionLibrary::GetCategoryNameByModuleTag(
-			 KitsuneGameplayTags::UI_CategoryDisplay_Inventory_Item).CategoryInfo;
-		int32 OnceUnlockCount = 7;
-		if (const FInventoryInfo* Info = CategoryInfo.Find(CategoryID))
-		{
-			OnceUnlockCount = Info->OnceUnlockCount;
-		}
-		
-		return FText::Format(
-			NSLOCTEXT("Inventory", "UnlockSlotConfirm", "是否花费 {0} 金币解锁 {1} 个格子？"),
-			FText::AsNumber(UnlockCost),
-			FText::AsNumber(OnceUnlockCount)
-		);
-	}
-};
 
-
-/**
- * 分类分组：按 CategoryID 聚合的一组槽位，用于背包分类 Tab 展示
- */
-USTRUCT()
-struct FInventoryCategoryGroup
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY()
-	FText CategoryDisplayName;
-
-	UPROPERTY()
-	TArray<UInventorySlotData*> CategorySlots;
 };

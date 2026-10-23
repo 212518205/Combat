@@ -5,6 +5,8 @@
 #include "AbilitySystem/KitsuneAttributeSet.h"
 #include "ViewModelBase.generated.h"
 
+class UInventoryComponent;
+class UKitsuneCombatComponent;
 /**
  * 
  */
@@ -14,26 +16,21 @@ class KITSUNE_API UViewModelBase : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual bool NativeInitialize() { return true; }
+	virtual bool NativeInitialize(APawn* InPawn) { return true; }
 
 	template <class T = UViewModelBase>
 	static T* GetViewModel(AController* InController, APawn* InPawn);
 
-protected:
-	UPROPERTY(BlueprintReadOnly,Category = "Player")
-	AController* OwningController = nullptr;
-
-	UPROPERTY(BlueprintReadOnly,Category = "Player")
-	APawn* OwningPawn = nullptr;
+protected:	
+	virtual void BindCombatComponent(UKitsuneCombatComponent* CombatComp){}
+	virtual void BindAbilitySystemComponent(UKitsuneAbilitySystemComponent* ASC){}
+	virtual void BindInventorySystemComponent(UInventoryComponent* ISC){}
 };
 
 template<class T>
 inline T* UViewModelBase::GetViewModel(AController* InController, APawn* InPawn)
 {
-	T* ViewModel = NewObject<T>();
-	ViewModel->OwningController = InController;
-	ViewModel->OwningPawn = InPawn;
-	if (ViewModel->NativeInitialize())
+	if (T* ViewModel = NewObject<T>(); ViewModel->NativeInitialize(InPawn))
 	{
 		return ViewModel;
 	}

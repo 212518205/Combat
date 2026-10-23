@@ -88,4 +88,8 @@ namespace KitsuneGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Dead, "Shared.Ability.Dead");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_HitReact, "Shared.Ability.HitReact");
 
+	/***  技能类型   `BC@` ***/
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Type_Skill, "Ability.Type.Skill");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Type_Hidden, "Ability.Type.Hidden");
+
 }

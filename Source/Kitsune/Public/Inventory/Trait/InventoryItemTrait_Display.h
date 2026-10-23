@@ -1,26 +1,23 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Inventory/InventoryItemTrait.h"
-#include "ItemTrait_Display.generated.h"
+#include "InventoryItemTrait_Display.generated.h"
 
 /**
  * 
  */
 UCLASS(meta = (DisplayName = "UI显示"))
-class KITSUNE_API UItemTrait_Display : public UInventoryItemTrait
+class KITSUNE_API UInventoryItemTrait_Display : public UInventoryItemTrait
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName CategoryID;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText CategoryDisplayName;
-	
+		
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText DisplayName;
 

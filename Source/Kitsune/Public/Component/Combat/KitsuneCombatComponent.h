@@ -9,6 +9,8 @@
 
 class AWeaponBase;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCurrentWeaponChangedDelegate, AWeaponBase*);
+
 /**
  * 
  */
@@ -37,6 +39,8 @@ public:
 	void ToggleWeaponCollision(bool bEnable);
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	FOnCurrentWeaponChangedDelegate OnCurrentWeaponChanged;
 
 protected:
 	/*** `@BC`   描述: 角色已拥有武器   `BC@` ***/

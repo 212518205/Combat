@@ -3,7 +3,7 @@
 
 #include "UI/ViewModel/EnemyViewModel.h"
 
-bool UEnemyViewModel::NativeInitialize()
+bool UEnemyViewModel::NativeInitialize(APawn* InPawn)
 {
-	return Super::NativeInitialize();
+	return Super::NativeInitialize(InPawn);
 }

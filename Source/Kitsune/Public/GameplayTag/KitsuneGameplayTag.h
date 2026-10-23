@@ -87,5 +87,9 @@ namespace KitsuneGameplayTags
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Dead);
 	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_HitReact);
 
+	/***  技能类型   `BC@` ***/
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Type_Skill);
+	KITSUNE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Type_Hidden);
+
 }
 

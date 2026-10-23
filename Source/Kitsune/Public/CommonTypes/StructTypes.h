@@ -54,29 +54,29 @@ struct FMenuTileRow : public FTableRowBase
 
 };
 
-USTRUCT()
-struct FInventoryInfo
+USTRUCT(BlueprintType)
+struct FInventoryCategoryConfig
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(EditDefaultsOnly)
-	FText CategoryName;
 
-	/***  初始给玩家准备的格子容量，后续可自行花费金币增加容量   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly)
-	int32 InitialCapacity = 10;
+	FText DisplayName;
 
-	/***  用于提示用户可解锁格子默认显示的待锁格子数量   `BC@` ***/
+	/***  初始已解锁的格数（玩家开局可用的格数，剩余显示为锁格）   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly)
-	int32 LockSlotCount = 10;
+	int32 InitialUnlockedSlots = 10;
 
 	/***  单次解锁格子数量   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly)
-	int32 OnceUnlockCount = 5;
+	int32 SlotsPerUnlock = 5;
 
 	/***  解锁花费   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly)
 	int32 UnlockCost = 500;
+
+	// @BC: 固定显示的锁格数量（视觉提示）。与容量无关——永远显示 N 个
+	UPROPERTY(EditDefaultsOnly)
+	int32 LockSlotCount = 10;
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 SortOrder = 0;
@@ -87,43 +87,48 @@ USTRUCT(BlueprintType)
 struct FCategoryInfoGroup
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(EditDefaultsOnly)
-	TMap<FName, FInventoryInfo> CategoryInfo;
-	
-};
 
-USTRUCT()
-struct FSerializedItem
-{
-	GENERATED_BODY()
-	
-	UPROPERTY()
-	FPrimaryAssetId ItemDefID;
-	
-	UPROPERTY()
-	FSoftObjectPath ItemDefPath;
-	
-	UPROPERTY()
-	int32 StackCount = 1;
-	
-	UPROPERTY()
-	int32 ItemFeature = static_cast<int32>(EItemFeature::None);
-	
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FName, FInventoryCategoryConfig> CategoryInfo;
+
 };
 
 USTRUCT(BlueprintType)
 struct FCategoryCapacityEntry
 {
 	GENERATED_BODY()
-	
-	UPROPERTY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName CategoryID;
-	
-	UPROPERTY()
-	int32 CategoryCapacity = 0;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 UnlockedSlots = 0;
+
+	FCategoryCapacityEntry() = default;
+	FCategoryCapacityEntry(const FName InCategoryID, const int32 InUnlockedSlots)
+		: CategoryID(InCategoryID), UnlockedSlots(InUnlockedSlots) {}
+
 };
+
+USTRUCT()
+struct FSerializedItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FPrimaryAssetId ItemDefID;
+
+	UPROPERTY()
+	FSoftObjectPath ItemDefPath;
+
+	UPROPERTY()
+	int32 StackCount = 1;
+
+	UPROPERTY()
+	int32 ItemFeature = static_cast<int32>(EInventoryItemFeature::None);
+
+};
+
 
 /***  PlayerViewModel: 技能信息 用于UI获取显示  `BC@` ***/
 USTRUCT(BlueprintType)
@@ -190,23 +195,3 @@ struct FKitsuneInitialWidgetConfig
 
 	bool IsValid() const { return StackTag.IsValid() && WidgetTag.IsValid(); }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

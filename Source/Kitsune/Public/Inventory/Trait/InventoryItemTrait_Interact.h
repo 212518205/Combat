@@ -1,16 +1,16 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Inventory/InventoryItemTrait.h"
-#include "ItemTrait_Interact.generated.h"
+#include "InventoryItemTrait_Interact.generated.h"
 
 /**
  * 
  */
 UCLASS(meta = (DisplayName = "交互"))
-class KITSUNE_API UItemTrait_Interact : public UInventoryItemTrait
+class KITSUNE_API UInventoryItemTrait_Interact : public UInventoryItemTrait
 {
 	GENERATED_BODY()
 

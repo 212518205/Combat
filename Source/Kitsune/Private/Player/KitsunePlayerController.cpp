@@ -6,9 +6,10 @@
 #include"Characters/KitsuneCharacter.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
+#include "GameplayTag/KitsuneGameplayTag.h"
 #include "Input/CommonUIActionRouterBase.h"
 #include "Input/KitsuneInputComponent.h"
-#include "Inventory/InventorySystemComponent.h"
+#include "Inventory/InventoryComponent.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
 #include "UI/Widget/Game/WidgetMainHudScreen.h"
 

@@ -5,9 +5,10 @@
 
 #include "CommonTextBlock.h"
 #include "Components/Image.h"
+#include "FunctionLibrary/KitsuneInventoryFunctionLibrary.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Inventory/InventoryItemInstance.h"
-#include "Inventory/Trait/ItemTrait_Interact.h"
+#include "Inventory/Trait/InventoryItemTrait_Interact.h"
 
 void UListEntryInteract::OnOwningListDataHandle(UObject* ItemData)
 {
@@ -15,7 +16,7 @@ void UListEntryInteract::OnOwningListDataHandle(UObject* ItemData)
 
 	if (CachedItemInstance = Cast<UInventoryItemInstance>(ItemData); CachedItemInstance)
 	{
-		CachedInteractTrait = UInventoryFunctionLibrary::FindItemDefinitionTrait<UItemTrait_Interact>(CachedItemInstance->GetItemDef());
+		CachedInteractTrait = UInventoryFunctionLibrary::FindItemDefinitionTrait<UInventoryItemTrait_Interact>(CachedItemInstance->GetItemDef());
 		CommonTextBlock_PromptKey->SetText(FText::FromString(CachedInteractTrait->PromptKey.GetDisplayName().ToString()));
 		CommonTextBlock_PromptMessage->SetText(CachedInteractTrait->InteractPrompt);
 		Image_Background->SetOpacity(0.f);

@@ -103,18 +103,11 @@ void UKitsuneCombatComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeP
 void UKitsuneCombatComponent::OnRep_CurrentWeaponTag(const FGameplayTag& OldValue)
 // ReSharper restore CppMemberFunctionMayBeConst
 {
-	const AWeaponBase* CurrentWeapon = GetCurrentCarriedWeapon();
+	AWeaponBase* CurrentWeapon = GetCurrentCarriedWeapon();
 	if (!GetOwningPawn()->IsA(AKitsuneCharacter::StaticClass()))return;
 	if (!GetOwningPawn()->IsLocallyControlled())return;
-	TSoftObjectPtr<UTexture2D> WeaponIcon;
-	if (CurrentWeapon)
-	{
-		WeaponIcon = CurrentWeapon->GetWeaponInfo()->WeaponIcon;
-	}
-	if (UPlayerViewModel* LocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(GetOwningPawn()))
-	{ 
-		LocalViewModel->SetPlayerWeaponIcon(WeaponIcon); 
-	}
+	
+	OnCurrentWeaponChanged.Broadcast(CurrentWeapon);
 }
 
 
