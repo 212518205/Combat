@@ -83,7 +83,6 @@ void UKitsuneChargedAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		if (UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo())
 		{
 			ASC->AddReplicatedLooseGameplayTag(ChargeStateTag);
-			bChargingTagApplied = true;
 		}
 	}
 	OnChargeBegin();
@@ -99,14 +98,11 @@ void UKitsuneChargedAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
 		OnChargeCancelled();
 	}
 
-	if (bChargingTagApplied)
+	if (ChargeStateTag.IsValid())
 	{
-		if (UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo())
-		{
-			ASC->RemoveReplicatedLooseGameplayTag(ChargeStateTag);
-		}
-		bChargingTagApplied = false;
+		GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(ChargeStateTag);
 	}
+	
 	bCharging = false;
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

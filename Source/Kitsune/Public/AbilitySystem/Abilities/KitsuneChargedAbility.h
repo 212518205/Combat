@@ -63,7 +63,5 @@ private:
 
 	bool bCharging = false;
 
-	bool bChargingTagApplied = false;
-
 	bool bChargeResolved = false;
 };

@@ -3,18 +3,12 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
-#include "UIManagerSubsystem.h"
 #include "Component/Combat/KitsuneCombatComponent.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 
 UKitsuneCombatComponent* UKitsuneGameplayAbility::GetPawnCombatComponentFromActorInfo() const
 {
 	return GetAvatarActorFromActorInfo()->FindComponentByClass<UKitsuneCombatComponent>();
-}
-
-UPlayerViewModel* UKitsuneGameplayAbility::GetOwningViewModel() const
-{
-	return UUIManagerSubsystem::GetUIManager(GetWorld())->FindViewModel<UPlayerViewModel>(Cast<APawn>(GetAvatarActorFromActorInfo()));
 }
 
 void UKitsuneGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,

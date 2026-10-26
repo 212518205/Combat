@@ -6,7 +6,6 @@
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "KitsuneGameplayAbility.generated.h"
 
-class UPlayerViewModel;
 class UKitsuneCombatComponent;
 
 UENUM()
@@ -28,9 +27,6 @@ public:
 	/*** `@BC`   描述: 蓝图纯函数   `BC@` ***/
 	UFUNCTION(BlueprintPure, Category = "Kitsune | Ability")
 	virtual UKitsuneCombatComponent* GetPawnCombatComponentFromActorInfo() const;
-
-	UFUNCTION(BlueprintPure, Category = "ViewModel")
-	UPlayerViewModel* GetOwningViewModel() const;
 	
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	
