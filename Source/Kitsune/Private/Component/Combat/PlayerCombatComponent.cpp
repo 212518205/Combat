@@ -7,7 +7,6 @@
 #include "Characters/EnemyCharacter.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
 #include "Net/UnrealNetwork.h"
-#include "UI/ViewModel/PlayerViewModel.h"
 
 
 UPlayerCombatComponent::UPlayerCombatComponent()

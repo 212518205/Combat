@@ -11,7 +11,9 @@
 #include "Input/KitsuneInputComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "UI/Widget/WidgetPrimaryLayout.h"
-#include "UI/Widget/Game/WidgetMainHudScreen.h"
+// [VMREFACTOR] 不再 Cast 具体 Widget 取数据，改为读 ViewModel
+#include "UI/ViewModel/InteractionViewModel.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 
 
 void AKitsunePlayerController::BeginPlay()
@@ -60,11 +62,14 @@ UCommonActivatableWidget* AKitsunePlayerController::GetCurrentTopWidget() const
 
 UInventoryItemInstance* AKitsunePlayerController::GetSelectedInteractableItemInstance() const
 {
-	if (const UWidgetMainHudScreen* MainHud = Cast<UWidgetMainHudScreen>(GetCurrentTopWidget()))
-	{
-		return MainHud->GetSelectedItemInstance();
-	}
-	return nullptr;
+	// [VMREFACTOR] 原来 Cast<UWidgetMainHudScreen> 取数据，属于 View 反向泄漏到 Controller；
+	// [VMREFACTOR] 现在直接读交互 VM（选中项仍是"最后一个进入重叠列表的可交互物"）
+	UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this);
+	UInteractionViewModel* VM = VMReg ? VMReg->Find<UInteractionViewModel>(GetPawn()) : nullptr;
+
+	if (!VM || VM->GetOverlappedItemInstances().IsEmpty()) return nullptr;
+
+	return VM->GetOverlappedItemInstances().Last();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

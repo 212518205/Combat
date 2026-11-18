@@ -110,16 +110,15 @@ struct FCategoryCapacityEntry
 
 };
 
+class UInventoryItemDefinition;
+
 USTRUCT()
 struct FSerializedItem
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FPrimaryAssetId ItemDefID;
-
-	UPROPERTY()
-	FSoftObjectPath ItemDefPath;
+	TSoftObjectPtr<UInventoryItemDefinition> ItemDef;
 
 	UPROPERTY()
 	int32 StackCount = 1;
@@ -130,35 +129,9 @@ struct FSerializedItem
 };
 
 
-/***  PlayerViewModel: 技能信息 用于UI获取显示  `BC@` ***/
-USTRUCT(BlueprintType)
-struct FAbilityUIData
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAbilitySpecHandle SpecHandle;
-	
-	UPROPERTY(BlueprintReadOnly)
-	FString DisplayName;
-	
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UTexture2D> Icon;
-	
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UTexture2D> AbilityTriggerKeyIcon;
-	
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag CooldownTag = FGameplayTag::EmptyTag;
-	
-	UPROPERTY(BlueprintReadOnly)
-	int Priority = -1;
-	
-	bool IsValid() const
-	{
-		return Icon && Priority >= 0;
-	}
-};
+// [VMREFACTOR] FAbilityUIData 已迁移到 UI/Types/AbilityUIData.h
+// [VMREFACTOR] 原因：它是纯 UI 展示模型，且原结构里挂了 FGameplayAbilitySpecHandle（GAS 内部句柄）
+// [VMREFACTOR] 必须在此删除，否则与 UI/Types/AbilityUIData.h 里的同名 USTRUCT 冲突（UHT 报重复定义）
 
 USTRUCT(BlueprintType)
 struct FFactionRelation

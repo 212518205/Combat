@@ -1,9 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Characters/KitsuneCharacter.h"
 
-#include "UIManagerSubsystem.h"
 #include "Characters/Data/DataAssetStartDataBase.h"
 #include "Component/Combat/PlayerCombatComponent.h"
 #include"GameFramework/CharacterMovementComponent.h"
@@ -12,7 +9,9 @@
 #include "Inventory/InventoryComponent.h"
 #include"Game/KitsunePlayerState.h"
 #include "Game/GameInstanceSubsystem/KitsuneSaveSubsystem.h"
-#include "UI/ViewModel/AttributeViewModel.h"
+#include "AbilitySystem/KitsuneAbilitySystemComponent.h"
+#include "UI/ViewModel/ASCViewModel.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 
 AKitsuneCharacter::AKitsuneCharacter()
 {
@@ -95,10 +94,21 @@ void AKitsuneCharacter::InitAbilityInfo()
 
 	AttributeSet = KitsunePlayerState->GetAttributeSet();
 
-	//if (const ENetMode NetMode = GetNetMode(); NetMode == NM_Client || NetMode == NM_Standalone || NetMode == NM_ListenServer)
+	if (UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this))
+	{
+		VMReg->GetOrCreate<UASCViewModel>(this)->BindAbilitySystemComponent(
+			Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComp));
+	}
+
+	if (IsLocallyControlled())
+	{
+		if (InventoryComp) InventoryComp->EnsureInventoryViewModel();
+		if (InteractComponent) InteractComponent->EnsureInteractionViewModel();
+		if (CombatComponent) CombatComponent->EnsureCombatViewModel();
+	}
+
 	if (GetNetMode() != NM_DedicatedServer)
 	{
-		UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(this);
 		OnWidgetComponentInitialized();
 	}
 
@@ -111,11 +121,6 @@ void AKitsuneCharacter::InitAbilityInfo()
 		}
 		ActorTeamID = FGenericTeamId(static_cast<uint8>(EKitsuneTeamID::TeamA));
 	}
-}
-
-UPlayerViewModel* AKitsuneCharacter::GetOwningViewModel()
-{
-	return UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(this);
 }
 
 void AKitsuneCharacter::OnDetectionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

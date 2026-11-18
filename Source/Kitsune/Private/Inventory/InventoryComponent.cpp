@@ -16,6 +16,10 @@
 #include "Game/SaveGame/KitsuneSaveGame.h"
 #include "Inventory/Trait/InventoryItemTrait_Stack.h"
 #include "Net/UnrealNetwork.h"
+// [VMREFACTOR] 组件自己创建 + 绑定 VM
+#include "GameFramework/Pawn.h"
+#include "UI/ViewModel/InventoryViewModel.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 
 
 void FInventoryArray::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
@@ -71,6 +75,20 @@ void UInventoryComponent::BeginPlay()
 		{
 			UnlockedByCategory.Emplace(CategoryID, Config.InitialUnlockedSlots);
 		}
+	}
+
+	// [VMREFACTOR] 背包只给本地控制的 Pawn 建（背包数据只有自主代理有）
+	EnsureInventoryViewModel();
+}
+
+void UInventoryComponent::EnsureInventoryViewModel()
+{
+	const APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn || !Pawn->IsLocallyControlled()) return;
+
+	if (UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this))
+	{
+		VMReg->GetOrCreate<UInventoryViewModel>(GetOwner())->BindInventoryComponent(this);
 	}
 }
 

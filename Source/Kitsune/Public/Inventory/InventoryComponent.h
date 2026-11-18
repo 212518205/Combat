@@ -92,6 +92,10 @@ public:
 	void UnlockCategorySlots(const FName CategoryID);
 
 	int32 GetCapacityByCategoryID(const FName CategoryID) const;
+
+	/** [VMREFACTOR] 幂等：BeginPlay 时 Pawn 可能还没被 Possess（IsLocallyControlled 为假），
+	 * [VMREFACTOR] 所以角色在 InitAbilityInfo 里会再调一次这里 */
+	void EnsureInventoryViewModel();
 	
 
 protected:

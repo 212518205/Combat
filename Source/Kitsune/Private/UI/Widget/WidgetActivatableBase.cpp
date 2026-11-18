@@ -1,28 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/Widget/WidgetActivatableBase.h"
 
-#include "UIManagerSubsystem.h"
 #include "Player/KitsunePlayerController.h"
-
-
-
-UPlayerViewModel* UWidgetActivatableBase::GetLocalPlayerViewModel()
-{
-	if (!CachedLocalViewModel)
-	{
-		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetOwningPlayer())->TryGetViewModel<UPlayerViewModel>(GetOwningPlayerPawn());
-	}
-
-	return CachedLocalViewModel;
-}
+#include "UIManagerSubsystem.h"
 
 UWidgetPrimaryLayout* UWidgetActivatableBase::GetPrimaryLayout() const
 {
 	const UUIManagerSubsystem* UIManager = UUIManagerSubsystem::GetUIManager(GetWorld());
-	
-	return UIManager->GetRegisteredPrimaryLayout();
+	return UIManager ? UIManager->GetRegisteredPrimaryLayout() : nullptr;
 }
 
 AKitsunePlayerController* UWidgetActivatableBase::GetOwningKitsunePlayerController()
@@ -32,4 +16,10 @@ AKitsunePlayerController* UWidgetActivatableBase::GetOwningKitsunePlayerControll
 		CachedOwningKitsunePC = GetOwningPlayer<AKitsunePlayerController>();
 	}
 	return CachedOwningKitsunePC.IsValid() ? CachedOwningKitsunePC.Get() : nullptr;
+}
+
+UViewModelBase* UWidgetActivatableBase::GetLocalViewModelByClass(const TSubclassOf<UViewModelBase> Class,
+                                                                EViewModelAccessResult& ExecResult) const
+{
+	return UKitsuneViewModelFunctionLibrary::FindViewModel(GetOwningPlayerPawn(), Class, ExecResult);
 }

@@ -1,12 +1,13 @@
-
 #include "Characters/EnemyCharacter.h"
 
-#include "UIManagerSubsystem.h"
 #include "AbilitySystem/KitsuneAbilitySystemComponent.h"
 #include "AbilitySystem/KitsuneAttributeSet.h"
 #include "Characters/Data/DataAssetStartDataEnemy.h"
 #include "Component/Combat/EnemyKitsuneCombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+// [VMREFACTOR] 去掉 UIManagerSubsystem.h 依赖
+#include "UI/ViewModel/ASCViewModel.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -32,18 +33,25 @@ void AEnemyCharacter::InitAbilityInfo()
 	Super::InitAbilityInfo();
 	
 	AbilitySystemComp->InitAbilityActorInfo(this, this);
-	
+
+	// [VMREFACTOR] 敌人的 ASC 就在自己身上：注册 key = Bind 源 = this
+	// [VMREFACTOR] 非 DS 全建（血条逻辑与玩家一致）
+	if (UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this))
+	{
+		VMReg->GetOrCreate<UASCViewModel>(this)->BindAbilitySystemComponent(
+			Cast<UKitsuneAbilitySystemComponent>(AbilitySystemComp));
+	}
+
 	if (GetNetMode() != NM_DedicatedServer)
 	{
-		EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModel<UEnemyViewModel>(this);
 		OnWidgetComponentInitialized();
 	}
+
 	if (HasAuthority())
 	{
 		StartData->InitAbilityAndEffectToASC(GetAbilitySystemComponent(), 1);
 		ActorTeamID = FGenericTeamId(static_cast<uint8>(EKitsuneTeamID::TeamB));
 	}
-	
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -58,10 +66,9 @@ UKitsuneCombatComponent* AEnemyCharacter::GetKitsuneCombatComponent() const
 	return CombatComponent;
 }
 
-UEnemyViewModel* AEnemyCharacter::GetEnemyViewModel()
+UASCViewModel* AEnemyCharacter::GetEnemyViewModel()
 {
-	if (EnemyViewModel)return EnemyViewModel;
-	EnemyViewModel = UUIManagerSubsystem::GetUIManager(this)->TryGetViewModel<UEnemyViewModel>(this);
-
-	return EnemyViewModel;
+	// [VMREFACTOR] 统一走 Registry，角色上不再自己缓存一份
+	UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this);
+	return VMReg ? VMReg->Find<UASCViewModel>(this) : nullptr;
 }

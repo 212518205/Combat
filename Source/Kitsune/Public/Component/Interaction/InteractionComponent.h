@@ -1,14 +1,14 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Component/KitsuneExtensionComponent.h"
+// [VMREFACTOR] EItemInstanceAction 随 UInteractionViewModel 一起迁走，这里只为 RPC 参数声明需要
+#include "UI/ViewModel/InteractionViewModel.h"
 #include "InteractionComponent.generated.h"
 
-
-class UPlayerViewModel;
 class UInventoryItemInstance;
+
 /**
  * 
  */
@@ -28,17 +28,12 @@ public:
 	void RemoveInteractableItem(UInventoryItemInstance* ItemInstance);
 	
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	void EnsureInteractionViewModel();
 
 protected:
 
 	UFUNCTION(Client, Reliable)
 	void ItemOverlapChange(UInventoryItemInstance* ItemInstance, EItemInstanceAction InstanceAction);
 
-	UPlayerViewModel* GetLocalPlayerViewModel();
-
-	/*** TODO: 这里不应该缓存viewmodel，在交互组件处理，外部通过viewmodel访问交互组件... [2026年4月25日 14:29:38 来自`@BC@`] ***/
-	TWeakObjectPtr<UPlayerViewModel> CachedLocalViewModel;
-	
 };
-
-

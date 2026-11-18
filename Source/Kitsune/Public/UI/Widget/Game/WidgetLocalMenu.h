@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "UI/Widget/WidgetActivatableBase.h"
@@ -8,7 +6,8 @@
 
 class UMenuEntryMapping;
 class UWrapBox;
-class UPlayerViewModel;
+// [VMREFACTOR] UPlayerViewModel 已删除，等级从 UASCViewModel 读
+class UASCViewModel;
 class UMenuEntryData;
 class UKitsuneCommonTileView;
 /**

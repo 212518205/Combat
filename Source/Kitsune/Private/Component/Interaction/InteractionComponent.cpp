@@ -3,10 +3,11 @@
 
 #include "Component/Interaction/InteractionComponent.h"
 
-#include "UIManagerSubsystem.h"
 #include "FunctionLibrary/KitsuneFunctionLibrary.h"
+#include "GameFramework/Pawn.h"
 #include "Inventory/InventoryComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 
 void UInteractionComponent::AddInteractableItem_Implementation(UInventoryItemInstance* ItemInstance)
 {
@@ -32,8 +33,18 @@ UInteractionComponent::UInteractionComponent()
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
+
+	EnsureInteractionViewModel();
+}
+
+void UInteractionComponent::EnsureInteractionViewModel()
+{
+	if (const APawn* Pawn = Cast<APawn>(GetOwner()); !Pawn || !Pawn->IsLocallyControlled()) return;
+
+	if (UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this))
+	{
+		VMReg->GetOrCreate<UInteractionViewModel>(GetOwner())->BindInteractionComponent(this);
+	}
 }
 
 void UInteractionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -44,32 +55,22 @@ void UInteractionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 
 void UInteractionComponent::ItemOverlapChange_Implementation(UInventoryItemInstance* ItemInstance, const EItemInstanceAction InstanceAction)
 {
+	// [VMREFACTOR] 数据源主动推送到 VM，组件不再自己缓存 VM
+	UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this);
+	UInteractionViewModel* VM = VMReg ? VMReg->Find<UInteractionViewModel>(GetOwner()) : nullptr;
 
-	const ENetMode NetMode = GetNetMode();
-	if (const UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel(); LocalViewModel
-		&& (GetOwnerRole() == ROLE_AutonomousProxy || NetMode == NM_ListenServer || NetMode == NM_Standalone))
+	if (!VM)
 	{
-		if (InstanceAction == EItemInstanceAction::EAddInstance)
-		{
-			GetLocalPlayerViewModel()->AddInteractableItemInstance(ItemInstance);
-		}
-		else
-		{
-			GetLocalPlayerViewModel()->RemoveInteractableItemInstance(ItemInstance);
-		}
+		// 非本机 Pawn 不会建这个 VM，属预期分支
+		return;
+	}
+
+	if (InstanceAction == EItemInstanceAction::EAddInstance)
+	{
+		VM->AddInteractableItemInstance(ItemInstance);
 	}
 	else
 	{
-		Debug::Print(TEXT("不是自主代理"));
+		VM->RemoveInteractableItemInstance(ItemInstance);
 	}
-}
-
-
-UPlayerViewModel* UInteractionComponent::GetLocalPlayerViewModel()
-{
-	if (!CachedLocalViewModel.Get())
-	{
-		CachedLocalViewModel = UUIManagerSubsystem::GetUIManager(GetWorld())->TryGetViewModel<UPlayerViewModel>(GetOwningPawn());
-	}
-	return CachedLocalViewModel.Get();
 }

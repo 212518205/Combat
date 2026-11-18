@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterBase.h"
@@ -8,7 +6,6 @@
 #include "KitsuneCharacter.generated.h"
 
 
-class UPlayerViewModel;
 class UBoxComponent;
 class UInventoryComponent;
 class UPlayerCombatComponent;
@@ -42,8 +39,6 @@ public:
 protected:
 	/*** `@BC`   描述: 初始化Gameplay框架相关信息   `BC@` ***/
 	virtual void InitAbilityInfo() override;
-	UFUNCTION(BlueprintCallable, Category = "UI | ViewModel")
-	UPlayerViewModel* GetOwningViewModel();
 
 	/*** `@BC`   描述: 角色扩展组件   `BC@` ***/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")

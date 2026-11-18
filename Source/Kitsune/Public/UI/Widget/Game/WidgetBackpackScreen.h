@@ -9,6 +9,8 @@
 
 class UKitsuneCommonTileView;
 class UKitsuneTabListWidgetBase;
+// [VMREFACTOR] 背包全 C++ 消费，改为 UInventoryViewModel（蓝图零改动）
+class UInventoryViewModel;
 /**
  * 
  */
@@ -22,6 +24,9 @@ protected:
 	virtual void NativeOnInitialized() override;
 	
 	TArray<TPair<FName, FText>> GetAllCategoryItems();
+
+	/** [VMREFACTOR] 只 Find 不创建 */
+	UInventoryViewModel* GetInventoryViewModel();
 	
 	UPROPERTY(meta = (BindWidget))
 	UKitsuneTabListWidgetBase* TabList_BagCategory;

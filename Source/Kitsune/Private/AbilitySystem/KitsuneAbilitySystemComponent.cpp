@@ -1,7 +1,5 @@
 #include "AbilitySystem/KitsuneAbilitySystemComponent.h"
-#include "UIManagerSubsystem.h"
 #include "AbilitySystem/Abilities/KitsuneGameplayAbility.h"
-#include "UI/ViewModel/PlayerViewModel.h"
 
 
 void UKitsuneAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InputTag)

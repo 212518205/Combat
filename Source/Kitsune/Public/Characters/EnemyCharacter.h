@@ -7,7 +7,8 @@
 #include "Interfaces/LockableInterface.h"
 #include "EnemyCharacter.generated.h"
 
-class UEnemyViewModel;
+// [VMREFACTOR] UEnemyViewModel 已删除：敌人和玩家共用 UASCViewModel，统一走 Registry
+class UASCViewModel;
 class UEnemyKitsuneCombatComponent;
 class UDataAssetStartDataEnemy;
 class UWidgetComponent;
@@ -32,9 +33,10 @@ protected:
 	/***   ...ACharacterBase Interface Begin...   ***/
 	virtual void InitAbilityInfo() override;
 	/***   ...ACharacterBase Interface End...     ***/
-	
+
+	// [VMREFACTOR] 保留函数名供蓝图调用，返回类型改为 UASCViewModel（蓝图节点需重新指向）
 	UFUNCTION(BlueprintCallable, Category = "UI | ViewModel")
-	UEnemyViewModel* GetEnemyViewModel();
+	UASCViewModel* GetEnemyViewModel();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TObjectPtr<UDataAssetStartDataEnemy> StartData;
@@ -43,7 +45,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component | Combat")
 	TObjectPtr<UEnemyKitsuneCombatComponent> CombatComponent;
 
-	UPROPERTY(BlueprintReadOnly)
-	UEnemyViewModel* EnemyViewModel;
-	
+	// [VMREFACTOR] 删除 UEnemyViewModel* EnemyViewModel 成员：不再有"组件/角色各存一份"的双份所有权
 };

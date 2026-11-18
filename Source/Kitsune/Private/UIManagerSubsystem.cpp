@@ -1,16 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
+﻿
 #include "UIManagerSubsystem.h"
 
-#include "Characters/KitsuneCharacter.h"
+#include "GameFramework/PlayerController.h"
 #include "UI/Widget/WidgetActivatableBase.h"
 #include "Engine/AssetManager.h"
 #include "FunctionLibrary/KitsuneWidgetFunctionLibrary.h"
 #include "GameplayTag/KitsuneGameplayTag.h"
-#include "Kismet/GameplayStatics.h"
-#include "UI/ViewModel/AttributeViewModel.h"
-#include "UI/ViewModel/PlayerViewModel.h"
 #include "UI/Widget/WidgetConfirmScreen.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 #include "Input/CommonUIActionRouterBase.h"
@@ -33,12 +28,12 @@ UUIManagerSubsystem* UUIManagerSubsystem::GetUIManager(const UObject* WorldConte
 
 bool UUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
-	if (!CastChecked<UGameInstance>(Outer)->IsDedicatedServerInstance()) /* Check is Server? Is server return false*/
+	if (!CastChecked<UGameInstance>(Outer)->IsDedicatedServerInstance()) 
 	{
 		TArray<UClass*> UIManagerClasses;
 		GetDerivedClasses(GetClass(), UIManagerClasses);
 
-		return UIManagerClasses.IsEmpty(); /* Return whether it has been created*/
+		return UIManagerClasses.IsEmpty(); 
 	}
 	return false;
 }
@@ -51,63 +46,12 @@ void UUIManagerSubsystem::OnWorldChangedCleanup(const UWorld* NewWorld)
 		RegisteredPrimaryLayout = nullptr;
 	}
 
-	for (auto It = RegisteredViewModels.CreateIterator(); It; ++It)
-	{
-		if (const AActor* Actor = It.Key(); !IsValid(Actor) || Actor->GetWorld() != NewWorld)
-		{
-			It.RemoveCurrent();
-		}
-	}
 }
-
-AKitsuneCharacter* UUIManagerSubsystem::GetLocalPlayerPawn() const
-{
-	const UGameInstance* GameInstance = GetGameInstance();
-	if (!GameInstance) return nullptr;
-
-	const UWorld* World = GameInstance->GetWorld();
-	if (!World) return nullptr;
-
-	const APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
-	if (!PC) return nullptr;
-
-	APawn* Pawn = PC->GetPawn();
-	return Cast<AKitsuneCharacter>(Pawn);
-}
-
-UPlayerViewModel* UUIManagerSubsystem::GetLocalPlayerViewModel(bool& bIsValid)
-{
-	bIsValid = false;
-
-	if (APawn* Pawn = GetLocalPlayerPawn())
-	{
-		UPlayerViewModel* VM = TryGetViewModel<UPlayerViewModel>(Pawn);
-		if (VM)
-		{
-			bIsValid = true;
-		}
-		return VM;
-	}
-
-	return nullptr;
-}
-
-UPlayerViewModel* UUIManagerSubsystem::GetLocalPlayerViewModel()
-{
-	bool bDummy;
-	return GetLocalPlayerViewModel(bDummy);
-}
-
 
 void UUIManagerSubsystem::RegisterPrimaryLayoutWidget(UWidgetPrimaryLayout* InPrimaryLayout)
 {
 	check(InPrimaryLayout);
 	RegisteredPrimaryLayout = InPrimaryLayout;
-}
-
-void UUIManagerSubsystem::UnRegisterViewModel(const AActor* InActor)
-{
-	RegisteredViewModels.Remove(InActor);
 }
 
 void UUIManagerSubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag,

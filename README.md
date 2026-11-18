@@ -111,29 +111,13 @@ Source/Kitsune/
 
 ---
 
-## 📚 设计文档
-
-> 以下文档位于仓库根目录的 `Kitsune/` 下，**仅本地保留、未纳入版本控制**（已在 `.gitignore` 中忽略），克隆仓库不会包含它们。
-
-| 文档 | 内容 |
-|---|---|
-| `Kitsune/GAS能力框架重构/00_总览与执行顺序.md` | 父类分层方案、阶段划分（S1~S4）、行为契约表、选型决策树 |
-| `Kitsune/GAS_ParentClasses/README.md` | 能力父类的另一种组织方式（参考集，另有 S1~S4 伪镜像文件） |
-| `Kitsune/ARCHITECTURE_REVIEW.md` | 架构评审记录 |
-| `Kitsune/ARCH_ISSUES.md` | 已知架构问题清单 |
-| `Kitsune/NAMING_TODO.md` | 命名统一待办 |
-| `Kitsune/Kitsune_UI架构讨论记录.md` | MVVM 分层与 Widget 组织方式的讨论 |
-| `Source/Kitsune/DevLog.md` | 开发日志（新建，内容待补，此文件在仓库内） |
-
----
-
 ## 🚀 快速开始
 
 ### 环境要求
 
 - **引擎**：Unreal Engine 5.6
 - **插件**：Gameplay Abilities、Common UI、Enhanced Input、Motion Warping、Modeling Tools Editor Mode
-- **IDE**：Visual Studio 2022 或 Rider for Unreal（个人使用 VS 2022 + ReSharper）
+- **IDE**：Visual Studio 2022 或 Rider for Unreal（个人使用 VS 2022 + ReSharper 转Rider）
 
 ### 构建与运行
 
@@ -147,17 +131,6 @@ Source/Kitsune/
 3. 首次打开会提示编译 C++ 模块，确认即可。
 4. 默认启动关卡为 `Content/BluePrints/Maps/Start`；想直接看战斗原型可打开测试关卡 `Content/BluePrints/Maps/TestPawn`。
 5. 运行时默认 GameMode 为 `BP_KitsuneGameModeBase`。
-
----
-
-## 📝 后续规划
-
-- [ ] 补齐 `UKitsuneChanneledAbility` / `UKitsuneToggleAbility` / `UKitsunePassiveAbility` 的实现（当前为骨架）。
-- [ ] 连招（Combo）按「蓝图配方」实现，不提供 C++ 父类：一条蒙太奇多 Section + 动画通知开输入窗口。
-- [ ] ASC 内部输入缓冲（Pressed / Held / Released 队列 + 每帧 `ProcessAbilityInput`），替代「做不成独立组件」的旧方案。
-- [ ] 联机预测：能力激活、属性、背包的预测与回滚。
-- [ ] 补全设计文档与开发日志，为关键类补单元测试示例。
-- [ ] 编辑器辅助工具（数据资产批量校验 / 命名检查）。
 
 ---
 

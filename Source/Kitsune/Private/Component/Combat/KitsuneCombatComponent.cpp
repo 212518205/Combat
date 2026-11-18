@@ -1,18 +1,32 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Component/Combat/KitsuneCombatComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "UIManagerSubsystem.h"
-#include "Actor/Weapon/DataAssetStartDataWeapon.h"
 #include "Actor/Weapon/WeaponBase.h"
-#include "Characters/EnemyCharacter.h"
 #include "Characters/KitsuneCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "UI/ViewModel/PlayerViewModel.h"
+#include "GameFramework/Pawn.h"
+#include "UI/ViewModel/CombatViewModel.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 
+void UKitsuneCombatComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	EnsureCombatViewModel();
+}
+
+void UKitsuneCombatComponent::EnsureCombatViewModel()
+{
+	const APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn || !Pawn->IsLocallyControlled()) return;
+
+	if (UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this))
+	{
+		VMReg->GetOrCreate<UCombatViewModel>(GetOwner())->BindCombatComponent(this);
+	}
+}
 
 void UKitsuneCombatComponent::RegisterCarriedWeapon_Implementation(AWeaponBase* NewWeapon, const bool bRegisterAndEquip)
 {

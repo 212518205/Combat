@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
@@ -22,6 +20,10 @@ class KITSUNE_API UKitsuneCombatComponent : public UKitsuneExtensionComponent
 public:
 	UKitsuneCombatComponent();
 
+	virtual void BeginPlay() override;
+
+	void EnsureCombatViewModel();
+
 	UFUNCTION(Server, Reliable,  BlueprintCallable, Category = "Weapon")
 	void RegisterCarriedWeapon(AWeaponBase* NewWeapon, const bool bRegisterAndEquip = false);
 
@@ -31,7 +33,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	AWeaponBase* GetCurrentCarriedWeapon() const;
 
-	/*** `@BC`   描述: 设置当前武器标签后需要将武器对应的技能赋予角色   `BC@` ***/
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetCurrentWeapon(const FGameplayTag& WeaponTag);
 

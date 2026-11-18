@@ -1,11 +1,18 @@
-
 #include "UI/Widget/Game/WidgetBackpackScreen.h"
 
 #include "Inventory/InventoryComponent.h"
 #include "UI/DataObjects/Inventory/InventorySlotData.h"  
-#include "UI/ViewModel/PlayerViewModel.h"
+// [VMREFACTOR] 从 UPlayerViewModel 切到 UInventoryViewModel
+#include "UI/ViewModel/InventoryViewModel.h"
+#include "UI/ViewModel/ViewModelWorldSubsystem.h"
 #include "UI/Widget/Components/KitsuneCommonTileView.h"
 #include "UI/Widget/Components/KitsuneTabListWidgetBase.h"
+
+UInventoryViewModel* UWidgetBackpackScreen::GetInventoryViewModel()
+{
+	UViewModelWorldSubsystem* VMReg = UViewModelWorldSubsystem::Get(this);
+	return VMReg ? VMReg->Find<UInventoryViewModel>(GetOwningPlayerPawn()) : nullptr;
+}
 
 void UWidgetBackpackScreen::NativeOnActivated()
 {
@@ -16,10 +23,12 @@ void UWidgetBackpackScreen::NativeOnActivated()
 		if (TabList_BagCategory->GetTabButtonBaseByID(CategoryID))continue;
 		TabList_BagCategory->RequestRegisterTab(CategoryID, DisplayName);
 	}
-	if (UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
+
+	// [VMREFACTOR] AddUnique：界面反复激活不会叠加委托
+	if (UInventoryViewModel* VM = GetInventoryViewModel())
 	{
-		PlayerVM->CategoryCapacityChanged.AddUniqueDynamic(this, &ThisClass::HandleCapacityChanged);
-		PlayerVM->OnInventoryItemChanged.AddUniqueDynamic(this, &ThisClass::HandleInventoryItemChanged);
+		VM->CategoryCapacityChanged.AddUniqueDynamic(this, &ThisClass::HandleCapacityChanged);
+		VM->OnInventoryItemChanged.AddUniqueDynamic(this, &ThisClass::HandleInventoryItemChanged);
 	}
 }
 
@@ -32,9 +41,9 @@ void UWidgetBackpackScreen::NativeOnInitialized()
 
 TArray<TPair<FName, FText>> UWidgetBackpackScreen::GetAllCategoryItems()
 {
-	if (const UPlayerViewModel* LocalViewModel = GetLocalPlayerViewModel())
+	if (const UInventoryViewModel* VM = GetInventoryViewModel())
 	{
-		return LocalViewModel->GetAllInventoryCategories();
+		return VM->GetAllInventoryCategories();
 	}
 	return {};
 }
@@ -49,9 +58,9 @@ void UWidgetBackpackScreen::RefreshCurrentTab()
 {
 	if (CurrentTabID == NAME_None)return;
 
-	if (const UPlayerViewModel* PlayerVM = GetLocalPlayerViewModel())
+	if (const UInventoryViewModel* VM = GetInventoryViewModel())
 	{
-		const TArray<UInventorySlotData*>& RawSlots = PlayerVM->GetDisplaySlotsByCategory(CurrentTabID);
+		const TArray<UInventorySlotData*>& RawSlots = VM->GetDisplaySlotsByCategory(CurrentTabID);
 		TileView_Backpack->SetListItems(RawSlots);
 	}
 	TileView_Backpack->RequestRefresh();

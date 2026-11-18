@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilitySpec.h"
+#include "GameplayEffect.h"
 
 void UDataAssetStartDataBase::InitAbilityAndEffectToASC(UAbilitySystemComponent* InTargetASC, const int32 AbilityLevel)
 {
@@ -30,11 +31,19 @@ void UDataAssetStartDataBase::GrantAbilitiesToASC(UAbilitySystemComponent* Targe
 }
 
 void UDataAssetStartDataBase::ApplyGameplayEffectToASC(UAbilitySystemComponent* TargetASC,
-	TArray<TSubclassOf<UGameplayEffect>>& UnassignedEffect, const int32 EffectLevel)
+	TArray<TSoftClassPtr<UGameplayEffect>>& UnassignedEffect, const int32 EffectLevel)
 {
-	for (const auto& GameplayEffectClass:UnassignedEffect)
+	for (const auto& SoftEffectClass : UnassignedEffect)
 	{
-		if (!GameplayEffectClass)return;
+		if (SoftEffectClass.IsNull())continue;
+
+		UClass* GameplayEffectClass = SoftEffectClass.LoadSynchronous();
+		if (!GameplayEffectClass)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[Kitsune] DefaultGameplayEffects 加载失败，已跳过：%s"),
+				*SoftEffectClass.ToString());
+			continue;
+		}
 
 		const FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
 		const FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, EffectLevel, ContextHandle);

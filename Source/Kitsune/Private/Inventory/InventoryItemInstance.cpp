@@ -4,7 +4,7 @@
 #include "Inventory/InventoryItemInstance.h"
 
 #include "DebugHelper.h"
-#include "Engine/AssetManager.h"
+#include "Engine/Blueprint.h"
 #include "Inventory/InventoryItemDefinition.h"
 #include "Net/UnrealNetwork.h"
 
@@ -61,8 +61,9 @@ UInventoryItemInstance* UInventoryItemInstance::CreateInstanceCopy(UObject* NewO
 FSerializedItem UInventoryItemInstance::ToSerialized() const
 {
 	FSerializedItem Data;
-	Data.ItemDefID = ItemDef ? ItemDef->GetPrimaryAssetId() : FPrimaryAssetId();
-	Data.ItemDefPath = FSoftObjectPath(ItemDef);
+	Data.ItemDef = ItemDef
+		? TSoftObjectPtr<UInventoryItemDefinition>(FSoftObjectPath(ItemDef.Get()))
+		: TSoftObjectPtr<UInventoryItemDefinition>();
 	Data.StackCount = StackCount;
 	Data.ItemFeature = ItemFeatures;
 	return Data;
@@ -84,15 +85,12 @@ UInventoryItemInstance* UInventoryItemInstance::CreateFromSerialized(UObject* Ne
 
 UInventoryItemDefinition* UInventoryItemInstance::ResolveItemDef(const FSerializedItem& Serialized)
 {
-	if (UInventoryItemDefinition* Def = TryLoadItemDefByPath(Serialized.ItemDefPath))
+	if (Serialized.ItemDef.IsNull())
 	{
-		return Def;
+		Debug::Print(TEXT("ResolveItemDef: 序列化数据里 ItemDef 为空"));
+		return nullptr;
 	}
-	if (Serialized.ItemDefID.IsValid())
-	{
-		const FSoftObjectPath Path = UAssetManager::Get().GetPrimaryAssetPath(Serialized.ItemDefID);
-		return TryLoadItemDefByPath(Path);
-	}
-	return nullptr;
+
+	return TryLoadItemDefByPath(Serialized.ItemDef.ToSoftObjectPath());
 }
 

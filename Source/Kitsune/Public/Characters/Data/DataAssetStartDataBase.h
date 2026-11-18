@@ -64,9 +64,9 @@ protected:
 
 	/*** `@BC`   Description: 初始属性   `BC@` ***/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effect")
-	TArray<TSubclassOf<UGameplayEffect>> DefaultGameplayEffects;
+	TArray<TSoftClassPtr<UGameplayEffect>> DefaultGameplayEffects;
 
-	static void ApplyGameplayEffectToASC(UAbilitySystemComponent* TargetASC,TArray<TSubclassOf<UGameplayEffect>>& UnassignedEffect, int32 EffectLevel);
+	static void ApplyGameplayEffectToASC(UAbilitySystemComponent* TargetASC,TArray<TSoftClassPtr<UGameplayEffect>>& UnassignedEffect, int32 EffectLevel);
 
 
 	/*** `@BC`   描述: 依据此父标签移除此在ASC中的能力   `BC@` ***/

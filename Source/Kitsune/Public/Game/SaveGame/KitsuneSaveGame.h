@@ -59,7 +59,7 @@ class KITSUNE_API UKitsuneSaveGame : public USaveGame
 public:
 	// @BC: 存档格式变更（背包容量 TMap → TArray<FCategoryCapacityEntry>），版本号 3 → 4
 	UPROPERTY()
-	int32 SaveVersion = 4;
+	int32 SaveVersion = 5;
 
 	UPROPERTY()
 	FPlayerProfileSave PlayerProfile;

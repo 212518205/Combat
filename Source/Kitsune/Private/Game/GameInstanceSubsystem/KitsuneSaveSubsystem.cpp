@@ -178,12 +178,14 @@ UKitsuneSaveGame* UKitsuneSaveSubsystem::GetOrCreatePlayerSaveGame(const int64 P
 
 void UKitsuneSaveSubsystem::FlushDirtySaves()
 {
-	for (const int64 PlayerUID : DirtyUIDs)
+	TSet<int64> Pending = MoveTemp(DirtyUIDs);
+	DirtyUIDs.Reset();
+	
+	for (const int64 PlayerUID : Pending)
 	{
 		SaveGameForPlayer(PlayerUID);
 	}
 	
-	DirtyUIDs.Reset();
 }
 
 

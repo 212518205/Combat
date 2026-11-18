@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CommonTypes/StructTypes.h"
+// [VMREFACTOR] FAbilityUIData 已迁到 UI/Types/AbilityUIData.h（里面不再有 GAS 句柄）
+#include "UI/Types/AbilityUIData.h"
 #include "WidgetAbilityEntry.generated.h"
 
 class UTextBlock;
@@ -20,15 +21,15 @@ class KITSUNE_API UWidgetAbilityEntry : public UUserWidget
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	void AbilityEntryInitialize(const FAbilityUIData& Data);
-	
+
 	UFUNCTION(BlueprintNativeEvent)
 	void ClearAbilityEntry();
-	
+
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> Image_Ability;
-	
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> Image_TriggerKey;
-	
+
 };

@@ -63,6 +63,7 @@ protected:
 	
 	void OnWidgetComponentInitialized();
 
+	/*** TODO: 可以改为KitsuneAbilitySystemComponent类型... [2026年11月17日 23:32:59 来自`@BC@`] ***/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComp;
 	

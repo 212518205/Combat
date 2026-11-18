@@ -40,6 +40,9 @@ public:
 	FGameplayTag GetCooldownTag() const { return CooldownTag; }
 	int GetPriority() const { return Priority; }
 
+	/** [VMREFACTOR] 技能栏槽位：0 = 菱形左上，依次排列；INDEX_NONE 表示由 UASCViewModel 按 Priority 自动补位 */
+	int32 GetSlotIndex() const { return SlotIndex; }
+
 protected:
 	/*** `@BC`   描述: 追加能力Give是否激活策略   `BC@` ***/	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -91,5 +94,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Kitsune | Info", meta = (Categories = "Player.AbilityCooldown"))
 	FGameplayTag CooldownTag = FGameplayTag::EmptyTag;
+
+	/** [VMREFACTOR] 技能栏槽位（-1 = 未配置，自动按 Priority 补位）；配了槽位才会显示在其他玩家的技能栏上 */
+	UPROPERTY(EditDefaultsOnly, Category = "Kitsune | Info")
+	int32 SlotIndex = INDEX_NONE;
 	
 };
